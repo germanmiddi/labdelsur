@@ -1,102 +1,36 @@
 
 <template>
 	<AppLayout>
+
 		<template #content>
+			
 			<main class="">
-			<!-- Page header -->
-			<div class="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
-				<div class="flex items-center space-x-5">
-					<div>
-						<h1 class="text-2xl font-bold text-gray-900">Mensajes</h1>
-						<p class="text-sm font-medium text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit, commodi.</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="mt-8 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
-				<div class="space-y-6 lg:col-start-1 lg:col-span-2">
-					<div class="bg-white shadow overflow-hidden sm:rounded-md">
-						<ul role="list" class="divide-y divide-gray-200">
-						<li v-for="application in applications" :key="application.applicant.email">
-							<a :href="application.href" class="block hover:bg-gray-50">
-							<div class="flex items-center px-4 py-4 sm:px-6">
-								<div class="min-w-0 flex-1 flex items-center">
-								<div class="flex-shrink-0">
-									<img class="h-12 w-12 rounded-full" :src="application.applicant.imageUrl" alt="" />
-								</div>
-								<div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
-									<div>
-									<p class="text-sm font-medium text-indigo-600 truncate">{{ application.applicant.name }}</p>
-									<p class="mt-2 flex items-center text-sm text-gray-500">
-										<MailIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-										<span class="truncate">{{ application.applicant.email }}</span>
-									</p>
-									</div>
-									<div class="hidden md:block">
-									<div>
-										<p class="text-sm text-gray-900">
-										Applied on
-										{{ ' ' }}
-										<time :datetime="application.date">{{ application.dateFull }}</time>
-										</p>
-										<p class="mt-2 flex items-center text-sm text-gray-500">
-										<CheckCircleIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400" aria-hidden="true" />
-										{{ application.stage }}
-										</p>
-									</div>
-									</div>
-								</div>
-								</div>
-								<div>
-								<ChevronRightIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-								</div>
-							</div>
-							</a>
-						</li>
-						</ul>
-					</div>
-				</div>
-
-				<section aria-labelledby="timeline-title" class="lg:col-start-3 lg:col-span-1">
-					<div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
-						<h2 id="timeline-title" class="text-lg font-medium text-gray-900">Timeline</h2>
-
-						<!-- Activity Feed -->
-						<div class="mt-6 flow-root">
-						<ul role="list" class="-mb-8">
-							<li v-for="(item, itemIdx) in timeline" :key="item.id">
-							<div class="relative pb-8">
-								<span v-if="itemIdx !== timeline.length - 1" class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
-								<div class="relative flex space-x-3">
-								<div>
-									<span :class="[item.type.bgColorClass, 'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white']">
-									<component :is="item.type.icon" class="w-5 h-5 text-white" aria-hidden="true" />
-									</span>
-								</div>
-								<div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-									<div>
-									<p class="text-sm text-gray-500">
-										{{ item.content }} <a href="#" class="font-medium text-gray-900">{{ item.target }}</a>
-									</p>
-									</div>
-									<div class="text-right text-sm whitespace-nowrap text-gray-500">
-									<time :datetime="item.datetime">{{ item.date }}</time>
-									</div>
-								</div>
-								</div>
-							</div>
-							</li>
-						</ul>
-						</div>
-						<div class="mt-6 flex flex-col justify-stretch">
-						  
-						  <button @click="sendTest" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Send Test Message</button>
+				<!-- Page header -->
+				<!-- <div class="max-w-3xl mx-auto sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl">
+					<div class="flex items-center space-x-5">
+						<div>
+							<h1 class="text-2xl font-bold text-gray-900">Mensajes</h1>
+							<p class="text-sm font-medium text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit, commodi.</p>
 						</div>
 					</div>
-				</section>
-			</div>
+				</div> -->
+
+				<div class="w-3xl mx-auto flex justify-between h-full  space-x-2 mt-4  ">
+					<div class="bg-gray-50 w-1/5 h-[36rem] rounded-xl shadow">
+						
+
+					</div>
+					<div class="bg-gray-50 w-4/5 rounded-xl shadow">
+						
+					</div>
+
+				</div>
+
+
 			</main>
+
 		</template>
+
 	</AppLayout>
 </template>
 

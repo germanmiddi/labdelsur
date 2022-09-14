@@ -5,16 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Message extends Model
+class Waidsession extends Model
 {
     protected $fillable = [
         'wa_id',
-        'body',
-        'menu_selected',
-        'status',
-        'response',
-        'wamid',
-        'timestamp'
     ];
     
     use HasFactory;

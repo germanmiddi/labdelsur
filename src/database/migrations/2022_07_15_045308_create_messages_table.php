@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('body')->nullable();
             $table->string('menu_selected')->nullable();
             $table->string('status')->nullable();
+            $table->string('response')->nulleable();
+            $table->string('wamid')->nulleable();
+            $table->integer('timestamp')->nulleable();            
             $table->timestamps();
         });
     }

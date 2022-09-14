@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('messages', function (Blueprint $table) {
-            $table->string('step_selected')->nulleable()->after('status');
+        Schema::create('waidsessions', function (Blueprint $table) {
+            $table->id();
+            $table->string('wa_id')->unique();
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('messages', function (Blueprint $table) {
-            $table->dropColumn('step_selected');
-        });
+        Schema::dropIfExists('waidsessions');
     }
 };
