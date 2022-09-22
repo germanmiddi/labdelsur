@@ -4,30 +4,88 @@
 
 		<template #content>
 			
-			<main class="">
-				<!-- Page header -->
-				<!-- <div class="max-w-3xl mx-auto sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl">
-					<div class="flex items-center space-x-5">
-						<div>
-							<h1 class="text-2xl font-bold text-gray-900">Mensajes</h1>
-							<p class="text-sm font-medium text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit, commodi.</p>
-						</div>
+			<!-- This is an example component -->
+			<div class="container mx-auto shadow-lg rounded-lg tracking-normal ">
+				
+				<!-- headaer -->
+				<div class="px-5 py-5 flex justify-between items-center bg-white border-b-2">
+					<div class="font-semibold text-2xl text-gray-700">Centro de Mensajes</div>
+					<div class="w-1/2">
+						<!-- <input type="text" name="" id="" placeholder="search IRL" class="rounded-2xl bg-gray-100 py-3 px-5 w-full" /> -->
 					</div>
-				</div> -->
-
-				<div class="w-3xl mx-auto flex justify-between h-full  space-x-2 mt-4  ">
-					<div class="bg-gray-50 w-1/5 h-[36rem] rounded-xl shadow">
-						
-
-					</div>
-					<div class="bg-gray-50 w-4/5 rounded-xl shadow">
-						
-					</div>
-
+					<div class="h-12 w-12 p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">MR</div>
 				</div>
+				<!-- end header -->
 
+				<!-- Chatting -->
+				<div class="flex flex-row justify-between bg-white">
+					<!-- chat list -->
+					<div class="flex flex-col w-2/5 border-r overflow-y-auto">
+						<!-- search compt -->
+						<div class="border-b-2 py-4 px-2">
+							<input type="text" placeholder="Buscar..." class="py-2 px-2 border-2 border-gray-100 rounded-2xl w-full" />
+						</div>
+						<!-- end search compt -->
 
-			</main>
+						<!-- user list -->
+						<div v-for="c in contacts" :key="c.id" class="flex flex-row py-4 px-4 justify-center items-center border-b" @click="getMessages(c.wa_id)">
+							<!-- <div class="w-1/6 mr-4">
+								<div class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">MR</div>
+							</div> -->
+							<div class="w-full">
+								<div class="text-lg font-semibold text-gray-700">{{ c.name }} <br> 
+									<span class="text-sm font-normal text-gray-400 " >{{ c.wa_id }}</span>
+								</div>
+							</div>
+						</div>
+						<!-- end user list -->
+					</div>
+					<!-- end chat list -->
+
+					<!-- message -->
+					<div class="w-full px-5 flex flex-col justify-between overflow-y-auto max-h-[70vh]" ref="container" id="message-box" >
+						<div class="flex flex-col mt-5">
+							<div v-for="m in messages" :key="m.id" >
+								
+								<div class="flex mb-2" :class="m.type == 'in' ? 'justify-start' : 'justify-end' ">
+									<div class="text-white py-3 px-4 max-w-md"
+										:class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400' 
+										                       : 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'"> 
+										{{m.body}}
+									</div>
+								</div>
+								<div class="flex text-sm mb-4 text-gray-600" 
+								    :class="m.type == 'in' ? 'justify-start ml-2' : 'justify-end mr-2'">
+									{{this.format(m.created_at)}}
+								</div>								
+							</div>
+						</div>
+
+						<div class="py-5 border-t mt-20">
+							<input class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl" type="text" placeholder="type your message here..." />
+						</div>
+
+					</div>
+					<!-- end message -->
+
+					<!-- <div class="w-2/5 border-l-2 px-5">
+						<div class="flex flex-col">
+							<div class="font-semibold text-xl py-4">Mern Stack Group</div>
+							<img
+								src="https://source.unsplash.com/L2cxSuKWbpo/600x600"
+								class="object-cover rounded-xl h-64"
+								alt=""
+							/>
+							<div class="font-semibold py-4">Created 22 Sep 2021</div>
+							<div class="font-light">
+								Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt,
+								perspiciatis!
+							</div>
+						</div>
+					</div> -->
+				</div>
+			</div>
+<!-- 			 -->
 
 		</template>
 
@@ -36,73 +94,35 @@
 
 
 <script>
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Popover,
-  PopoverButton,
-  PopoverOverlay,
-  PopoverPanel,
-  TransitionChild,
-  TransitionRoot,
-} from '@headlessui/vue'
-import {
-  ArrowNarrowLeftIcon,
-  CheckIcon,
-  HomeIcon,
-  PaperClipIcon,
-  QuestionMarkCircleIcon,
-  SearchIcon,
-  ThumbUpIcon,
-  UserIcon,
-} from '@heroicons/vue/solid'
+	import {
+			Menu,
+			MenuButton,
+			MenuItem,
+			MenuItems,
+			Popover,
+			PopoverButton,
+			PopoverOverlay,
+			PopoverPanel,
+			TransitionChild,
+			TransitionRoot,
+		} from '@headlessui/vue'
 
-import { CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/vue/solid'
+	import {
+			ArrowNarrowLeftIcon,
+			CheckIcon,
+			HomeIcon,
+			PaperClipIcon,
+			QuestionMarkCircleIcon,
+			SearchIcon,
+			ThumbUpIcon,
+			UserIcon,
+		} from '@heroicons/vue/solid'
 
+	import { CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/vue/solid'
+	import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
+	import AppLayout from '@/Layouts/AppLayout.vue';
+	import moment from 'moment';
 
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
-import AppLayout from '@/Layouts/AppLayout.vue';
-
-const applications = [
-  {
-	applicant: {
-	  name: 'Ricardo Cooper',
-	  email: 'ricardo.cooper@example.com',
-	  imageUrl:
-		'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-	},
-	date: '2020-01-07',
-	dateFull: 'January 7, 2020',
-	stage: 'Completed phone screening',
-	href: '#',
-  },
-  {
-	applicant: {
-	  name: 'Kristen Ramos',
-	  email: 'kristen.ramos@example.com',
-	  imageUrl:
-		'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-	},
-	date: '2020-01-07',
-	dateFull: 'January 7, 2020',
-	stage: 'Completed phone screening',
-	href: '#',
-  },
-  {
-	applicant: {
-	  name: 'Ted Fox',
-	  email: 'ted.fox@example.com',
-	  imageUrl:
-		'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-	},
-	date: '2020-01-07',
-	dateFull: 'January 7, 2020',
-	stage: 'Completed phone screening',
-	href: '#',
-  },
-]
 const user = {
   name: 'Whitney Francis',
   email: 'whitney@example.com',
@@ -134,97 +154,40 @@ const eventTypes = {
   advanced: { icon: ThumbUpIcon, bgColorClass: 'bg-blue-500' },
   completed: { icon: CheckIcon, bgColorClass: 'bg-green-500' },
 }
-const timeline = [
-  {
-	id: 1,
-	type: eventTypes.applied,
-	content: 'Applied to',
-	target: 'Front End Developer',
-	date: 'Sep 20',
-	datetime: '2020-09-20',
-  },
-  {
-	id: 2,
-	type: eventTypes.advanced,
-	content: 'Advanced to phone screening by',
-	target: 'Bethany Blake',
-	date: 'Sep 22',
-	datetime: '2020-09-22',
-  },
-  {
-	id: 3,
-	type: eventTypes.completed,
-	content: 'Completed phone screening with',
-	target: 'Martha Gardner',
-	date: 'Sep 28',
-	datetime: '2020-09-28',
-  },
-  {
-	id: 4,
-	type: eventTypes.advanced,
-	content: 'Advanced to interview by',
-	target: 'Bethany Blake',
-	date: 'Sep 30',
-	datetime: '2020-09-30',
-  },
-  {
-	id: 5,
-	type: eventTypes.completed,
-	content: 'Completed interview with',
-	target: 'Katherine Snyder',
-	date: 'Oct 4',
-	datetime: '2020-10-04',
-  },
-]
-const comments = [
-  {
-	id: 1,
-	name: 'Leslie Alexander',
-	date: '4d ago',
-	imageId: '1494790108377-be9c29b29330',
-	body: 'Ducimus quas delectus ad maxime totam doloribus reiciendis ex. Tempore dolorem maiores. Similique voluptatibus tempore non ut.',
-  },
-  {
-	id: 2,
-	name: 'Michael Foster',
-	date: '4d ago',
-	imageId: '1519244703995-f4e0f30006d5',
-	body: 'Et ut autem. Voluptatem eum dolores sint necessitatibus quos. Quis eum qui dolorem accusantium voluptas voluptatem ipsum. Quo facere iusto quia accusamus veniam id explicabo et aut.',
-  },
-  {
-	id: 3,
-	name: 'Dries Vincent',
-	date: '4d ago',
-	imageId: '1506794778202-cad84cf45f1d',
-	body: 'Expedita consequatur sit ea voluptas quo ipsam recusandae. Ab sint et voluptatem repudiandae voluptatem et eveniet. Nihil quas consequatur autem. Perferendis rerum et.',
-  },
-]
 
 export default {
-  components: {
-	Menu,
-	MenuButton,
-	MenuItem,
-	MenuItems,
-	Popover,
-	PopoverButton,
-	PopoverOverlay,
-	PopoverPanel,
-	TransitionChild,
-	TransitionRoot,
-	ArrowNarrowLeftIcon,
-	BellIcon,
-	HomeIcon,
-	MenuIcon,
-	PaperClipIcon,
-	QuestionMarkCircleIcon,
-	SearchIcon,
-	XIcon,
-	AppLayout,
-	CheckCircleIcon, ChevronRightIcon, MailIcon    
-	
+	props: {
+		contacts: Object
+	},
 
-  },
+	components: {
+		Menu,
+		MenuButton,
+		MenuItem,
+		MenuItems,
+		Popover,
+		PopoverButton,
+		PopoverOverlay,
+		PopoverPanel,
+		TransitionChild,
+		TransitionRoot,
+		ArrowNarrowLeftIcon,
+		BellIcon,
+		HomeIcon,
+		MenuIcon,
+		PaperClipIcon,
+		QuestionMarkCircleIcon,
+		SearchIcon,
+		XIcon,
+		AppLayout,
+		CheckCircleIcon, ChevronRightIcon, MailIcon,
+		moment    
+	},
+	filters: {
+		moment: function (date) {
+			return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+		}
+	},
   setup() {
 	return {
 	  user,
@@ -233,15 +196,46 @@ export default {
 	  userNavigation,
 	  attachments,
 	  eventTypes,
-	  timeline,
-	  comments,
-	  applications
+	//   timeline,
+	//   comments,
+	//   applications
 	}
   },
   data(){
-
+	  return{
+		  messages:"",
+		  selectedContact:"",
+		  intervalId: ""
+	  }
   },
+
   methods:{
+	
+	format(date){
+		return moment(date).format('DD-MM-YYYY h:mm');
+	},
+
+	async getMessages(wa_id){
+
+		const get = `${route('messages.list')}?wa_id=${wa_id}`
+		
+		clearInterval(this.intervalId)
+
+		this.intervalId = setInterval(function(){
+			axios.get(get)
+			.then(response => {
+				this.messages = response.data
+				this.$nextTick(() => {
+					var element = document.getElementById('message-box');
+					element.scrollTop = element.scrollHeight	
+
+				})
+			})
+			
+		}.bind(this), 3000)
+
+	},  
+	
 	async sendTest(){
 
 		const get = `${route('whatsapp.sendtest')}` 

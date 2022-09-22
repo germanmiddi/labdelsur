@@ -4,12 +4,11 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-use App\Http\Controllers\Manager\Orders\OrderController;
-use App\Http\Controllers\Manager\Clients\ClientController;
-use App\Http\Controllers\Manager\Drivers\DriverController;
-use App\Http\Controllers\Manager\Companies\CompanyController;
 use App\Http\Controllers\Manager\Whatsapp\WhatsappController;
+use App\Http\Controllers\Manager\Dashboard\DashboardController;
+use App\Http\Controllers\Manager\Messages\MessagesController;
 use App\Http\Controllers\Web\HomeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,44 +21,41 @@ use App\Http\Controllers\Web\HomeController;
 |
 */
 
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', [
-//         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'),
-//         'laravelVersion' => Application::VERSION,
-//         'phpVersion' => PHP_VERSION,
-//     ]);
-// });
-
 Route::get('/',[HomeController::class, 'index'])
        ->name('home');
 
-Route::get('/dashboard', function(){
-            return Inertia::render('Manager/Dashboard/Index');
-        })->name('dashboard')->middleware('auth');    
-
+Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard')
+        ->middleware('auth');    
 
 Route::get('/whatsapp/sendtest', [WhatsappController::class,'sendTest' ])
         ->name('whatsapp.sendtest')
         ->middleware('auth');
 
-Route::get('/orders', [OrderController::class, 'index'])
-    ->name('orders')
-    ->middleware('auth');    
 
-Route::get('/orders/create', [OrderController::class, 'create'])
-    ->name('orders.create')
-    ->middleware('auth');    
+Route::get('/messages/list', [MessagesController::class,'list' ])
+        ->name('messages.list')
+        ->middleware('auth');
 
-Route::get('/clients', [ClientController::class, 'index'])
-    ->name('clients')
-    ->middleware('auth');    
 
-Route::get('/companies', [CompanyController::class, 'index'])
-    ->name('companies')
-    ->middleware('auth');    
 
-Route::get('/drivers', [DriverController::class, 'index'])
-    ->name('drivers')
-    ->middleware('auth');    
+// Route::get('/orders', [OrderController::class, 'index'])
+//     ->name('orders')
+//     ->middleware('auth');    
+
+// Route::get('/orders/create', [OrderController::class, 'create'])
+//     ->name('orders.create')
+//     ->middleware('auth');    
+
+// Route::get('/clients', [ClientController::class, 'index'])
+//     ->name('clients')
+//     ->middleware('auth');    
+
+// Route::get('/companies', [CompanyController::class, 'index'])
+//     ->name('companies')
+//     ->middleware('auth');    
+
+// Route::get('/drivers', [DriverController::class, 'index'])
+//     ->name('drivers')
+//     ->middleware('auth');    
     

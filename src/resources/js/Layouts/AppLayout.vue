@@ -1,11 +1,12 @@
 <template>
-  <div class="min-h-full">
+  <div class="min-h-screen font-['inter'] ">
     <Disclosure as="nav" class="bg-indigo-600" v-slot="{ open }">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img class="h-8 w-8" src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg" alt="Workflow" />
+              <!-- <img class="w-24" src="/img/logo.png" /> -->
+              <!-- <img class="h-8 w-8" src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg" alt="Workflow" /> -->
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
@@ -104,10 +105,10 @@ const user = {
 }
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
-  { name: 'Reports', href: '#', current: false },
+  { name: 'Contactos', href: '#', current: false },
+  { name: 'Turnos', href: '#', current: false },
+  { name: 'Reportes', href: '#', current: false },
+  { name: 'Configuración', href: '#', current: false },
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#' },

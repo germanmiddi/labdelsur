@@ -13,9 +13,10 @@ class Message extends Model
         'menu_selected',
         'status',
         'response',
-        'wamid',
-        'timestamp'
+        'wamid'
     ];
     
     use HasFactory;
+
+
 }

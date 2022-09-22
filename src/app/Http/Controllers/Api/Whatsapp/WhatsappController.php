@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Message;
 use App\Models\Waidsession;
+use App\Models\Contact;
 
 
 use Carbon\Carbon;
@@ -32,8 +33,9 @@ class WhatsappController extends Controller
     public function set_message($wa_id, $message){
 
         $prev_menu = Message::where('wa_id', $wa_id)
-                             ->orderBy('updated_at', 'desc')
-                             ->first();
+                            ->where('response','!=','')   
+                            ->orderBy('updated_at', 'desc')
+                            ->first();
 
         if($prev_menu && $message != 0){
             $prev_step = $prev_menu->response;
@@ -45,69 +47,69 @@ class WhatsappController extends Controller
         switch($current_step){
 
             case '0':
-                $text = "Buen día, soy tu asistente virtual. Puedo ayudarte con los siguientes temas:
-1 - Turno para atención -sólo para obra social UTA- (lo pondría más abajo, para que el impacto no sea que uno se dedica prioritariamente a esta obra social)    
-2 - ¿Cómo obtener mis resultados?
-3 - Horario de atención y ubicación
-4 - Extracciones a domicilio
-5 - COVID 19
-6 - Indicaciones de estudios
-7 - Coberturas
-8 - Autorización de órdenes
-9 - Presupuestos";                
+                $text = "Buen día, soy tu asistente virtual. Puedo ayudarte con los siguientes temas:";
+                $text .= "\n 1 - Horario de atención y ubicación";
+                $text .= "\n 2 - Turno para atención -sólo para obra social UTA";
+                $text .= "\n 3 - ¿Cómo obtener mis resultados?";
+                $text .= "\n 4 - Extracciones a domicilio";
+                $text .= "\n 5 - COVID 19";
+                $text .= "\n 6 - Indicaciones de estudios";
+                $text .= "\n 7 - Obras Sociales y Prepagas";
+                $text .= "\n 8 - Autorización de órdenes";
+                $text .= "\n 9 - Presupuestos";
                 break;
+
+
             case '0.1':
-                $text = "Los proximos turnos disponibles son XXXX dias en el horario de 7:30 a 10 para confirmar su turno digite el numero del dia que quiere asistir
-1 - 10/9 de 7:30 a 10 
-2 - 11/9 de 7:30 a 10 
-3 - 12/9 de 7:30 a 10 
-4 - Necesito un turno más urgente";                
-                break;  
+                    $text = "Horario de lunes a viernes de 7:30 a 18:00 hs y sábados de 7:30 a 13:00 hs.";
+                    $text .= "\n Horarios de extracciones: Lunes a sábados de 7:30 a 10:30 hs";
+                    $text .= "\n Direccion: ubicacion";
+                    $text .= "\n Si es de UTA y necesita solicitar un turno";
+                    $text .= "\n Indicación de estudios";
+                    break;
 
             case '0.2':
-                $text = " Para acceder a su resultado: ";
-                $text .= "\n1 - Ingresar a www.laboratoriodelsur.com.ar solapa de resultados";
-                $text .= "\n2 - Cargá el número de orden que te dimos cuando te realizaste el estudio.";
-
-                break;
+                $text = "Los proximos turnos disponibles son XXXX dias en el horario de 7:30 a 10 para confirmar su turno digite el numero del dia que quiere asistir";
+                $text .= "\n 1 - 10/9 de 7:30 a 10";
+                $text .= "\n 2 - 11/9 de 7:30 a 10";
+                $text .= "\n 3 - 12/9 de 7:30 a 10";
+                $text .= "\n 4 - Necesito un turno más urgente";
+                break;  
 
             case '0.3':
-                $text = "Horario de lunes a viernes de 7:30 a 18:00 hs y sábados de 7:30 a 13:00 hs. 
-Horarios de extracciones: Lunes a sábados de 7:30 a 10:30 hs
-Direccion: ubicacion
-Si es de UTA y necesita solicitar un turno
-Indicación de estudios";
+                $text = " Para acceder a su resultado: ";
+                $text .= "\n 1 - Ingresar a www.laboratoriodelsur.com.ar solapa de resultados";
+                $text .= "\n 2 - Cargá el número de orden que te dimos cuando te realizaste el estudio.";
+
                 break;
+
             
             case '0.4':
                 $text = "Para realizar domicilios le pedimos la foto de la credencial, DNI y orden médica y la dirección y las entrecalles. A la brevedad le confirmaremos disponibilidad. ";
                 break;
             
             case '0.5':
-                $text = "Los hisopados son sin turno de 11 a 15 de lunes a viernes y sábados de 9 a 12. 
-Si es PCR y desea los resultados en el día puede venir de 11 a 12 o los sábados de 9 a 11. Si es antígeno demora 30 minutos el resultado. 
-Importe del estudio
-Si posee orden medica y lo realiza por obra social";
+                $text = "Los hisopados son sin turno de 11 a 15 de lunes a viernes y sábados de 9 a 12.";
+                $text .= "\n Si es PCR y desea los resultados en el día puede venir de 11 a 12 o los sábados de 9 a 11. Si es antígeno demora 30 minutos el resultado. ";
+                $text .= "\n Importe del estudio";
+                $text .= "\n Si posee orden medica y lo realiza por obra social";
                 break;
             
             case '0.6':
-                $text = "12 horas de ayuno, cuando se analice: Colesterol, Triglicéridos, LDL y Hepatograma.
-8 horas de ayuno para el resto de los análisis.
-               
-Cortisol y Curva de glucemia: La extracción debe realizarse a las 8 AM.
-Prolactina: debe tener dos horas de haberse levantado antes de venir al laboratorio y no haber realizado actividad fisica ni esfuerzo
-                            
-Si tiene que realizarse estudios de hormonas tiroideas y toma medicacion para las tiroides ese día lo toma luego de la extracción
-                            
-Urocultivo mujeres 
-Urocultivo hombres 
-Orina de 24 hs 
-Sangre oculta en materia fecal 
-Parasitologico o coprocultivo 
-Cultivo de flujo
-Micologicoa 
-PSA 
-Si necesita ayuda para interpretar la orden. Sera contactado con un agente";
+                $text = "12 horas de ayuno, cuando se analice: Colesterol, Triglicéridos, LDL y Hepatograma.";
+                $text .= "\n 8 horas de ayuno para el resto de los análisis.";
+                $text .= "\n Cortisol y Curva de glucemia: La extracción debe realizarse a las 8 AM.";
+                $text .= "\n Prolactina: debe tener dos horas de haberse levantado antes de venir al laboratorio y no haber realizado actividad fisica ni esfuerzo";
+                $text .= "\n Si tiene que realizarse estudios de hormonas tiroideas y toma medicacion para las tiroides ese día lo toma luego de la extracción";
+                $text .= "\n Urocultivo mujeres ";
+                $text .= "\n Urocultivo hombres ";
+                $text .= "\n Orina de 24 hs ";
+                $text .= "\n Sangre oculta en materia fecal ";
+                $text .= "\n Parasitologico o coprocultivo ";
+                $text .= "\n Cultivo de flujo";
+                $text .= "\n Micologicoa ";
+                $text .= "\n PSA ";
+                $text .= "\n Si necesita ayuda para interpretar la orden. Sera contactado con un agente";
                 break;
 
             case '0.7':
@@ -151,11 +153,9 @@ Si necesita ayuda para interpretar la orden. Sera contactado con un agente";
 
     public function receive(Request $request){
         
-        //return;
-        
+        // return response($request['hub_challenge'], 200);
+
         if( isset($request['entry'][0]['changes'][0]['value']['messages'][0]) ){
-            
-            
 
             $a = json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]);
             Log::info('soy un mensaje '. $a);
@@ -164,10 +164,26 @@ Si necesita ayuda para interpretar la orden. Sera contactado con un agente";
                      ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
                      : '';
 
+            $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
+                    ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
+                    : '';
 
-            // $session = Waidsession::create(['wa_id' => $wa_id]);
+            $session = Waidsession::where('wa_id',$wa_id)->first(); 
+    
+            if($session){
+                Log::info('No se procesa por Session'); return;
+            }else{  
+                Waidsession::create(['wa_id' => $wa_id]);
+            }                    
 
-            // Log::info('session' . $session);
+            $contact = Contact::where('wa_id',$wa_id)->first(); 
+            
+            if(!$contact){
+                Contact::create(['wa_id' => $wa_id, 
+                                  'name' => $name]);
+            }
+            
+            Log::info('contact' . $contact);
 
             $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
 
@@ -178,7 +194,17 @@ Si necesita ayuda para interpretar la orden. Sera contactado con un agente";
             $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
                      ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
                      : '' ;
-            
+
+            $inbound_msj = new Message;
+            $inbound_msj->wa_id     = $wa_id;
+            $inbound_msj->type      = 'in';
+            $inbound_msj->body      = $message;
+            $inbound_msj->status    = 'initial';
+            $inbound_msj->response  = ''; 
+            $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
+            $inbound_msj->timestamp = $timestamp;
+            $inbound_msj->save();
+
             $response = $this->set_message($wa_id, $message);
 
             
@@ -192,19 +218,21 @@ Si necesita ayuda para interpretar la orden. Sera contactado con un agente";
             $url = 'https://graph.facebook.com/v14.0/107765322075657/messages';
 
 
-            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer EAAMnvn93Q1ABAEM5JwtfmqXEe6btOqcXWDpmm7KBM28GS5Ewcwaqyt95BzZAlg2Ov2N8lBUVMuGpnmqdjSM6sR2eF6ciYzhVBRyZAyfyimN4vnToCKBpJtXGTvaWMYuZCX7ZAmrxA7b8umZBONpTgWHVhEdlfJRfoO759viw5stj4pvJeMhlL2DU97CDtHl5OmrZAdPBhPwgZDZD',
+            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer EAAMnvn93Q1ABAA6oA78ZBj2iSPbXxuwQu2FvXDdFjsyhVffhWGVd7pO1I7nF6p0CWp4U93gNCCtrw2r5Iyz0DY8u26cIZBamy3zPzJtlVlpaDY97qUu1QN4HJsa0izAqVNwUuNz8NqJcfYZANikMdCyxzSm47BiHhp4MhcvjXEFsLoZAaRog7RZBHiqPxdg42h5CpkXPJugZDZD',
                                              'Content-Type'  => 'application/json'])->post($url, $params);
             
             
-            $current_step = new Message;
-            $current_step->wa_id     = $wa_id;
-            $current_step->body      = $message;
-            $current_step->status    = 'initial';
-            $current_step->response  = $response['id']; 
-            $current_step->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
-            $current_step->timestamp = $timestamp;
-            $current_step->save();
+            $outbound_msj = new Message;
+            $outbound_msj->wa_id     = $wa_id;
+            $outbound_msj->type      = 'out';
+            $outbound_msj->body      = $response['text']; //$message;
+            $outbound_msj->status    = 'initial';
+            $outbound_msj->response  = $response['id']; 
+            $outbound_msj->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
+            $outbound_msj->timestamp = \Carbon\Carbon::now()->timestamp;
+            $outbound_msj->save();
             
+            Waidsession::where('wa_id',$wa_id)->delete();
 
         }elseif( isset($request['entry'][0]['changes'][0]['value']['statuses'][0]['status']) ){
             
@@ -218,6 +246,7 @@ Si necesita ayuda para interpretar la orden. Sera contactado con un agente";
 
         }
 
+        
         return response($request['hub_challenge'], 200);
 
     }
