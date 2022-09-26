@@ -1,3 +1,4 @@
 src/public/css/app.css
 src/public/js/app.js
 .DS_Store
+.env
