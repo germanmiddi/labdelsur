@@ -13,7 +13,7 @@
 					<div class="w-1/2">
 						<!-- <input type="text" name="" id="" placeholder="search IRL" class="rounded-2xl bg-gray-100 py-3 px-5 w-full" /> -->
 					</div>
-					<div class="h-12 w-12 p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">MR</div>
+					<div>{{this.selectedName}}</div>
 				</div>
 				<!-- end header -->
 
@@ -28,11 +28,11 @@
 						<!-- end search compt -->
 
 						<!-- user list -->
-						<div v-for="c in contacts" :key="c.id" class="flex flex-row py-4 px-4 justify-center items-center border-b" @click="getMessages(c.wa_id)">
+						<div v-for="c in contacts" :key="c.id" class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer" @click="getMessages(c)">
 							<!-- <div class="w-1/6 mr-4">
 								<div class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">MR</div>
 							</div> -->
-							<div class="w-full">
+							<div class="w-full ">
 								<div class="text-lg font-semibold text-gray-700">{{ c.name }} <br> 
 									<span class="text-sm font-normal text-gray-400 " >{{ c.wa_id }}</span>
 								</div>
@@ -44,8 +44,10 @@
 
 					<!-- message -->
 					<div class="w-full px-5 flex flex-col justify-between overflow-y-auto max-h-[70vh]" ref="container" id="message-box" >
+						
 						<div class="flex flex-col mt-5">
-							<div v-for="m in messages" :key="m.id" >
+							<div v-if="loading" class="mx-auto"> <Icons name="loading" class="h-12 w-12 text-opacity-50" /></div>
+							<div v-else v-for="m in messages" :key="m.id" >
 								
 								<div class="flex mb-2" :class="m.type == 'in' ? 'justify-start' : 'justify-end' ">
 									<div class="text-white py-3 px-4 max-w-md"
@@ -122,6 +124,8 @@
 	import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
 	import AppLayout from '@/Layouts/AppLayout.vue';
 	import moment from 'moment';
+	import Icons from '@/Layouts/Components/Icons.vue';
+
 
 const user = {
   name: 'Whitney Francis',
@@ -156,9 +160,9 @@ const eventTypes = {
 }
 
 export default {
-	props: {
-		contacts: Object
-	},
+	// props: {
+	// 	contacts: Object
+	// },
 
 	components: {
 		Menu,
@@ -181,7 +185,8 @@ export default {
 		XIcon,
 		AppLayout,
 		CheckCircleIcon, ChevronRightIcon, MailIcon,
-		moment    
+		moment,
+		Icons    
 	},
 	filters: {
 		moment: function (date) {
@@ -205,18 +210,26 @@ export default {
 	  return{
 		  messages:"",
 		  selectedContact:"",
-		  intervalId: ""
+		  intervalId: "",
+		  loading:false,
+		  selectedName:"",
+		  contacts:""
 	  }
   },
-
+  created(){
+	this.getContacts()
+  },
   methods:{
 	
 	format(date){
 		return moment(date).format('DD-MM-YYYY h:mm');
 	},
 
-	async getMessages(wa_id){
-
+	async getMessages(c){
+		this.loading = true
+		this.selectedName = c.name
+		
+		let wa_id = c.wa_id
 		const get = `${route('messages.list')}?wa_id=${wa_id}`
 		
 		clearInterval(this.intervalId)
@@ -224,6 +237,7 @@ export default {
 		this.intervalId = setInterval(function(){
 			axios.get(get)
 			.then(response => {
+				this.loading = false
 				this.messages = response.data
 				this.$nextTick(() => {
 					var element = document.getElementById('message-box');
@@ -235,7 +249,21 @@ export default {
 		}.bind(this), 3000)
 
 	},  
-	
+
+	async getContacts(){
+		
+		const get = `${route('contacts.list')}`
+
+		setInterval(function(){
+			axios.get(get)
+			.then(response => {
+				// console.log(response.data)
+				this.contacts = response.data
+			})
+		}.bind(this), 3000)
+
+	},
+
 	async sendTest(){
 
 		const get = `${route('whatsapp.sendtest')}` 

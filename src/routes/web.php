@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Manager\Whatsapp\WhatsappController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
 use App\Http\Controllers\Manager\Messages\MessagesController;
+use App\Http\Controllers\Manager\Contacts\ContactsController;
 use App\Http\Controllers\Web\HomeController;
 
 
@@ -37,7 +38,10 @@ Route::get('/messages/list', [MessagesController::class,'list' ])
         ->name('messages.list')
         ->middleware('auth');
 
-
+Route::get('/contacts/list', [ContactsController::class,'list' ])
+        ->name('contacts.list')
+        ->middleware('auth');        
+        
 
 // Route::get('/orders', [OrderController::class, 'index'])
 //     ->name('orders')

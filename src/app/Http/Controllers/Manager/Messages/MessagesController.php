@@ -15,7 +15,9 @@ class MessagesController extends Controller
     public function list(){
 
         $wa_id = request('wa_id');
-        // dd($wa_id);
+        
+        Message::where('wa_id', $wa_id)->update(['status' => 'read']);
+
         return Message::where('wa_id', $wa_id)->get();
 
 
