@@ -8,6 +8,7 @@ use App\Http\Controllers\Manager\Whatsapp\WhatsappController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
 use App\Http\Controllers\Manager\Messages\MessagesController;
 use App\Http\Controllers\Manager\Contacts\ContactsController;
+use App\Http\Controllers\Manager\Configuration\ConfigurationController;
 use App\Http\Controllers\Web\HomeController;
 
 
@@ -42,6 +43,29 @@ Route::get('/contacts/list', [ContactsController::class,'list' ])
         ->name('contacts.list')
         ->middleware('auth');        
         
+Route::get('/configuration', [ConfigurationController::class, 'index'])
+        ->name('configuration')
+        ->middleware('auth'); 
+
+Route::post('/configuration/updateday', [ConfigurationController::class, 'update_day'])
+        ->name('configuration.updateday')
+        ->middleware('auth'); 
+
+Route::post('/configuration/updateholiday', [ConfigurationController::class, 'store_holiday'])
+        ->name('configuration.storeholiday')
+        ->middleware('auth'); 
+
+Route::get('/configuration/listholiday', [ConfigurationController::class, 'list_holiday'])
+        ->name('configuration.listholiday')
+        ->middleware('auth'); 
+
+Route::get('/configuration/listday', [ConfigurationController::class, 'list_day'])
+        ->name('configuration.listday')
+        ->middleware('auth');
+
+Route::get('/configuration/deleteholiday/{id}', [ConfigurationController::class, 'delete_holiday'])
+        ->name('configuration.deleteholiday')
+        ->middleware('auth');
 
 // Route::get('/orders', [OrderController::class, 'index'])
 //     ->name('orders')
