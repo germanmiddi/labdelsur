@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('holidays', function (Blueprint $table) {
-            $table->id();
-            $table->date('date')->nullable();
-            $table->string('description')->nullable();         
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->string('fullname')->after('name'); //nullable
+            $table->string('nro_doc')->nullable()->after('fullname');
+            $table->string('nro_affiliate')->nullable()->after('nro_doc');
         });
     }
 
@@ -29,6 +27,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('holidays');
+        Schema::table('contacts', function (Blueprint $table) {
+            
+        });        
     }
 };

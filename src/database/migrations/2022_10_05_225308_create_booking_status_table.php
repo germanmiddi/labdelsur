@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('holidays', function (Blueprint $table) {
+        //bookings
+        Schema::create('booking_status', function (Blueprint $table) {
             $table->id();
-            $table->date('date')->nullable();
-            $table->string('description')->nullable();         
+            $table->string('status', 20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('holidays');
+        Schema::dropIfExists('booking_status');
     }
 };

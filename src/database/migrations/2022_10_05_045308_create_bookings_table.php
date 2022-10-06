@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('holidays', function (Blueprint $table) {
+        //bookings
+        Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->date('date')->nullable();
-            $table->string('description')->nullable();         
+            $table->date('date');  
+            $table->boolean('status')->default(1);
+            $table->bigInteger('contact_id');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('holidays');
+        Schema::dropIfExists('bookings');
     }
 };

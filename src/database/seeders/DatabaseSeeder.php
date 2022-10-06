@@ -69,9 +69,30 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\DetailDay::create([
-            'num_day' => '7',
+            'num_day' => '0',
             'description' => 'Domingo',
             'cant_orders' => '0'
+        ]);
+
+        \App\Models\Setting::create([
+            'module' => 'BOOKING',
+            'key' => 'cant_days_booking',
+            'value' => '5',
+            'description' => 'Cantidad de dias que se ofrecerán como opciones para el usuario'
+        ]);
+
+        \App\Models\Setting::create([
+            'module' => 'BOOKING',
+            'key' => 'hora_limit_booking',
+            'value' => '18:00',
+            'description' => 'Horario a partir del cual no se otorgan turnos para la fecha actual'
+        ]);
+
+        \App\Models\Setting::create([
+            'module' => 'BOOKING',
+            'key' => 'day_limit_booking',
+            'value' => '2022-10-13',
+            'description' => 'Fecha limite hasta cuando se otorgarán turno | si esta vacio no posee limite'
         ]);
     }
 }

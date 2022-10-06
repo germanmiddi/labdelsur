@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Http\Controllers\Manager\Settings;
+
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+
+use App\Models\Setting;
+use App\Models\Contact;
+use App\Models\Holiday;
+use App\Models\DetailDay;
+
+class SettingController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function index(){
+        return Inertia::render('Manager/Settings/Index', 
+        [
+            'holidays' => Holiday::all(),
+            'days' => DetailDay::all(),
+            'settings' => Setting::where('module', 'BOOKING')->get()
+        ]); 
+    }
+
+    public function store_holiday(Request $request){
+
+        //dd();
+        $input_date = $request->form['date'];
+        $input_date  = date('Y-m-d', strtotime($input_date));
+        try {
+            Holiday::create(array(
+                'date' => $input_date,
+                'description' => $request->form['description']
+            ));
+            return response()->json(['message'=>'Feriado creado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+
+    public function delete_holiday($id){
+        try {
+            $holiday = Holiday::find($id);
+            $holiday->delete();
+            return response()->json(['message'=>'Feriado eliminado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+    public function update_day(Request $request){
+        try {
+            DetailDay::where('id', $request->form['id'])->update([
+                'num_day' => $request->form['num_day'],
+                'cant_orders' => $request->form['cant_orders'],
+                'description' => $request->form['description']
+            ]); 
+            return response()->json(['message'=>'Configuración actualizada'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+    public function list_holiday(){
+        return Holiday::all();
+    }
+
+    public function list_day(){
+        return DetailDay::all();
+    }
+
+    // UPDATE SETTINGS
+    public function update_setting($request)
+    {
+        
+        $rows = json_decode($request);
+        try {
+            foreach($rows as $row){
+                $content = Setting::find($row->id);
+                $content->value = $row->value;
+                $content->save();
+            }
+            return response()->json(['message'=>'Configuración actualizada'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+
+
+    }
+
+
+
+}

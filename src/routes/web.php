@@ -8,7 +8,8 @@ use App\Http\Controllers\Manager\Whatsapp\WhatsappController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
 use App\Http\Controllers\Manager\Messages\MessagesController;
 use App\Http\Controllers\Manager\Contacts\ContactsController;
-use App\Http\Controllers\Manager\Configuration\ConfigurationController;
+use App\Http\Controllers\Manager\Settings\SettingController;
+use App\Http\Controllers\Manager\Booking\BookingController;
 use App\Http\Controllers\Web\HomeController;
 
 
@@ -43,47 +44,39 @@ Route::get('/contacts/list', [ContactsController::class,'list' ])
         ->name('contacts.list')
         ->middleware('auth');        
         
-Route::get('/configuration', [ConfigurationController::class, 'index'])
-        ->name('configuration')
+Route::get('/settings', [SettingController::class, 'index'])
+        ->name('settings')
         ->middleware('auth'); 
 
-Route::post('/configuration/updateday', [ConfigurationController::class, 'update_day'])
-        ->name('configuration.updateday')
+Route::post('/settings/updateday', [SettingController::class, 'update_day'])
+        ->name('settings.updateday')
         ->middleware('auth'); 
 
-Route::post('/configuration/updateholiday', [ConfigurationController::class, 'store_holiday'])
-        ->name('configuration.storeholiday')
+Route::post('/settings/updateholiday', [SettingController::class, 'store_holiday'])
+        ->name('settings.storeholiday')
         ->middleware('auth'); 
 
-Route::get('/configuration/listholiday', [ConfigurationController::class, 'list_holiday'])
-        ->name('configuration.listholiday')
+Route::get('/settings/listholiday', [SettingController::class, 'list_holiday'])
+        ->name('settings.listholiday')
         ->middleware('auth'); 
 
-Route::get('/configuration/listday', [ConfigurationController::class, 'list_day'])
-        ->name('configuration.listday')
+Route::get('/settings/listday', [SettingController::class, 'list_day'])
+        ->name('settings.listday')
         ->middleware('auth');
 
-Route::get('/configuration/deleteholiday/{id}', [ConfigurationController::class, 'delete_holiday'])
-        ->name('configuration.deleteholiday')
+Route::get('/settings/deleteholiday/{id}', [SettingController::class, 'delete_holiday'])
+        ->name('settings.deleteholiday')
         ->middleware('auth');
 
-// Route::get('/orders', [OrderController::class, 'index'])
-//     ->name('orders')
-//     ->middleware('auth');    
+Route::post('/settings/update/{values}', [SettingController::class, 'update_setting'])
+        ->name('settings.update')
+        ->middleware('auth'); 
+        
+Route::get('/booking/daysavailable/{date?}', [BookingController::class, 'get_days_available'])
+        ->name('booking.dayavailable')
+        ->middleware('auth'); 
 
-// Route::get('/orders/create', [OrderController::class, 'create'])
-//     ->name('orders.create')
-//     ->middleware('auth');    
+Route::post('/booking', [BookingController::class, 'store_booking'])
+        ->name('booking.storebooking')
+        ->middleware('auth');
 
-// Route::get('/clients', [ClientController::class, 'index'])
-//     ->name('clients')
-//     ->middleware('auth');    
-
-// Route::get('/companies', [CompanyController::class, 'index'])
-//     ->name('companies')
-//     ->middleware('auth');    
-
-// Route::get('/drivers', [DriverController::class, 'index'])
-//     ->name('drivers')
-//     ->middleware('auth');    
-    
