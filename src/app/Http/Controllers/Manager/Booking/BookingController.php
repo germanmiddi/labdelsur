@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use App\Models\DetailDay;
 use App\Models\Holiday;
 use App\Models\Booking;
+use App\Models\BookingStatus;
 use App\Models\Contact;
 use App\Models\Setting;
 
@@ -19,7 +20,10 @@ class BookingController extends Controller
 
     public function index()
     {
-        return  Inertia::render('Manager/Booking/List');
+        return  Inertia::render('Manager/Booking/List', 
+        [
+            'booking_status' => BookingStatus::all()
+        ]);
     }
 
     public function list(){
@@ -47,47 +51,15 @@ class BookingController extends Controller
             });
         }
 
-        $sort_by = 'fullname';
         if($sort_by === 'id' || $sort_by === 'created_at'){
             $result->orderBy($sort_by, $sort_order);
         }else{
-            $result->whereHas('contact', function($q) use ($sort_by, $sort_order){
+            $result->with(['contact' => function ($q) use ($sort_by, $sort_order) {
                 $q->orderBy($sort_by, $sort_order);
-            });
+            }])->get();
         }
 
-        /* if(request('paid')){
-            $paid_filter = json_decode(request('paid'));                
-            $result->whereIn('wix_paymentStatus', $paid_filter);
-        } */
-
-        /* if(request('fulfillment')){
-            $fulfillment_filter = json_decode(request('fulfillment'));                
-            $result->whereIn('wix_fulfillmentStatus', $fulfillment_filter);
-        } */
-
-        /* if(request('date')){
-
-            $date = json_decode(request('date'));
-            
-            $from = date('Y-m-d', strtotime($date[0]));
-            $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));
-            // dd($from, $to);            
-            $result->whereBetween('created_at', [$from, $to]);
-
-        } */
-
-        /* if(request('client')){
-            $result->where('wix_buyerInfo->firstName', 'LIKE', '%'. request('client') . '%')
-                    ->orWhere('wix_buyerInfo->lastName', 'LIKE',  '%'. request('client') . '%')
-                    ->orWhere('wix_buyerInfo->email', 'LIKE',  '%'. request('client') . '%')
-                    ->orWhere('wix_buyerInfo->phone', 'LIKE',  '%'. request('client') . '%');
-        } */
-
-        /* if(request('order_id')){
-            $result->where('wix_number', 'LIKE', '%' . request('order_id') . '%');
-        } */
-
+        
         return  $result->paginate($length)
                         ->withQueryString()
                         ->through(fn ($booking) => [
@@ -95,18 +67,6 @@ class BookingController extends Controller
                             'date'                  => Carbon::parse($booking->created_at)->format("d-m-Y"),
                             'contact'               => $booking->contact()->first(),
                             'status'                => $booking->status()->first(),
-                            /*'wix_dateCreated'       => $order->wix_dateCreated,
-                            'wix_paymentStatus'     => $order->wix_paymentStatus,
-                            'wix_fulfillmentStatus' => $order->wix_fulfillmentStatus,
-                            'wix_totals'            => $order->wix_totals,
-                            'wix_buyerInfo'         => $order->wix_buyerInfo,
-                            'print_status'          => $order->print_status,
-                            'ship_status'           => $order->ship_status,
-                            'ff_status'             => $order->ff_status,
-                            'bill_status'             => $order->bill_status,
-                            'bills'                 => $order->billing()->get(),
-                            'shipment'              => $order->shipment()->whereNotNull('tracking_number')->get(), */
-                            
                         ]);
 
     }

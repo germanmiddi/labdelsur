@@ -45,7 +45,7 @@
 								</div>
 							</div>
 							<div v-if="loading">
-								<Icons name="loading" class="w-8 mx-auto" />
+								<Icons name="loading" class="w-8 mx-auto mt-2" />
 							</div>
 							<table v-else class="w-full text-sm text-left text-gray-500 dark:text-gray-400  mt-2">
 								<thead
@@ -158,6 +158,7 @@
 												form.name = booking.contact.name,
 												form.wa_id = booking.contact.wa_id,
 												form.nro_affiliate = booking.contact.nro_affiliate,
+												form.status_id = booking.status.id,
 												//editing = true,
 												open = true" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
 												<Icons name="edit" class="h-5 w-5"></Icons>
@@ -264,6 +265,21 @@
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
 												</div>
 											</div>
+											<div>
+												<label for="telefono"
+													class="block text-sm font-medium text-gray-900">Estado</label>
+												<div class="mt-1">
+													<select v-model="form.status_id" id="driver" name="driver" 
+                                                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                    <option disabled value="" selected>Selecciones un Estado</option>
+                                                    <option v-for="status in booking_status" :key="status.id"
+                                                        :value="status.id"
+                                                        :bind:select="status.id == form.status_id">{{
+                                                                status.status
+                                                        }}</option>
+                                                </select>
+												</div>
+											</div>
 
 										</div>
 									</div>
@@ -272,8 +288,8 @@
 									<button type="button"
 										class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 										@click="open = false">Cancelar</button>
-									<button @click.prevent="submit"
-										class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar</button>
+									<!-- <button @click.prevent="submit"
+										class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar</button> -->
 								</div>
 							</form>
 						</div>
@@ -297,6 +313,7 @@ import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } f
 
 export default {
 	props: {
+		booking_status: Object
 	},
 
 	components: {
@@ -335,17 +352,6 @@ export default {
 			loading: false,
 			open: false,
 			form:{}
-			/* cant_days_booking: cant_days_booking[0],
-			hora_limit_booking: hora_limit_booking[0],
-			day_limit_booking: day_limit_booking[0],
-			newHoliday: false,
-			editDay: false,
-			form_day: {},
-			form_holiday: {},
-			list_days: this.days,
-			list_holidays: this.holidays,
-			toastMessage: "",
-			labelType: "info", */
 		}
 	},
 	watch: {
@@ -354,9 +360,6 @@ export default {
 
 	created() {
 		this.getBookings()
-		/* this.list_day = this.days
-		this.list_holiday = this.holidays
-		this.formatHora(); */
 	},
 	methods: {
 
@@ -367,12 +370,11 @@ export default {
 
 			this.loading = true
 			this.bookings = ""
-
 			let filter = `&length=${this.length}`
 			filter += `&sort_by=${this.sort_by}`
 			filter += `&sort_order=${this.sort_order}`
-
-			if (this.search > 0) {
+			
+			if (this.search.length > 0) {
 				filter += `&search=${this.search}`
 			}
 
@@ -380,33 +382,10 @@ export default {
 				filter += `&search_date=${JSON.stringify(this.search_date)}`
 			}
 
-
-			/* if (this.filter.order_id.length > 0) {
-				filter += `&order_id=${this.filter.order_id}`
-			}
-
-			if (this.filter.paid.length > 0) {
-				filter += `&paid=${JSON.stringify(this.filter.paid)}`
-			}
-
-			if (this.filter.fulfillment.length > 0) {
-				filter += `&fulfillment=${JSON.stringify(this.filter.fulfillment)}`
-			}
-
-			if (this.filter.client.length > 0) {
-				filter += `&client=${this.filter.client}`
-			}
-
-			if (this.filter.date) {
-				filter += `&date=${JSON.stringify(this.filter.date)}`
-			} */
-
-
 			const get = `${route('booking.list')}?${filter}`
 
 			const response = await fetch(get, { method: 'GET' })
 			this.bookings = await response.json()
-
 			this.loading = false
 		},
 		async getBookingsPaginate(link) {
@@ -421,97 +400,6 @@ export default {
 			this.sort_order = this.sort_order === 'ASC' ? 'DESC' : 'ASC'
 			this.getBookings()
 		}
-		/* format(date) {
-			return moment(date).format('DD-MM-YYYY');
-		}, */
-
-		/* formatHora() {
-			this.hora_limit_booking.value = { hours: moment(this.hora_limit_booking.value, 'HH:mm:ss').format('H'), minutes: moment(this.hora_limit_booking.value, 'HH:mm:ss').format('mm') };
-		},
-		updateDay() {
-			this.editDay = false
-
-			let rt = route('settings.updateday');
-
-			axios.post(rt, {
-				form: this.form_day,
-			}).then(response => {
-				this.labelType = "success"
-				this.toastMessage = response.data.message
-				this.listDay()
-			}).catch(error => {
-				this.labelType = "danger"
-				this.toastMessage = error.response.data.message
-			})
-		},
-		storeHoliday() {
-			this.newHoliday = false
-
-			let rt = route('settings.storeholiday');
-
-			axios.post(rt, {
-				form: this.form_holiday,
-			}).then(response => {
-				this.labelType = "success"
-				this.toastMessage = response.data.message
-				this.listHoliday()
-			}).catch(error => {
-				this.labelType = "danger"
-				this.toastMessage = error.response.data.message
-			})
-		},
-		deleteHoliday(id) {
-			let rt = route('settings.deleteholiday', id);
-			axios.get(rt).then(response => {
-				this.labelType = "success"
-				this.toastMessage = response.data.message
-				this.listHoliday()
-			}).catch(error => {
-				this.labelType = "danger"
-				this.toastMessage = error.response.data.message
-			})
-		},
-		async listHoliday() {
-			const get = `${route('settings.listholiday')}`
-
-			const response = await fetch(get, { method: 'GET' })
-			this.list_holidays = await response.json()
-		},
-		async listDay() {
-			const get = `${route('settings.listday')}`
-
-			const response = await fetch(get, { method: 'GET' })
-			this.list_days = await response.json()
-		},
-		updateSetting() {
-			var rows = []
-			rows.push({
-				id: this.cant_days_booking.id,
-				value: this.cant_days_booking.value
-			})
-
-			rows.push({
-				id: this.hora_limit_booking.id,
-				value: this.hora_limit_booking.value.hours+':'+this.hora_limit_booking.value.minutes+':00'
-			})
-
-			rows.push({
-				id: this.day_limit_booking.id,
-				value: this.day_limit_booking.value
-			})
-
-			let myJsonString = JSON.stringify(rows);
-			let post = route('settings.update', myJsonString)
-
-			axios.post(post)
-			.then(response => {
-				this.labelType = "success"
-				this.toastMessage = response.data.message
-			}).catch(error => {
-				this.labelType = "danger"
-				this.toastMessage = error.response.data.message
-			})
-		} */
 	}
 }
 </script>
