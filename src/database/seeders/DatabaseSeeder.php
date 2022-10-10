@@ -94,5 +94,9 @@ class DatabaseSeeder extends Seeder
             'value' => '2022-10-13',
             'description' => 'Fecha limite hasta cuando se otorgarán turno | si esta vacio no posee limite'
         ]);
+
+        \App\Models\BookingStatus::create([
+            'status' => 'AGENDADO',
+        ]);
     }
 }

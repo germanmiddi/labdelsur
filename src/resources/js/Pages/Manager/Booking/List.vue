@@ -1,0 +1,517 @@
+<template>
+	<AppLayout>
+		<template #content>
+			<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
+			<main class="py-10">
+				<!-- Page header -->
+				<div
+					class="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+
+					<div class="flex items-center space-x-5">
+						<h1 class="text-2xl font-bold text-gray-900">Turnos</h1>
+					</div>
+
+				</div>
+				<!-- <div class="mt-8 max-w-3xl grid grid-cols-2 gap-2 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2"> -->
+				<div>
+
+					<div>
+						<div class="bg-white px-3 py-5  sm:rounded-lg">
+							<div class="w-12/12 mx-auto flex justify-between align-middle">
+
+								<div>
+									<Datepicker id="date" class="w-full" v-model="search_date" :enableTimePicker="false"
+										:monthChangeOnScroll="false" autoApply :format="format">
+									</Datepicker>
+								</div>
+								<div class="text-left">
+									<input class="text-sm border-gray-300 rounded-md text-left" type="text" id="search"
+										v-model="search" placeholder="Buscar...">
+									<button
+										class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+										@click="getBookings()">Buscar</button>
+								</div>
+
+								<div>
+									<label class="font-semibold mr-2" for="">Ver: </label>
+									<select class="text-sm border-gray-300 rounded-md" v-model="length"
+										@change="getBookings">
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="30">30</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+								</div>
+							</div>
+							<div v-if="loading">
+								<Icons name="loading" class="w-8 mx-auto" />
+							</div>
+							<table v-else class="w-full text-sm text-left text-gray-500 dark:text-gray-400  mt-2">
+								<thead
+									class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
+									<tr>
+										<th scope="col" class="py-3 px-6" @click="sort_by='id', sortBookings()">
+											<div class="flex items-center justify-center">
+												ID
+												<Icons v-if="sort_by=='id' && sort_order=='ASC'" name="bars-up"
+													class="h-4 w-4 ml-2" />
+												<Icons v-else-if="sort_by=='id' && sort_order=='DESC'" name="bars-down"
+													class="h-4 w-4 ml-2" />
+												<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+											</div>
+										</th>
+										<th scope="col" class="py-3 px-6" @click="sort_by='created_at', sortBookings()">
+											<div class="flex items-center justify-center">
+												Fecha
+												<Icons v-if="sort_by=='created_at' && sort_order=='ASC'" name="bars-up"
+													class="h-4 w-4 ml-2" />
+												<Icons v-else-if="sort_by=='created_at' && sort_order=='DESC'"
+													name="bars-down" class="h-4 w-4 ml-2" />
+												<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+											</div>
+										</th>
+										<th scope="col" class="py-3 px-6" @click="sort_by='fullname', sortBookings()">
+											<div class="flex items-center justify-center">
+												Nombre
+												<Icons v-if="sort_by=='fullname' && sort_order=='ASC'" name="bars-up"
+													class="h-4 w-4 ml-2" />
+												<Icons v-else-if="sort_by=='fullname' && sort_order=='DESC'"
+													name="bars-down" class="h-4 w-4 ml-2" />
+												<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+											</div>
+										</th>
+										<th scope="col" class="py-3 px-6"
+											@click="sort_by='nro_affiliate', sortBookings()">
+											<div class="flex items-center justify-center">
+												Nro. Afiliado
+												<Icons v-if="sort_by=='nro_affiliate' && sort_order=='ASC'"
+													name="bars-up" class="h-4 w-4 ml-2" />
+												<Icons v-else-if="sort_by=='nro_affiliate' && sort_order=='DESC'"
+													name="bars-down" class="h-4 w-4 ml-2" />
+												<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+											</div>
+										</th>
+										<th scope="col" class="py-3 px-6" @click="sort_by='wa_id', sortBookings()">
+											<div class="flex items-center justify-center">
+												Telefono
+												<Icons v-if="sort_by=='wa_id' && sort_order=='ASC'" name="bars-up"
+													class="h-4 w-4 ml-2" />
+												<Icons v-else-if="sort_by=='wa_id' && sort_order=='DESC'"
+													name="bars-down" class="h-4 w-4 ml-2" />
+												<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+											</div>
+										</th>
+										<th scope="col" class="py-3 px-6" @click="sort_by='name', sortBookings()">
+											<div class="flex items-center justify-center">
+												WhatsApp
+												<Icons v-if="sort_by=='name' && sort_order=='ASC'" name="bars-up"
+													class="h-4 w-4 ml-2" />
+												<Icons v-else-if="sort_by=='name' && sort_order=='DESC'"
+													name="bars-down" class="h-4 w-4 ml-2" />
+												<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+											</div>
+										</th>
+										<th scope="col" class="py-3 px-6" @click="sort_by='status', sortBookings()">
+											<div class="flex items-center justify-center">
+												Estado
+												<Icons v-if="sort_by=='status' && sort_order=='ASC'" name="bars-up"
+													class="h-4 w-4 ml-2" />
+												<Icons v-else-if="sort_by=='status' && sort_order=='DESC'"
+													name="bars-down" class="h-4 w-4 ml-2" />
+												<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+											</div>
+										</th>
+										<th scope="col" class="py-3 px-6">
+											Accion
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="booking in bookings.data"
+										class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center">
+										<th scope="row"
+											class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+											{{booking.id}}
+										</th>
+										<td class="py-4 px-6">
+											{{booking.date}}
+										</td>
+										<td class="py-4 px-6">
+											{{booking.contact.fullname}}
+										</td>
+										<td class="py-4 px-6">
+											{{booking.contact.nro_affiliate}}
+										</td>
+										<td class="py-4 px-6">
+											{{booking.contact.wa_id}}
+										</td>
+										<td class="py-4 px-6">
+											{{booking.contact.name}}
+										</td>
+										<td class="py-4 px-6">
+											{{booking.status.status}}
+										</td>
+										<td class="py-4 px-6">
+											<a type="button" @click="
+												form.fullname = booking.contact.fullname,
+												form.name = booking.contact.name,
+												form.wa_id = booking.contact.wa_id,
+												form.nro_affiliate = booking.contact.nro_affiliate,
+												//editing = true,
+												open = true" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+												<Icons name="edit" class="h-5 w-5"></Icons>
+											</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="flex justify-between mx-5 px-2 items-center mt-2">
+								<div>
+									Mostrando: {{this.bookings.from}} a {{this.bookings.to}} - Entradas encontradas:
+									{{this.bookings.total}}
+								</div>
+
+								<div class="flex flex-wrap -mb-1">
+									<template v-for="link in bookings.links">
+										<div v-if="link.url === null"
+											class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md"
+											v-html="link.label"> </div>
+										<div v-else
+											class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 rounded-md hover:bg-blue-500 hover:text-white cursor-pointer"
+											:class="{ 'bg-blue-500': link.active },{ 'text-white': link.active }"
+											@click="getBookingsPaginate(link.url)" v-html="link.label"> </div>
+									</template>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</main>
+		</template>
+
+
+	</AppLayout>
+	<TransitionRoot as="template" :show="open">
+		<Dialog as="div" class="fixed inset-0 overflow-hidden" @close="open = false">
+			<div class="absolute inset-0 overflow-hidden">
+				<DialogOverlay class="absolute inset-0" />
+
+				<div class="fixed inset-y-0 pl-16 max-w-full right-0 flex">
+					<TransitionChild as="template" enter="transform transition ease-in-out duration-500 sm:duration-700"
+						enter-from="translate-x-full" enter-to="translate-x-0"
+						leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0"
+						leave-to="translate-x-full">
+						<div class="w-screen max-w-md">
+							<form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl">
+								<div class="flex-1 h-0 overflow-y-auto">
+									<div class="py-7 px-4 bg-gray-500 sm:px-6">
+										<div class="flex items-center justify-between">
+											<DialogTitle v-if="editing == false" class="text-lg font-medium text-white">
+												Nuevo Chofer
+											</DialogTitle>
+
+											<DialogTitle v-else class="text-lg font-medium text-white"> Editar
+												Turno </DialogTitle>
+											<div class="ml-3 h-7 flex items-center">
+												<button type="button"
+													class="bg-gray-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+													@click="open = false">
+													<span class="sr-only">Cerrar</span>
+													<Icons name="x" class="h-5 w-5"></Icons>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="flex-1 flex flex-col justify-between">
+										<div class="px-4 divide-y divide-gray-200 sm:px-6 font-medium">
+
+											<div>
+												<label for="fullname"
+													class="block text-sm font-medium text-gray-900">Nombre y
+													Apellido</label>
+												<div class="mt-1">
+													<input type="text" v-model="form.fullname" name="fullname"
+														id="fullname"
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+												</div>
+											</div>
+											<div>
+												<label for="nro_affiliate"
+													class="block text-sm font-medium text-gray-900">Nro. Afiliado</label>
+												<div class="mt-1">
+													<input type="text" v-model="form.nro_affiliate" name="nro_affiliate"
+														id="nro_affiliate"
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+												</div>
+											</div>
+											<div>
+												<label for="fullname"
+													class="block text-sm font-medium text-gray-900">WhatsApp</label>
+												<div class="mt-1">
+													<input type="text" v-model="form.name" name="name"
+														id="name"
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+												</div>
+											</div>
+											<div>
+												<label for="telefono"
+													class="block text-sm font-medium text-gray-900">Telefono</label>
+												<div class="mt-1">
+													<input type="text" v-model="form.wa_id" name="wa_id"
+														id="wa_id"
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<div class="flex-shrink-0 px-4 py-4 flex justify-end">
+									<button type="button"
+										class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+										@click="open = false">Cancelar</button>
+									<button @click.prevent="submit"
+										class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar</button>
+								</div>
+							</form>
+						</div>
+					</TransitionChild>
+				</div>
+			</div>
+		</Dialog>
+	</TransitionRoot>
+</template>
+
+
+<script>
+import { CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/vue/solid'
+import AppLayout from '@/Layouts/AppLayout.vue';
+import moment from 'moment';
+import Icons from '@/Layouts/Components/Icons.vue';
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import Toast from '@/Layouts/Components/Toast.vue'
+import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
+
+export default {
+	props: {
+	},
+
+	components: {
+		AppLayout,
+		CheckCircleIcon, ChevronRightIcon, MailIcon,
+		moment,
+		Icons,
+		Datepicker,
+		Toast,
+		Dialog,
+		DialogOverlay,
+		DialogTitle,
+		TransitionChild,
+		TransitionRoot,
+	},
+	setup() {
+		const format = (date) => {
+			const day = date.getDate();
+			const month = date.getMonth() + 1;
+			const year = date.getFullYear();
+
+			return `${day}/${month}/${year}`;
+		}
+		return {
+			format
+		}
+	},
+	data() {
+		return {
+			bookings: "",
+			length: "10",
+			sort_order: 'DESC',
+			sort_by: "id",
+			search: "",
+			search_date: "",
+			loading: false,
+			open: false,
+			form:{}
+			/* cant_days_booking: cant_days_booking[0],
+			hora_limit_booking: hora_limit_booking[0],
+			day_limit_booking: day_limit_booking[0],
+			newHoliday: false,
+			editDay: false,
+			form_day: {},
+			form_holiday: {},
+			list_days: this.days,
+			list_holidays: this.holidays,
+			toastMessage: "",
+			labelType: "info", */
+		}
+	},
+	watch: {
+
+	},
+
+	created() {
+		this.getBookings()
+		/* this.list_day = this.days
+		this.list_holiday = this.holidays
+		this.formatHora(); */
+	},
+	methods: {
+
+		clearMessage() {
+			this.toastMessage = ""
+		},
+		async getBookings() {
+
+			this.loading = true
+			this.bookings = ""
+
+			let filter = `&length=${this.length}`
+			filter += `&sort_by=${this.sort_by}`
+			filter += `&sort_order=${this.sort_order}`
+
+			if (this.search > 0) {
+				filter += `&search=${this.search}`
+			}
+
+			if (this.search_date > 0) {
+				filter += `&search_date=${JSON.stringify(this.search_date)}`
+			}
+
+
+			/* if (this.filter.order_id.length > 0) {
+				filter += `&order_id=${this.filter.order_id}`
+			}
+
+			if (this.filter.paid.length > 0) {
+				filter += `&paid=${JSON.stringify(this.filter.paid)}`
+			}
+
+			if (this.filter.fulfillment.length > 0) {
+				filter += `&fulfillment=${JSON.stringify(this.filter.fulfillment)}`
+			}
+
+			if (this.filter.client.length > 0) {
+				filter += `&client=${this.filter.client}`
+			}
+
+			if (this.filter.date) {
+				filter += `&date=${JSON.stringify(this.filter.date)}`
+			} */
+
+
+			const get = `${route('booking.list')}?${filter}`
+
+			const response = await fetch(get, { method: 'GET' })
+			this.bookings = await response.json()
+
+			this.loading = false
+		},
+		async getBookingsPaginate(link) {
+
+			var get = `${link}`;
+			const response = await fetch(get, { method: 'GET' })
+
+			this.bookings = await response.json()
+
+		},
+		sortBookings() {
+			this.sort_order = this.sort_order === 'ASC' ? 'DESC' : 'ASC'
+			this.getBookings()
+		}
+		/* format(date) {
+			return moment(date).format('DD-MM-YYYY');
+		}, */
+
+		/* formatHora() {
+			this.hora_limit_booking.value = { hours: moment(this.hora_limit_booking.value, 'HH:mm:ss').format('H'), minutes: moment(this.hora_limit_booking.value, 'HH:mm:ss').format('mm') };
+		},
+		updateDay() {
+			this.editDay = false
+
+			let rt = route('settings.updateday');
+
+			axios.post(rt, {
+				form: this.form_day,
+			}).then(response => {
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+				this.listDay()
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = error.response.data.message
+			})
+		},
+		storeHoliday() {
+			this.newHoliday = false
+
+			let rt = route('settings.storeholiday');
+
+			axios.post(rt, {
+				form: this.form_holiday,
+			}).then(response => {
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+				this.listHoliday()
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = error.response.data.message
+			})
+		},
+		deleteHoliday(id) {
+			let rt = route('settings.deleteholiday', id);
+			axios.get(rt).then(response => {
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+				this.listHoliday()
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = error.response.data.message
+			})
+		},
+		async listHoliday() {
+			const get = `${route('settings.listholiday')}`
+
+			const response = await fetch(get, { method: 'GET' })
+			this.list_holidays = await response.json()
+		},
+		async listDay() {
+			const get = `${route('settings.listday')}`
+
+			const response = await fetch(get, { method: 'GET' })
+			this.list_days = await response.json()
+		},
+		updateSetting() {
+			var rows = []
+			rows.push({
+				id: this.cant_days_booking.id,
+				value: this.cant_days_booking.value
+			})
+
+			rows.push({
+				id: this.hora_limit_booking.id,
+				value: this.hora_limit_booking.value.hours+':'+this.hora_limit_booking.value.minutes+':00'
+			})
+
+			rows.push({
+				id: this.day_limit_booking.id,
+				value: this.day_limit_booking.value
+			})
+
+			let myJsonString = JSON.stringify(rows);
+			let post = route('settings.update', myJsonString)
+
+			axios.post(post)
+			.then(response => {
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = error.response.data.message
+			})
+		} */
+	}
+}
+</script>

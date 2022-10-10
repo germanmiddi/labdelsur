@@ -71,6 +71,14 @@ Route::get('/settings/deleteholiday/{id}', [SettingController::class, 'delete_ho
 Route::post('/settings/update/{values}', [SettingController::class, 'update_setting'])
         ->name('settings.update')
         ->middleware('auth'); 
+
+Route::get('/booking', [BookingController::class, 'index'])
+        ->name('booking')
+        ->middleware('auth');
+
+Route::get('booking/list', [BookingController::class, 'list'])
+        ->name('booking.list')
+        ->middleware('auth');
         
 Route::get('/booking/daysavailable/{date?}', [BookingController::class, 'get_days_available'])
         ->name('booking.dayavailable')

@@ -96,10 +96,10 @@
 					</div>
 
 					<div class="col-span-2">
-						<div class="bg-white px-3 py-5 sm:rounded-lg ">
+						<div class="bg-white px-3 py-5 sm:rounded-lg" >
 							<h1 class="text-center font-semibold text-2xl">Listado de Feriados</h1>
 
-							<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2">
+							<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2 ">
 								<thead
 									class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
 									<tr>

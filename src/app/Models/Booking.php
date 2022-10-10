@@ -11,11 +11,16 @@ class Booking extends Model
     
     protected $fillable = [
         'date',
-        'status',
+        'status_id',
         'contact_id'
     ];
 
     public function contact(){
         return $this->belongsTo(Contact::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(BookingStatus::class);
     }
 }
