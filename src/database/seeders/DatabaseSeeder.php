@@ -26,11 +26,11 @@ class DatabaseSeeder extends Seeder
         //     CitiesTableSeeder::class,
         // ]);
 
-        \App\Models\User::create([
+        /* \App\Models\User::create([
             'name' => 'German Middi',
             'email' => 'g@gmail.com',
             'password' => bcrypt('Inicio123')
-        ]); 
+        ]);  */
 
         \App\Models\DetailDay::create([
             'num_day' => '1',
@@ -98,5 +98,6 @@ class DatabaseSeeder extends Seeder
         \App\Models\BookingStatus::create([
             'status' => 'AGENDADO',
         ]);
+        
     }
 }

@@ -2,62 +2,60 @@
 	<AppLayout>
 		<template #content>
 			<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
-			<main class="py-10">
-				<!-- Page header -->
-				<div
-					class="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
 
-					<div class="flex items-center space-x-5">
-						<h1 class="text-2xl font-bold text-gray-900">Panel de Configuraciones</h1>
+			<div class="focus-within:content flex-grow flex flex-col">
+				<div class="mx-auto my-10 text-4xl font-bold
+							xl: w-11/12
+							lg: w-11/12
+							flex justify-between">
+
+					<div class="flex items-center">
+						<h1>Configuraciones</h1>
 					</div>
+				</div>
+
+				<div class="lg:flex lg:items-center lg:justify-between">
 
 				</div>
-				<!-- <div class="mt-8 max-w-3xl grid grid-cols-2 gap-2 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2"> -->
-				<div class="grid grid-cols-4 gap-4">
+				<!--   TABLA -->
+				<div class="grid grid-cols-2 gap-2">
+					<div class=" col-span-1">
+						<h1 class="text-center font-semibold text-2xl">Configuración por Dia</h1>
+						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
 
-					<div class="col-span-2">
-						<div class="bg-white px-3 py-5  sm:rounded-lg">
-							<h1 class="text-center font-semibold text-2xl">Configuración por Dia</h1>
-
-							<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  mt-2">
-								<thead
-									class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
-									<tr>
-										<th scope="col" class="py-3 px-6">
-											Dia
-										</th>
-										<th scope="col" class="py-3 px-6">
-											Turnos
-										</th>
-										<th scope="col" class="py-3 px-6">
-											Acción
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="day in list_days"
-										class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center">
-										<th scope="row"
-											class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-											{{day.description}}
-										</th>
-										<td class="py-4 px-6">
-											{{day.cant_orders}}
-										</td>
-										<td class="py-4 px-6">
-											<button @click="editDay = true,
-											form_day.id=day.id,
-											form_day.num_day=day.num_day,
-											form_day.description=day.description,
-											form_day.cant_orders=day.cant_orders"
-												class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-												<Icons name="edit" class="h-5 w-5"></Icons>
-											</button>
-										</td>
-									</tr>
-								</tbody>
+							<table class="w-full whitespace-nowrap">
+								<tr class="text-left font-bold bg-indigo-600 text-white">
+									<th scope="col" class="py-3 px-6">
+										Dia
+									</th>
+									<th scope="col" class="py-3 px-6">
+										Turnos
+									</th>
+									<th scope="col" class="py-3 px-6">
+										Acción
+									</th>
+								</tr>
+								<tr v-for="day in list_days"
+									class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center hover:bg-gray-100 focus-within:bg-gray-100">
+									<th scope="row"
+										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+										{{day.description}}
+									</th>
+									<td class="py-4 px-6">
+										{{day.cant_orders}}
+									</td>
+									<td class="py-4 px-6">
+										<button @click="editDay = true,
+										form_day.id=day.id,
+										form_day.num_day=day.num_day,
+										form_day.description=day.description,
+										form_day.cant_orders=day.cant_orders"
+											class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+											<Icons name="edit" class="h-5 w-5"></Icons>
+										</button>
+									</td>
+								</tr>
 							</table>
-
 							<form v-show="editDay" action="#" method="POST">
 								<div class="shadow overflow-hidden sm:rounded-md mt-2">
 									<div class="px-4 py-5 bg-white sm:p-6">
@@ -92,48 +90,40 @@
 								</div>
 							</form>
 						</div>
-
 					</div>
 
-					<div class="col-span-2">
-						<div class="bg-white px-3 py-5 sm:rounded-lg" >
-							<h1 class="text-center font-semibold text-2xl">Listado de Feriados</h1>
+					<div class=" col-span-1">
+						<h1 class="text-center font-semibold text-2xl">Listado de Feriados</h1>
+						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
+							<table class="w-full whitespace-nowrap">
+								<tr class="text-left font-bold bg-indigo-600 text-white">
+									<th scope="col" class="py-3 px-6">
+										Fecha
+									</th>
+									<th scope="col" class="py-3 px-6">
+										Detalle
+									</th>
+									<th scope="col" class="py-3 px-6">
+										Acción
+									</th>
+								</tr>
+								<tr v-for="holiday in list_holidays"
+									class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center hover:bg-gray-100 focus-within:bg-gray-100">
+									<th scope="row"
+										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+										{{format(holiday.date)}}
 
-							<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2 ">
-								<thead
-									class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
-									<tr>
-										<th scope="col" class="py-3 px-6">
-											Fecha
-										</th>
-										<th scope="col" class="py-3 px-6">
-											Detalle
-										</th>
-										<th scope="col" class="py-3 px-6">
-											Acción
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="holiday in list_holidays"
-										class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center">
-										<th scope="row"
-											class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-											{{format(holiday.date)}}
-
-										</th>
-										<td class="py-4 px-6">
-											{{holiday.description}}
-										</td>
-										<td class="py-4 px-6">
-											<a type="button" @click="deleteHoliday(holiday.id)"
-												class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-												<Icons name="trash" class="h-5 w-5"></Icons>
-											</a>
-										</td>
-
-									</tr>
-								</tbody>
+									</th>
+									<td class="py-4 px-6">
+										{{holiday.description}}
+									</td>
+									<td class="py-4 px-6">
+										<a type="button" @click="deleteHoliday(holiday.id)"
+											class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+											<Icons name="trash" class="h-5 w-5"></Icons>
+										</a>
+									</td>
+								</tr>
 							</table>
 							<div class="mt-6 flex flex-col justify-stretch">
 								<a type="button" @click="newHoliday = true" v-show="!newHoliday"
@@ -178,13 +168,11 @@
 								</div>
 							</form>
 						</div>
-
 					</div>
 
-					<div class="col-span-2">
-						<div class="bg-white px-3 py-5  sm:rounded-lg">
-							<h1 class="text-center font-semibold text-2xl">Configuración de Turnos</h1>
-
+					<div class=" col-span-1">
+						<h1 class="text-center font-semibold text-2xl">Configuración de Turnos</h1>
+						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
 							<form action="#" method="POST">
 
 								<div class="px-4 py-5 bg-white sm:p-6">
@@ -201,17 +189,19 @@
 												class="block text-sm font-medium text-gray-700">Horario de corte.
 											</label>
 											<Datepicker id="hora_limit_booking" name="hora_limit_booking"
-												class="w-full mt-1" v-model="hora_limit_booking.value" :startTime="startTime"
-												timePicker>
+												class="w-full mt-1" v-model="hora_limit_booking.value"
+												:startTime="startTime" timePicker>
 											</Datepicker>
 										</div>
 										<div class="col-span-6 sm:col-span-6">
 											<label for="google_postal_code"
-												class="block text-sm font-medium text-gray-700">Fecha de último turno disponible.
+												class="block text-sm font-medium text-gray-700">Fecha de último turno
+												disponible.
 											</label>
-											<Datepicker id="day_limit_booking" class="w-full mt-1" v-model="day_limit_booking.value" name="day_limit_booking"
-													:enableTimePicker="false" :monthChangeOnScroll="false" autoApply
-													:format="format">
+											<Datepicker id="day_limit_booking" class="w-full mt-1"
+												v-model="day_limit_booking.value" name="day_limit_booking"
+												:enableTimePicker="false" :monthChangeOnScroll="false" autoApply
+												:format="format">
 											</Datepicker>
 										</div>
 
@@ -225,10 +215,10 @@
 								</div>
 							</form>
 						</div>
-
 					</div>
+
 				</div>
-			</main>
+			</div>
 		</template>
 	</AppLayout>
 </template>
@@ -301,7 +291,7 @@ export default {
 	},
 	methods: {
 
-		clearMessage(){
+		clearMessage() {
 			this.toastMessage = ""
 		},
 		format(date) {
@@ -375,7 +365,7 @@ export default {
 
 			rows.push({
 				id: this.hora_limit_booking.id,
-				value: this.hora_limit_booking.value.hours+':'+this.hora_limit_booking.value.minutes+':00'
+				value: this.hora_limit_booking.value.hours + ':' + this.hora_limit_booking.value.minutes + ':00'
 			})
 
 			rows.push({
@@ -387,13 +377,13 @@ export default {
 			let post = route('settings.update', myJsonString)
 
 			axios.post(post)
-			.then(response => {
-				this.labelType = "success"
-				this.toastMessage = response.data.message
-			}).catch(error => {
-				this.labelType = "danger"
-				this.toastMessage = error.response.data.message
-			})
+				.then(response => {
+					this.labelType = "success"
+					this.toastMessage = response.data.message
+				}).catch(error => {
+					this.labelType = "danger"
+					this.toastMessage = error.response.data.message
+				})
 		}
 	}
 }

@@ -37,8 +37,7 @@ class BookingController extends Controller
         if(request('search_date')){
             $date = json_decode(request('search_date'));
             $search_date = date('Y-m-d', strtotime($date));
-    
-            $result->whereDate('created_at', $search_date);
+            $result->whereDate('date', $search_date);
         }
 
         if(request('search')){
@@ -51,12 +50,13 @@ class BookingController extends Controller
             });
         }
 
-        if($sort_by === 'id' || $sort_by === 'created_at'){
+        if($sort_by === 'id' || $sort_by === 'date'){
             $result->orderBy($sort_by, $sort_order);
         }else{
-            $result->with(['contact' => function ($q) use ($sort_by, $sort_order) {
+            //$result->orderBy('contact.fullname', $sort_order);
+            /* $result->with(['contact' => function ($q) use ($sort_by, $sort_order) {
                 $q->orderBy($sort_by, $sort_order);
-            }])->get();
+            }])->get(); */
         }
 
         
@@ -64,7 +64,7 @@ class BookingController extends Controller
                         ->withQueryString()
                         ->through(fn ($booking) => [
                             'id'                    => $booking->id,
-                            'date'                  => Carbon::parse($booking->created_at)->format("d-m-Y"),
+                            'date'                  => Carbon::parse($booking->date)->format("d-m-Y"),
                             'contact'               => $booking->contact()->first(),
                             'status'                => $booking->status()->first(),
                         ]);

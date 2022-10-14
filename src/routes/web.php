@@ -10,6 +10,7 @@ use App\Http\Controllers\Manager\Messages\MessagesController;
 use App\Http\Controllers\Manager\Contacts\ContactsController;
 use App\Http\Controllers\Manager\Settings\SettingController;
 use App\Http\Controllers\Manager\Booking\BookingController;
+use App\Http\Controllers\Manager\User\UserController;
 use App\Http\Controllers\Web\HomeController;
 
 
@@ -25,7 +26,7 @@ use App\Http\Controllers\Web\HomeController;
 */
 
 Route::get('/',[HomeController::class, 'index'])
-       ->name('home');
+        ->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard')
@@ -88,3 +89,18 @@ Route::post('/booking', [BookingController::class, 'store_booking'])
         ->name('booking.storebooking')
         ->middleware('auth');
 
+Route::get('/user', [UserController::class, 'index'])
+        ->name('user')
+        ->middleware('auth');
+
+Route::get('user/list', [UserController::class, 'list'])
+        ->name('user.list')
+        ->middleware('auth');
+
+Route::post('user/store', [UserController::class, 'store'])
+        ->name('user.store')
+        ->middleware('auth');
+
+Route::post('user/update', [UserController::class, 'update'])
+        ->name('user.update')
+        ->middleware('auth');

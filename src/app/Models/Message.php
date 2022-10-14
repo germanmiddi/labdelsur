@@ -18,5 +18,8 @@ class Message extends Model
     
     use HasFactory;
 
+    public function contact(){
+        return $this->belongsTo(Contact::class);
+    } 
 
 }

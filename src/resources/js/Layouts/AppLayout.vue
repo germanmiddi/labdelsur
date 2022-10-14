@@ -108,6 +108,7 @@ const navigation = [
   { name: 'Contactos', href: '#', current: false },
   { name: 'Turnos', href: 'booking', current: window.location.pathname === '/booking' ? true : false },
   { name: 'Reportes', href: '' , current: false },
+  { name: 'Usuarios', href: 'user' , current: window.location.pathname === '/user' ? true : false },
   { name: 'Configuración', href: "settings", current: window.location.pathname === '/settings' ? true : false },
 ]
 const userNavigation = [
