@@ -42,6 +42,7 @@ class BookingController extends Controller
 
         if(request('search')){
             $search = request('search');
+
             $result->whereHas('contact', function($q) use ($search){
                 $q->Where('fullname','LIKE', '%'. $search . '%')
                     ->orWhere('name','LIKE', '%'. $search . '%')
@@ -50,17 +51,21 @@ class BookingController extends Controller
             });
         }
 
-        if($sort_by === 'id' || $sort_by === 'date'){
-            $result->orderBy($sort_by, $sort_order);
-        }else{
-            //$result->orderBy('contact.fullname', $sort_order);
-            /* $result->with(['contact' => function ($q) use ($sort_by, $sort_order) {
-                $q->orderBy($sort_by, $sort_order);
-            }])->get(); */
+        if($sort_by === 'fullname' || $sort_by === 'nro_affiliate' || $sort_by === 'wa_id' || $sort_by === 'name'){
+            $sort_by = 'contact.'.$sort_by;
+            $result->leftJoin(DB::raw('(select * from contacts) as contact'), function ($join) {
+                                    $join->on ( 'contact.id', '=', 'contact_id' );
+                    });
+        }else if($sort_by === 'status'){
+            $sort_by = 'booking_status.'.$sort_by;
+            $result->leftJoin(DB::raw('(select * from booking_status) as booking_status'), function ($join) {
+                                    $join->on ( 'booking_status.id', '=', 'status_id' );
+                    });
         }
 
         
-        return  $result->paginate($length)
+        return  $result ->orderBy($sort_by, $sort_order)
+                        ->paginate($length)
                         ->withQueryString()
                         ->through(fn ($booking) => [
                             'id'                    => $booking->id,

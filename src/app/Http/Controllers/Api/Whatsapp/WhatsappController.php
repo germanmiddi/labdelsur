@@ -70,9 +70,11 @@ class WhatsappController extends Controller
 
             case '0.2':
                 $text = "Los proximos turnos disponibles son XXXX dias en el horario de 7:30 a 10 para confirmar su turno digite el numero del dia que quiere asistir";
+                
                 $text .= "\n 1 - 10/9 de 7:30 a 10";
                 $text .= "\n 2 - 11/9 de 7:30 a 10";
                 $text .= "\n 3 - 12/9 de 7:30 a 10";
+
                 $text .= "\n 4 - Necesito un turno más urgente";
                 break;  
 
@@ -218,7 +220,7 @@ class WhatsappController extends Controller
             $url = 'https://graph.facebook.com/v14.0/107765322075657/messages';
 
 
-            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer EAAMnvn93Q1ABAIBmfXDKiZCZBSZCMwahrNzcj7QYDI4zfdUxjdy0AOxs1NSOp56U2A8uhFluMKqbd8M2JUzEZBO0rnnPZBNFdcbe49IRiId0jMcByC8RLJoWti0Rj30zCrHBxbO8Wr7MSbjguIp4sdOSGips85rA3hlGUwe8ppi146RHv3mJoDeUK8qMTZALiAIMxSQrZAUIwZDZD',
+            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer EAAMnvn93Q1ABAC3H44Hixtx2yMS0ecMe5ZBhZAAMZARmcypcdog6TD0275ctx5rDiNPAEPthlQmFbar56j74VRrMmbfBUdxseIzPZCYiapYgudNv69shF7I2b1mIV8NDHFCfvg9nC6aszYc8ZBF4iAfy0raZBpsiHV4iLr4SFEESx9bJzxmLkQ',
                                              'Content-Type'  => 'application/json'])->post($url, $params);
             
             

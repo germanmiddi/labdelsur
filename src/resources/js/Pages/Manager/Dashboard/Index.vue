@@ -29,30 +29,27 @@
 						<div class="flex flex-col w-2/5 border-r overflow-y-auto max-h-[70vh]">
 							<!-- search compt -->
 							<div class="border-b-2 py-4 px-2 bg-blue-100 text-center">
-								<!-- <input type="text" placeholder="Buscar..."
-									class="py-2 px-2 border-2 border-gray-100 rounded-2xl w-full" /> -->
-									<input class="shadow-sm text-sm border-gray-300 rounded-md" type="text" id="search"
-											placeholder="Buscar...">
+								<input class="shadow-sm text-sm border-gray-300 rounded-md" type="text" id="search"
+									placeholder="Buscar...">
 							</div>
 							<!-- end search compt -->
-
 							<!-- user list -->
 							<div v-for="c in contacts" :key="c.id"
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer"
 								:class="[(c.message.status != 'read' ? 'bg-gradient-to-r from-blue-500 to-blue-300 hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-200' : '')]"
 								@click="getMessages(c)">
 								<div class="w-1/6 mr-4">
-									<div class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">{{c.name.substr(0,2).toUpperCase()}}</div>
-									
+									<div
+										class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
+										{{c.name.substr(0,2).toUpperCase()}}</div>
 								</div>
 								<div class="w-full">
 									<div class="text-sm font-semibold text-white"
-										:class="[(c.message.status != 'read' ? 'text-white' : 'text-black')]"
-									>{{ c.name }}<br>
+										:class="[(c.message.status != 'read' ? 'text-white' : 'text-black')]">{{ c.name
+										}}<br>
 										<span class="text-sm font-normal"
-											:class="[(c.message.status != 'read' ? 'text-white' : 'text-gray-700')]"
-										>{{ c.wa_id }}</span>
-										
+											:class="[(c.message.status != 'read' ? 'text-white' : 'text-gray-700')]">{{
+											c.wa_id }}</span>
 									</div>
 								</div>
 							</div>
@@ -83,7 +80,7 @@
 								</div>
 							</div>
 
-							
+
 							<div class="py-5 border-t mt-20">
 								<input class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl"
 									type="text" placeholder="type your message here..." />

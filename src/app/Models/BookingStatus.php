@@ -13,6 +13,10 @@ class BookingStatus extends Model
     use SoftDeletes;
     protected $table = 'booking_status';
 
+    protected $fillable = [
+        'status'
+    ];
+
     public function booking()
     {
         return $this->hasMany(booking::class);
