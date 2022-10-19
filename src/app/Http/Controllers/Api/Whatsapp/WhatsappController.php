@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Message;
+use App\Models\Setting;
 use App\Models\Waidsession;
 use App\Models\Contact;
 
+use App\Http\Controllers\Manager\Booking\BookingController;
 
 use Carbon\Carbon;
 
@@ -31,52 +33,139 @@ class WhatsappController extends Controller
 
     
     public function set_message($wa_id, $message){
-
         $prev_menu = Message::where('wa_id', $wa_id)
                             ->where('response','!=','')   
                             ->orderBy('updated_at', 'desc')
                             ->first();
+        
+        $setting =  Setting::where('module', 'BOOKING')->where('key', 'cant_days_booking')->first();
 
         if($prev_menu && $message != 0){
             $prev_step = $prev_menu->response;
-            $current_step = $prev_step . '.' . $message;
+            //GENERO UN RESPONSE ESPECIAL
+            if($prev_step === '0.2' && intval($message) > 0 && intval($message) <= intval($setting->value)){
+                $current_step = $prev_step . '.T';    
+            }else if($prev_step === '0.2.T'){
+                    $current_step = $prev_step . '.N';
+                }else if($prev_step === '0.2.T.N'){
+                    $current_step = $prev_step . '.D';
+                    }else{
+                        $current_step = $prev_step . '.' . $message;
+                    }
+
         }else{
             $current_step = 0;
-        }                             
-
-        switch($current_step){
+        }    
+                                
+        switch(/* substr( */$current_step/* , 0, 3 */){
 
             case '0':
                 $text = "Buen día, soy tu asistente virtual. Puedo ayudarte con los siguientes temas:";
-                $text .= "\n 1 - Horario de atención y ubicación";
-                $text .= "\n 2 - Turno para atención -sólo para obra social UTA";
+                $text .= "\n 1️⃣ - Horario de atención y ubicación";
+                $text .= "\n 2 - Turno para atención - sólo para obra social UTA";
                 $text .= "\n 3 - ¿Cómo obtener mis resultados?";
                 $text .= "\n 4 - Extracciones a domicilio";
                 $text .= "\n 5 - COVID 19";
                 $text .= "\n 6 - Indicaciones de estudios";
                 $text .= "\n 7 - Obras Sociales y Prepagas";
                 $text .= "\n 8 - Autorización de órdenes";
-                $text .= "\n 9 - Presupuestos";
+                $text .= "\n 9 - Presupuestos 🤖";
+                
                 break;
 
 
             case '0.1':
-                    $text = "Horario de lunes a viernes de 7:30 a 18:00 hs y sábados de 7:30 a 13:00 hs.";
-                    $text .= "\n Horarios de extracciones: Lunes a sábados de 7:30 a 10:30 hs";
-                    $text .= "\n Direccion: ubicacion";
-                    $text .= "\n Si es de UTA y necesita solicitar un turno";
-                    $text .= "\n Indicación de estudios";
+                    $text = "Detalle de horario y atencion";
                     break;
 
             case '0.2':
-                $text = "Los proximos turnos disponibles son XXXX dias en el horario de 7:30 a 10 para confirmar su turno digite el numero del dia que quiere asistir";
+                //$this->manager_turnos($wa_id, $message, substr($current_step, 3));
                 
-                $text .= "\n 1 - 10/9 de 7:30 a 10";
-                $text .= "\n 2 - 11/9 de 7:30 a 10";
-                $text .= "\n 3 - 12/9 de 7:30 a 10";
+                $text = "Dias disponibles, para confirmar su turno digite el numero del dia que quiere asistir:";
+                $bookingController = new BookingController();
+                $bookings = $bookingController->days_available();
+                
+                if($bookings['code'] == 200){
+                    $pos = 1;
+                    foreach ($bookings['data'] as $booking) {
+                        $text .= "\n ".$pos." - Dia ".Carbon::parse($booking)->format("d-m-Y")." en el horario de 7:30 a 10:30 hs";
+                        $pos++;
+                    }
+                }else{
+                    $text .= "\nNo tenemos disponbilidad de turnos intente con otra fecha.";
+                }
+                break;
+                
+            // GESTION DE TURNOS...
+            case ('0.2.T' ):
+                $text = "Indique el nombre del paciente, por favor:";
+                break;
+            
+            case ('0.2.T.N'):
+                $text = "Indique el Nro de DNI del paciente, por favor:";
+                break;
+            
+            case ('0.2.T.N.D'):
+                
+                //OBTENGO LAS OPCIONES DE FECHA..
+                $fecha_options = Message::where('wa_id', $wa_id)
+                            ->where('response','0.2')
+                            ->where('type', 'out')   
+                            ->orderBy('updated_at', 'desc')
+                            ->first();
+                
+                //OBTENGO LA POSICION DE LA FECHA SELECCIONADA.
+                $fecha = Message::where('wa_id', $wa_id)
+                            ->where('response','0.2.T')
+                            ->where('type', 'in')   
+                            ->orderBy('updated_at', 'desc')
+                            ->first();
+                
+                //RECUPERO LA FECHA SELECCIONADA.
+                $options = preg_split('/\r\n|\r|\n/', $fecha_options->body);
+                $row = 0;
+                $selected_row = '';
+                foreach ($options as $op) {
+                    if(intval(substr($op, 0, 3)) == intval($fecha->body)){
+                        $selected_row = $row;
+                    }
+                    $row++;
+                }
+                $position = array_search(' '.$fecha->body.' -', $options, false);
+                $fecha = substr($options[$selected_row], 9, 10);
+                
+                //VERIFICO LA DISPONIBILIDAD DEL TURNO.
+                $bookingController = new BookingController();
+                if(!$bookingController->check_booking_available($fecha)){
+                    //$this->manager_turnos($wa_id, $message, '');
+                    $text = "Lo sentimos el turno seleccionado ha sido tomado por otro usuario. \nIndique 0 (Cero) para volver al menú principal";
 
-                $text .= "\n 4 - Necesito un turno más urgente";
-                break;  
+                    break;
+                }
+                
+                //RECUPERO EL NOMBRE DEL CLIENTE
+                $nombre = Message::where('wa_id', $wa_id)
+                            ->where('response','0.2.T.N')
+                            ->where('type', 'in')   
+                            ->orderBy('updated_at', 'desc')
+                            ->first();
+
+                //RECUPERO EL DNI DEL CLIENTE.
+                $dni = $message;
+                $form = [
+                    'wa_id'     => $wa_id,
+                    'fullname'  => $nombre->body,
+                    'nro_doc'   => $dni,
+                    'date'      => $fecha
+                ];
+                $bookingController = new BookingController();
+                $bookings = $bookingController->store_booking($form);
+                if($bookings['code'] == 200){
+                    $text = "Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.".";
+                }else{
+                    $text = "No ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
+                }
+                break;
 
             case '0.3':
                 $text = " Para acceder a su resultado: ";
@@ -156,86 +245,92 @@ class WhatsappController extends Controller
     public function receive(Request $request){
         
         // return response($request['hub_challenge'], 200);
-
         if( isset($request['entry'][0]['changes'][0]['value']['messages'][0]) ){
 
-            $a = json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]);
-            Log::info('soy un mensaje '. $a);
+            DB::beginTransaction();
+            try {
+                $a = json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]);
+                Log::info('soy un mensaje '. $a);
 
-            $wa_id = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']) 
-                     ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
-                     : '';
+                $wa_id = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']) 
+                    ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
+                    : '';
 
-            $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
+                $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
                     ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
                     : '';
 
-            $session = Waidsession::where('wa_id',$wa_id)->first(); 
+                $session = Waidsession::where('wa_id',$wa_id)->first(); 
     
-            if($session){
-                Log::info('No se procesa por Session'); return;
-            }else{  
-                Waidsession::create(['wa_id' => $wa_id]);
-            }                    
+                if($session){
+                    Log::info('No se procesa por Session'); return;
+                }else{  
+                    Waidsession::create(['wa_id' => $wa_id]);
+                }                    
 
-            $contact = Contact::where('wa_id',$wa_id)->first(); 
+                $contact = Contact::where('wa_id',$wa_id)->first(); 
+                
+                if(!$contact){
+                    $contact = Contact::create(['wa_id' => $wa_id, 
+                                    'name' => $name]);
+                }
+
+                $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
+
+                // Si devuelve false, se cambia el signo para que procese el return
+                if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
             
-            if(!$contact){
-                Contact::create(['wa_id' => $wa_id, 
-                                  'name' => $name]);
+
+                $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
+                        ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
+                        : '' ;
+
+                $response = $this->set_message($wa_id, $message);
+                
+                $inbound_msj = new Message;
+                $inbound_msj->wa_id     = $wa_id;
+                $inbound_msj->contact_id     = $contact->id;
+                $inbound_msj->type      = 'in';
+                $inbound_msj->body      = $message;
+                $inbound_msj->status    = 'initial';
+                //$inbound_msj->response  = ''; 
+                $inbound_msj->response  = $response['id']; 
+                $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
+                $inbound_msj->timestamp = $timestamp;
+                $inbound_msj->save();
+
+                
+                $params = [ "messaging_product" => "whatsapp", 
+                            "recipient_type"    => "individual",
+                            "to"                => $wa_id, 
+                            "type"              => "text",
+                            "preview_url"       => false,             
+                            "text"              => [ "body" => $response['text'] ]];
+            
+            
+                $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+                $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
+
+                //$url = 'https://graph.facebook.com/v14.0/107765322075657/messages';
+
+                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,//EAAMnvn93Q1ABALdBvkY0T4d57N3GsbXAQgHxvsE0teRq9FhlDLid2V0yNMNVOnH1ZCuYIEDLf2eK2iF8FPjLLaWV5UKJebCAuVJbOBzkzMM4O9Ex8EOoDOBS834XVyKUo5bHZCDSoQ3iSdOFZCV1H1ZC0RZBmQMhhpS8FBANM7YnzR8GUEFxANe3P6KBPlZAgZAPnjbPZBOOGAZDZD',
+                                                'Content-Type'  => 'application/json'])->post($wp_url->value, $params);
+                $outbound_msj = new Message;
+                $outbound_msj->wa_id     = $wa_id;
+                $outbound_msj->contact_id= $contact->id;
+                $outbound_msj->type      = 'out';
+                $outbound_msj->body      = $response['text']; //$message;
+                $outbound_msj->status    = 'initial';
+                $outbound_msj->response  = $response['id']; 
+                $outbound_msj->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
+                $outbound_msj->timestamp = \Carbon\Carbon::now()->timestamp;
+                $outbound_msj->save();
+                
+                Waidsession::where('wa_id',$wa_id)->delete();
+                DB::Commit();
+            } catch (\Throwable $th) {
+                DB::rollBack();
             }
-            
-            Log::info('contact' . $contact);
-
-            $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
-
-            // Si devuelve false, se cambia el signo para que procese el return
-            if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
-            
-
-            $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
-                     ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
-                     : '' ;
-
-            $inbound_msj = new Message;
-            $inbound_msj->wa_id     = $wa_id;
-            $inbound_msj->type      = 'in';
-            $inbound_msj->body      = $message;
-            $inbound_msj->status    = 'initial';
-            $inbound_msj->response  = ''; 
-            $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
-            $inbound_msj->timestamp = $timestamp;
-            $inbound_msj->save();
-
-            $response = $this->set_message($wa_id, $message);
-
-            
-            $params = [ "messaging_product" => "whatsapp", 
-                        "recipient_type"    => "individual",
-                        "to"                => $wa_id, 
-                        "type"              => "text",
-                        "preview_url"       => false,             
-                        "text"              => [ "body" => $response['text'] ]];
-
-            $url = 'https://graph.facebook.com/v14.0/107765322075657/messages';
-
-
-            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer EAAMnvn93Q1ABAC3H44Hixtx2yMS0ecMe5ZBhZAAMZARmcypcdog6TD0275ctx5rDiNPAEPthlQmFbar56j74VRrMmbfBUdxseIzPZCYiapYgudNv69shF7I2b1mIV8NDHFCfvg9nC6aszYc8ZBF4iAfy0raZBpsiHV4iLr4SFEESx9bJzxmLkQ',
-                                             'Content-Type'  => 'application/json'])->post($url, $params);
-            
-            
-            $outbound_msj = new Message;
-            $outbound_msj->wa_id     = $wa_id;
-            $outbound_msj->type      = 'out';
-            $outbound_msj->body      = $response['text']; //$message;
-            $outbound_msj->status    = 'initial';
-            $outbound_msj->response  = $response['id']; 
-            $outbound_msj->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
-            $outbound_msj->timestamp = \Carbon\Carbon::now()->timestamp;
-            $outbound_msj->save();
-            
-            Waidsession::where('wa_id',$wa_id)->delete();
-
         }elseif( isset($request['entry'][0]['changes'][0]['value']['statuses'][0]['status']) ){
             
             // $b = json_encode($request['entry'][0]['changes']);
@@ -350,8 +445,6 @@ class WhatsappController extends Controller
             
             $response = json_decode($http_post);
 
-            Log::info($response);
-
         }elseif (isset($request['entry'][0]['changes'][0]['value']['statuses'][0])){
 
             Log::info('soy un status');
@@ -362,6 +455,35 @@ class WhatsappController extends Controller
 
         return response($request['hub_challenge'], 200);
 
+    }
+
+    public function manager_turnos($wa_id, $message, $current_step, $text = ''){
+
+       /*  switch ($current_step) {
+            $text = '';
+            
+            
+            case 'value':
+                # code...
+                break;
+            
+            default:
+                $text .= "Dias disponibles, para confirmar su turno digite el numero del dia que quiere asistir:";
+                $bookingController = new BookingController();
+                $bookings = $bookingController->days_available();
+                
+                if($bookings['code'] == 200){
+                    $pos = 1;
+                    foreach ($bookings['data'] as $booking) {
+                        $text .= "\n ".$pos." - Dia ".Carbon::parse($booking)->format("d-m-Y")." en el horario de 7:30 a 10:30 hs";
+                        $pos++;
+                    }
+                }else{
+                    $text .= "\nNo tenemos disponbilidad de turnos intente con otra fecha.";
+                }
+                return $text;
+                break;
+        } */
     }
 
 }

@@ -9,16 +9,16 @@
 							flex justify-between">
 
 					<div class="flex items-center">
-						<h1>Usuarios</h1>
+						<h1>Contactos</h1>
 					</div>
 					<div class="flex text-sm">
-                    <button class="ml-2 inline-flex items-center p-1 border border-transparent rounded-lg shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    <!-- <button class="ml-2 inline-flex items-center p-1 border border-transparent rounded-lg shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 								@click=" 
 								form={},
 								editingUser = false,
 								open = true">
                         <span>Nuevo Usuario </span>
-                    </button>
+                    </button> -->
                 </div>
 				</div>
 
@@ -28,12 +28,12 @@
 							v-model="search" placeholder="Buscar...">
 						<button
 							class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-							@click="getUsers()">Buscar</button>
+							@click="getContacts()">Buscar</button>
 					</div>
 
 					<div class="mt-5 flex lg:mt-0 lg:ml-4">
 						<label class="font-semibold mr-2 mt-2" for="">Ver: </label>
-						<select class="text-sm border-gray-300 rounded-md" v-model="length" @change="getUsers">
+						<select class="text-sm border-gray-300 rounded-md" v-model="length" @change="getContacts">
 							<option value="2">2</option>
 							<option value="5">5</option>
 							<option value="10">10</option>
@@ -46,7 +46,7 @@
 				<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
 					<table class="w-full whitespace-nowrap">
 						<tr class="text-left font-bold bg-indigo-600 text-white">
-							<th scope="col" class="py-3 px-6" @click="sort_by='id', sortUsers()">
+							<th scope="col" class="py-3 px-6" @click="sort_by='id', sortContacts()">
 								<div class="flex items-center justify-center">
 									ID
 									<Icons v-if="sort_by=='id' && sort_order=='ASC'" name="bars-up"
@@ -56,9 +56,9 @@
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
 							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by='name', sortUsers()">
+							<th scope="col" class="py-3 px-6" @click="sort_by='name', sortContacts()">
 								<div class="flex items-center justify-center">
-									Nombre
+									Nick
 									<Icons v-if="sort_by=='name' && sort_order=='ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
 									<Icons v-else-if="sort_by=='name' && sort_order=='DESC'" name="bars-down"
@@ -66,12 +66,22 @@
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
 							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by='email', sortUsers()">
+							<th scope="col" class="py-3 px-6" @click="sort_by='fullname', sortContacts()">
 								<div class="flex items-center justify-center">
-									Email
-									<Icons v-if="sort_by=='email' && sort_order=='ASC'" name="bars-up"
+									Nombre
+									<Icons v-if="sort_by=='fullname' && sort_order=='ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
-									<Icons v-else-if="sort_by=='email' && sort_order=='DESC'" name="bars-down"
+									<Icons v-else-if="sort_by=='fullname' && sort_order=='DESC'" name="bars-down"
+										class="h-4 w-4 ml-2" />
+									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+								</div>
+							</th>
+							<th scope="col" class="py-3 px-6" @click="sort_by='nro_doc', sortContacts()">
+								<div class="flex items-center justify-center">
+									N° Doc.
+									<Icons v-if="sort_by=='nro_doc' && sort_order=='ASC'" name="bars-up"
+										class="h-4 w-4 ml-2" />
+									<Icons v-else-if="sort_by=='nro_doc' && sort_order=='DESC'" name="bars-down"
 										class="h-4 w-4 ml-2" />
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
@@ -82,21 +92,25 @@
 								</div>
 							</th>
 						</tr>
-						<tr v-for="user in users.data"
+						<tr v-for="contact in contacts.data"
 							class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center hover:bg-gray-100 focus-within:bg-gray-100">
 							<th scope="row"
 								class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-								{{user.id}}
+								{{contact.id}}
 							</th>
 							<td class="py-4 px-6">
-								{{user.name}}
+								{{contact.name ?? '-'}}
 							</td>
 							<td class="py-4 px-6">
-								{{user.email}}
+								{{contact.fullname ?? '-'}}
+							</td>
+							<td class="py-4 px-6">
+								{{contact.nro_doc ?? '-'}}
 							</td>
 
 							<td class="py-4 px-6">
-								<a type="button" @click="
+								-
+								<!-- <a type="button" @click="
 								form.id = user.id,
 								form.name = user.name,
 								form.email = user.email,
@@ -104,25 +118,25 @@
 								editingUser = true
 								" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
 									<Icons name="edit" class="h-5 w-5"></Icons>
-								</a>
+								</a> -->
 							</td>
 						</tr>
 					</table>
 					<div class="flex justify-between mx-5 px-2 items-center p-2">
 						<div>
-							Mostrando: {{this.users.from}} a {{this.users.to}} - Entradas encontradas:
-							{{this.users.total}}
+							Mostrando: {{this.contacts.from}} a {{this.contacts.to}} - Entradas encontradas:
+							{{this.contacts.total}}
 						</div>
 
 						<div class="flex flex-wrap -mb-1">
-							<template v-for="link in users.links">
+							<template v-for="link in contacts.links">
 								<div v-if="link.url === null"
 									class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md"
 									v-html="link.label"> </div>
 								<div v-else
 									class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 rounded-md hover:bg-indigo-500 hover:text-white cursor-pointer"
 									:class="{ 'bg-indigo-500': link.active },{ 'text-white': link.active }"
-									@click="getUsersPaginate(link.url)" v-html="link.label"> </div>
+									@click="getContactsPaginate(link.url)" v-html="link.label"> </div>
 							</template>
 						</div>
 					</div>
@@ -131,7 +145,7 @@
 			</div>
 		</template>
 	</AppLayout>
-	<TransitionRoot as="template" :show="open">
+	<!-- <TransitionRoot as="template" :show="open">
 		<Dialog as="div" class="fixed inset-0 overflow-hidden" @close="open = false">
 			<div class="absolute inset-0 overflow-hidden">
 				<DialogOverlay class="absolute inset-0" />
@@ -218,7 +232,7 @@
 				</div>
 			</div>
 		</Dialog>
-	</TransitionRoot>
+	</TransitionRoot> -->
 </template>
 
 
@@ -253,15 +267,15 @@ export default {
 	},
 	data() {
 		return {
-			users: "",
+			contacts: "",
 			length: "10",
 			sort_order: 'DESC',
 			sort_by: "id",
 			search: "",
 			loading: false,
-			open: false,
-			editingUser: false,
-			form: {},
+			/* open: false,
+			editingUser: false, */
+			//form: {},
 			toastMessage: "",
             labelType: "info",
 		}
@@ -271,14 +285,14 @@ export default {
 	},
 
 	created() {
-		this.getUsers()
+		this.getContacts()
 	},
 	methods: {
 
 		clearMessage() {
 			this.toastMessage = ""
 		},
-		async getUsers() {
+		async getContacts() {
 
 			this.loading = true
 			this.users = ""
@@ -290,25 +304,25 @@ export default {
 				filter += `&search=${this.search}`
 			}
 
-			const get = `${route('user.list')}?${filter}`
+			const get = `${route('contacts.list')}?${filter}`
 
 			const response = await fetch(get, { method: 'GET' })
-			this.users = await response.json()
+			this.contacts = await response.json()
 			this.loading = false
 		},
-		async getUsersPaginate(link) {
+		async getContactsPaginate(link) {
 
 			var get = `${link}`;
 			const response = await fetch(get, { method: 'GET' })
 
-			this.users = await response.json()
+			this.contacts = await response.json()
 
 		},
-		sortUsers() {
+		sortContacts() {
 			this.sort_order = this.sort_order === 'ASC' ? 'DESC' : 'ASC'
-			this.getUsers()
+			this.getContacts()
 		},
-		async submit() {
+		/* async submit() {
 			let rt = '';
 			if (this.editingUser) {
 				rt = route('user.update');
@@ -333,7 +347,7 @@ export default {
 				this.toastMessage = 'Se ha producido un error'
 			})
 			this.open = false
-		}
+		} */
 	}
 }
 </script>

@@ -29,7 +29,7 @@
 
 					<div class="mt-5 flex lg:mt-0 lg:ml-4">
 						<label class="font-semibold mr-2 mt-2" for="">Ver: </label>
-						<select class="text-sm border-gray-300 rounded-md" v-model="length" name="" id="">
+						<select class="text-sm border-gray-300 rounded-md" v-model="length" @change="getBookings">
 							<option value="2">2</option>
 							<option value="5">5</option>
 							<option value="10">10</option>

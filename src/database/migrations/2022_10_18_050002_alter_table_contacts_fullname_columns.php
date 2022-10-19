@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('messages', function (Blueprint $table) {
-            $table->string('contact_id')->nullable()->after('wa_id');
-
-            /* $table->foreign('contact_id')->references('id')->on('contacts')
-                ->onDelete('cascade')
-                ->onUpdate('cascade'); */
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->string('fullname')->nullable()->change();
         });
     }
 
@@ -29,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('messages', function (Blueprint $table) {
-            
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->string('fullname')->nullable()->change();
         });        
     }
 };

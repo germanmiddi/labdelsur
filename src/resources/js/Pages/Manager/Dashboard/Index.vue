@@ -68,9 +68,9 @@
 								<div v-else v-for="m in messages" :key="m.id">
 
 									<div class="flex mb-2" :class="m.type == 'in' ? 'justify-start' : 'justify-end' ">
-										<div class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400' 
+										<div v-html="m.body.replace(/\n/g, '<br>')"  class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400' 
 										: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
-											{{m.body}}
+										 
 										</div>
 									</div>
 									<div class="flex text-sm mb-4 text-gray-600"
@@ -269,7 +269,7 @@ export default {
 
 		async getContacts() {
 
-			const get = `${route('contacts.list')}`
+			const get = `${route('contacts.listdashboard')}`
 
 			setInterval(function () {
 				axios.get(get)

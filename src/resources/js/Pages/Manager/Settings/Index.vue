@@ -206,6 +206,20 @@
 										</div>
 
 										<div class="col-span-6 sm:col-span-6">
+											<label for="google_area1"
+												class="block text-sm font-medium text-gray-700">URL | WhatsApp</label>
+											<input type="text" name="wp_url" id="wp_url" v-model="wp_url.value"
+												class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+										</div>
+
+										<div class="col-span-6 sm:col-span-6">
+											<label for="google_area1"
+												class="block text-sm font-medium text-gray-700">Token | WhatsApp</label>
+											<input type="text" name="wp_token" id="wp_token" v-model="wp_token.value"
+												class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+										</div>
+
+										<div class="col-span-6 sm:col-span-6">
 											<a type="button" @click="updateSetting"
 												class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar
 											</a>
@@ -266,10 +280,15 @@ export default {
 		var cant_days_booking = list_settings.filter(obj => obj.key == 'cant_days_booking')
 		var hora_limit_booking = list_settings.filter(obj => obj.key == 'hora_limit_booking')
 		var day_limit_booking = list_settings.filter(obj => obj.key == 'day_limit_booking')
+		var wp_token = list_settings.filter(obj => obj.key == 'wp_token')
+		var wp_url = list_settings.filter(obj => obj.key == 'wp_url')
+
 		return {
 			cant_days_booking: cant_days_booking[0],
 			hora_limit_booking: hora_limit_booking[0],
 			day_limit_booking: day_limit_booking[0],
+			wp_token: wp_token[0],
+			wp_url: wp_url[0],
 			newHoliday: false,
 			editDay: false,
 			form_day: {},
@@ -357,8 +376,8 @@ export default {
 			this.list_days = await response.json()
 		},
 		updateSetting() {
-			var rows = []
-			rows.push({
+
+			/* rows.push({
 				id: this.cant_days_booking.id,
 				value: this.cant_days_booking.value
 			})
@@ -373,10 +392,44 @@ export default {
 				value: this.day_limit_booking.value
 			})
 
-			let myJsonString = JSON.stringify(rows);
-			let post = route('settings.update', myJsonString)
+			rows.push({
+				id: this.wp_token.id,
+				value: this.wp_token.value
+			})
 
-			axios.post(post)
+			rows.push({
+				id: this.wp_url.id,
+				value: this.wp_url.value
+			}) */
+			var data = [];
+			data =[{
+				'id':this.cant_days_booking.id,
+				'value': this.cant_days_booking.value
+			},
+			{
+				'id':this.day_limit_booking.id,
+				'value': this.day_limit_booking.value
+			},
+			{
+				'id':this.wp_token.id,
+				'value': this.wp_token.value
+			},
+			{
+				'id':this.cant_days_booking.id,
+				'value': this.cant_days_booking.value
+			},
+			{
+				'id':this.wp_url.id,
+				'value': this.wp_url.value
+			}
+			
+			];
+			//let myJsonString = JSON.stringify(rows);
+			let post = route('settings.update')
+
+			axios.post(post, {
+				data: data
+			})
 				.then(response => {
 					this.labelType = "success"
 					this.toastMessage = response.data.message

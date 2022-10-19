@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
+use Illuminate\Support\Facades\Log;
+
 use App\Models\DetailDay;
 use App\Models\Holiday;
 use App\Models\Booking;
@@ -49,6 +51,8 @@ class BookingController extends Controller
                     ->orWhere('wa_id','LIKE', '%'. $search . '%')
                     ->orWhere('nro_affiliate','LIKE', '%'. $search . '%');
             });
+
+            
         }
 
         if($sort_by === 'fullname' || $sort_by === 'nro_affiliate' || $sort_by === 'wa_id' || $sort_by === 'name'){
@@ -76,7 +80,8 @@ class BookingController extends Controller
 
     }
 
-    public function get_days_available($date = ''){
+    public function days_available($date = ''){
+        
         try {
             // Formatea variable de fecha..
             if($date === ''){
@@ -123,7 +128,7 @@ class BookingController extends Controller
                     Holiday::where('date', '=', $date->format('Y-m-d'))->doesntExist()
                     &&
                     // Check que no se hayan completado el limite de las orders diarias. 
-                    Booking::where('date',$date->format('Y-m-d'))->where('status', 1)->count() < $cant_orders['cant_orders']
+                    Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count() < $cant_orders['cant_orders']
                 )
                 {
                     $days[] = $date->format('Y-m-d');
@@ -132,44 +137,100 @@ class BookingController extends Controller
             }
 
             if(!isset($days)){
-                return response()->json(['message'=>'No se han encontrado turnos disponibles'], 203);
+                return $data = [
+                    'code' => 203,
+                    'message' => 'No se han encontrado turnos disponibles',
+                    'data' => ''
+                ];
             }
-            return response()->json(['message'=>'Se ha procesado con exito', 'data' => $days], 200);
+            return $data = [
+                'code' => 200,
+                'message' => 'Se ha procesado con exito',
+                'data' => $days
+            ];
         } catch (\Throwable $th) {
-            return response()->json(['message'=>'Se ha producido un error'], 500);
+            return $data = [
+                'code' => 500,
+                'message' => 'Se ha producido un erro',
+                'data' => $days
+            ];
+            
         }
+    }
+    public function get_days_available($date = ''){
         
+        $data = $this->days_available($date);
 
-        //response()->json($days);
+        if($data['code'] == 200){
+            return response()->json($data, 200);
+        }elseif($data['code'] == 203){
+            return response()->json($data, 203);
+        }else{
+            return response()->json($data, 500);
+        }
     }
 
-    public function store_booking(Request $request){
+    public function create_booking(Request $request){
+        $data = $this->store_booking($request->form);
+
+        if($data['code'] == 200){
+            return response()->json($data, 200);
+        }else{
+            return response()->json($data, 500);
+        }
+    }
+
+    public function store_booking($data){
         DB::beginTransaction();
         try {
             // ACTUALIZO LOS DATOS DEL CONTACTO
-            $contact = Contact::where('wa_id', $request->form['wa_id'])->update([
-                'fullname' => $request->form['fullname'],
-                'nro_doc'  => $request->form['nro_doc'] ?? null, 
-                'nro_affiliate' => $request->form['nro_affiliate'] ?? null  
+            Contact::where('wa_id', $data['wa_id'])->update([
+                'fullname' => $data['fullname'],
+                'nro_doc'  => $data['nro_doc'] ?? null, 
+                'nro_affiliate' => $data['nro_affiliate'] ?? null  
             ]);
-
+            
+            $contact = Contact::where('wa_id', $data['wa_id'])->first();
             // CREO EL NUEVO TURNO..            
-            $input_date = $request->form['date'];
+            $input_date = $data['date'];
             $input_date  = date('Y-m-d', strtotime($input_date));
 
             $booking = new Booking;
-            $booking->status = 0;
             $booking->date = $input_date;
+            $booking->status_id = 1;
             $booking->contact_id = $contact->id;
 
             $booking->save();
 
             DB::commit();
             
-            return response()->json(['message'=>'Turno registrado'], 200);
+            return $data = [
+                'code' => 200,
+                'message' => 'Se ha almacenado correctamente el turno'
+            ];
         } catch (\Throwable $th) {
+            log::info($th);
             DB::rollBack();
-            return response()->json(['message'=>'Se ha producido un error'], 500);
+            return $data = [
+                'code' => 500,
+                'message' => 'Se ha producido un erro'
+            ];
     }
 }
+
+public function check_booking_available($date){
+    
+    $date = Carbon::parse($date);
+    $cant_orders = DetailDay::select('cant_orders')->where('num_day', '=', date('w', strtotime($date)))->first();
+
+    Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count();
+    
+    if(Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count() < $cant_orders['cant_orders']){
+        return true;
+    }
+
+    return false;
+    
+}
+
 }

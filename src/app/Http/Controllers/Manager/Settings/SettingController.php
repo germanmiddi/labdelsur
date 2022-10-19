@@ -26,13 +26,13 @@ class SettingController extends Controller
         [
             'holidays' => Holiday::all(),
             'days' => DetailDay::all(),
-            'settings' => Setting::where('module', 'BOOKING')->get()
+            'settings' => Setting::get()
         ]); 
     }
 
     public function store_holiday(Request $request){
 
-        //dd();
+        
         $input_date = $request->form['date'];
         $input_date  = date('Y-m-d', strtotime($input_date));
         try {
@@ -79,14 +79,16 @@ class SettingController extends Controller
     }
 
     // UPDATE SETTINGS
-    public function update_setting($request)
+    public function update_setting(Request $request)
     {
-        
-        $rows = json_decode($request);
+        //dd($request[0]);
+        //$rows = json_decode($request);
+        //dd($request->data);
         try {
-            foreach($rows as $row){
-                $content = Setting::find($row->id);
-                $content->value = $row->value;
+
+            for($i = 0; $i < count($request->data); $i++){
+                $content = Setting::find($request->data[$i]['id']);
+                $content->value = $request->data[$i]['value'];
                 $content->save();
             }
             return response()->json(['message'=>'Configuración actualizada'], 200);

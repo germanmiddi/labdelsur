@@ -13,8 +13,42 @@ use App\Models\Message;
 
 class ContactsController extends Controller
 {
+    public function index()
+    {
+        return  Inertia::render('Manager/Contact/List');
+    }
 
     public function list(){
+
+        $result = Contact::query();
+
+        $length = request('length');
+        $sort_by = request('sort_by') ?? 'id';
+        $sort_order = request('sort_order') ?? 'DESC';
+
+        if(request('search')){
+            $search = request('search');
+            $result->Where('wa_id','LIKE', '%'. $search . '%')
+                    ->orWhere('name','LIKE', '%'. $search . '%')
+                    ->orWhere('fullname','LIKE', '%'. $search . '%')
+                    ->orWhere('nro_doc','LIKE', '%'. $search . '%');
+        }
+        
+
+        $result->orderBy($sort_by, $sort_order);
+        
+        return  $result->paginate($length)
+                        ->withQueryString()
+                        ->through(fn ($user) => [
+                            'id'                    => $user->id,
+                            'name'                  => $user->name,
+                            'fullname'                 => $user->fullname,
+                            'nro_doc'                 => $user->nro_doc,
+                        ]);
+
+    }
+
+    public function list_dashboard(){
 
         $result = Contact::query();
         $result->leftJoin(DB::raw('(select contact_id, status, created_at as date 

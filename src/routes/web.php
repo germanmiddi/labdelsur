@@ -41,8 +41,16 @@ Route::get('/messages/list', [MessagesController::class,'list' ])
         ->name('messages.list')
         ->middleware('auth');
 
+Route::get('/contacts', [ContactsController::class,'index' ])
+        ->name('contacts')
+        ->middleware('auth');
+
 Route::get('/contacts/list', [ContactsController::class,'list' ])
         ->name('contacts.list')
+        ->middleware('auth');
+
+Route::get('/contacts/listdashboard', [ContactsController::class,'list_dashboard' ])
+        ->name('contacts.listdashboard')
         ->middleware('auth');        
         
 Route::get('/settings', [SettingController::class, 'index'])
@@ -69,7 +77,7 @@ Route::get('/settings/deleteholiday/{id}', [SettingController::class, 'delete_ho
         ->name('settings.deleteholiday')
         ->middleware('auth');
 
-Route::post('/settings/update/{values}', [SettingController::class, 'update_setting'])
+Route::post('/settings/update', [SettingController::class, 'update_setting'])
         ->name('settings.update')
         ->middleware('auth'); 
 
@@ -85,8 +93,8 @@ Route::get('/booking/daysavailable/{date?}', [BookingController::class, 'get_day
         ->name('booking.dayavailable')
         ->middleware('auth'); 
 
-Route::post('/booking', [BookingController::class, 'store_booking'])
-        ->name('booking.storebooking')
+Route::post('/booking', [BookingController::class, ' create_booking'])
+        ->name('booking.createbooking')
         ->middleware('auth');
 
 Route::get('/user', [UserController::class, 'index'])
