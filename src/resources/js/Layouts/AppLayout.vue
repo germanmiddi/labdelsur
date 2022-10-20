@@ -104,11 +104,12 @@ const user = {
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Contactos', href: '#', current: false },
-  { name: 'Turnos', href: '#', current: false },
-  { name: 'Reportes', href: '#', current: false },
-  { name: 'Configuración', href: '#', current: false },
+  { name: 'Mensajes', href: 'dashboard', current: window.location.pathname === '/dashboard' ? true : false },
+  { name: 'Contactos', href: 'contacts', current: window.location.pathname === '/contacts' ? true : false },
+  { name: 'Turnos', href: 'booking', current: window.location.pathname === '/booking' ? true : false },
+  /* { name: 'Reportes', href: '' , current: false }, */
+  { name: 'Usuarios', href: 'user' , current: window.location.pathname === '/user' ? true : false },
+  { name: 'Configuración', href: "settings", current: window.location.pathname === '/settings' ? true : false },
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#' },

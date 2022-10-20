@@ -9,7 +9,11 @@ class Contact extends Model
 {
     protected $fillable = [
         'wa_id',
-        'name'
+        'name',
+        'fullname',
+        'nro_doc',
+        'nro_affiliate',
+        'bot_status'
     ];
 
     use HasFactory;
@@ -17,5 +21,9 @@ class Contact extends Model
     public function messages(){
         return $this->hasMany(Message::class);   
     }    
+
+    public function bookings(){
+        return $this->hasMany(Booking::class);   
+    } 
     
 }
