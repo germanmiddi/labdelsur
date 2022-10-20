@@ -42,8 +42,9 @@ class ContactsController extends Controller
                         ->through(fn ($user) => [
                             'id'                    => $user->id,
                             'name'                  => $user->name,
-                            'fullname'                 => $user->fullname,
-                            'nro_doc'                 => $user->nro_doc,
+                            'fullname'              => $user->fullname,
+                            'nro_doc'               => $user->nro_doc,
+                            'bot_status'            => $user->bot_status,
                         ]);
 
     }
@@ -65,12 +66,26 @@ class ContactsController extends Controller
                         ->paginate(999)
                         ->withQueryString()
                         ->through(fn ($contact) => [
-                        'id' => $contact->id,
-                        'name' => $contact->name,
-                        'wa_id' => $contact->wa_id,
-                        'message' => $contact->messages()->latest()->first(),
+                        'id'            => $contact->id,
+                        'name'          => $contact->name,
+                        'wa_id'         => $contact->wa_id,
+                        'bot_status'    => $contact->bot_status,
+                        'message'       => $contact->messages()->latest()->first(),
                     ]);  
         
+    }
+
+    public function change_status_bot($id){
+        try {
+            $contact = Contact::where('id', $id)->first();
+
+            Contact::where('id', $id)->update([
+                'bot_status' => !$contact->bot_status
+            ]);
+            return response()->json(['message'=>'Contacto actualizado correctamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
     }
 
 }

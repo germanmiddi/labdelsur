@@ -109,16 +109,14 @@
 							</td>
 
 							<td class="py-4 px-6">
-								-
-								<!-- <a type="button" @click="
-								form.id = user.id,
-								form.name = user.name,
-								form.email = user.email,
-								open = true,
-								editingUser = true
-								" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-									<Icons name="edit" class="h-5 w-5"></Icons>
-								</a> -->
+								<a type="button" @click="changeStatusBot(contact.id)" title="Chat con asesor"
+									class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+									:class="contact.bot_status ? 'bg-red-300 hover:bg-red-700' : 'bg-green-300 hover:bg-green-700'"
+									
+									>
+									
+									<Icons name="chat" class="h-5 w-5"></Icons>
+								</a>
 							</td>
 						</tr>
 					</table>
@@ -273,9 +271,6 @@ export default {
 			sort_by: "id",
 			search: "",
 			loading: false,
-			/* open: false,
-			editingUser: false, */
-			//form: {},
 			toastMessage: "",
             labelType: "info",
 		}
@@ -322,32 +317,21 @@ export default {
 			this.sort_order = this.sort_order === 'ASC' ? 'DESC' : 'ASC'
 			this.getContacts()
 		},
-		/* async submit() {
-			let rt = '';
-			if (this.editingUser) {
-				rt = route('user.update');
-			} else {
-				rt = route('user.store');
-			}
-
-			axios.post(rt, {
-				form: this.form,
-			}).then(response => {
+		async changeStatusBot($id){
+			this.loading = true
+			let rt = route('contacts.changestatusbot', $id);
+			axios.get(rt).then(response => {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
-					this.getUsers()
-				} else {
-					this.labelType = "info"
-					this.toastMessage = response.data.message
-				}
+					this.getContacts()
+				} 
 			}).catch(error => {
-				console.log('OKOK -- '+error)
 				this.labelType = "danger"
 				this.toastMessage = 'Se ha producido un error'
 			})
-			this.open = false
-		} */
+			this.loading = false
+		}
 	}
 }
 </script>

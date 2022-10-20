@@ -3,7 +3,7 @@
 	<AppLayout>
 
 		<template #content>
-
+			<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 			<div class="focus-within:content flex-grow flex flex-col">
 				<div class="mx-auto my-10 text-4xl font-bold
 							xl: w-11/12
@@ -26,7 +26,7 @@
 				<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
 					<div class="flex flex-row justify-between bg-white ">
 						<!-- chat list -->
-						<div class="flex flex-col w-2/5 border-r overflow-y-auto max-h-[70vh]">
+						<div class="flex flex-col w-2/5 border-r overflow-y-auto h-[70vh]">
 							<!-- search compt -->
 							<div class="border-b-2 py-4 px-2 bg-blue-100 text-center">
 								<input class="shadow-sm text-sm border-gray-300 rounded-md" type="text" id="search"
@@ -37,13 +37,13 @@
 							<div v-for="c in contacts" :key="c.id"
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer"
 								:class="[(c.message.status != 'read' ? 'bg-gradient-to-r from-blue-500 to-blue-300 hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-200' : '')]"
-								@click="getMessages(c)">
-								<div class="w-1/6 mr-4">
+								>
+								<div class="w-1/6 mr-4" @click="getMessages(c)">
 									<div
 										class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
 										{{c.name.substr(0,2).toUpperCase()}}</div>
 								</div>
-								<div class="w-full">
+								<div class="w-4/6" @click="getMessages(c)">
 									<div class="text-sm font-semibold text-white"
 										:class="[(c.message.status != 'read' ? 'text-white' : 'text-black')]">{{ c.name
 										}}<br>
@@ -51,6 +51,15 @@
 											:class="[(c.message.status != 'read' ? 'text-white' : 'text-gray-700')]">{{
 											c.wa_id }}</span>
 									</div>
+									
+								</div>
+								<div class="w-1/6">
+									<a type="button" @click="changeStatusBot(c.id)" title="Chat con asesor"
+									class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+									:class="c.bot_status ? 'bg-red-300 hover:bg-red-700' : 'bg-green-300 hover:bg-green-700'"
+									>
+									<Icons name="chat" class="h-4 w-4"></Icons>
+									</a>
 								</div>
 							</div>
 							<!-- end user list -->
@@ -70,7 +79,7 @@
 									<div class="flex mb-2" :class="m.type == 'in' ? 'justify-start' : 'justify-end' ">
 										<div v-html="m.body.replace(/\n/g, '<br>')"  class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400' 
 										: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
-										 
+										
 										</div>
 									</div>
 									<div class="flex text-sm mb-4 text-gray-600"
@@ -81,9 +90,19 @@
 							</div>
 
 
-							<div class="py-5 border-t mt-20">
-								<input class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl"
-									type="text" placeholder="type your message here..." />
+							<div class="py-5 border-t mt-20 grid grid-cols-10 gap-4"
+								:class="this.selectedWaId == '' ? 'pointer-events-none bg-red-50' : ''">
+								<div class="col-span-9">
+									<textarea rows="2" class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none" v-model="msg"
+									type="text" placeholder="Escribe tu mensaje aquí..." />
+								</div>
+								<div class="col-span-1">
+									<a type="button" title="Enviar Mensaje" @click="sendMessage()"
+										class="cursor-pointer py-3 px-3 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										<Icons name="send" class="h-5 w-5"></Icons>
+									</a>
+								</div>
+								
 							</div>
 						</div>
 						<!-- end message -->
@@ -141,6 +160,7 @@ import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import moment from 'moment';
 import Icons from '@/Layouts/Components/Icons.vue';
+import Toast from '@/Layouts/Components/Toast.vue';
 
 
 const user = {
@@ -176,9 +196,6 @@ const eventTypes = {
 }
 
 export default {
-	// props: {
-	// 	contacts: Object
-	// },
 
 	components: {
 		Menu,
@@ -202,7 +219,8 @@ export default {
 		AppLayout,
 		CheckCircleIcon, ChevronRightIcon, MailIcon,
 		moment,
-		Icons
+		Icons,
+		Toast
 	},
 	filters: {
 		moment: function (date) {
@@ -217,9 +235,6 @@ export default {
 			userNavigation,
 			attachments,
 			eventTypes,
-			//   timeline,
-			//   comments,
-			//   applications
 		}
 	},
 	data() {
@@ -229,7 +244,11 @@ export default {
 			intervalId: "",
 			loading: false,
 			selectedName: "",
-			contacts: ""
+			selectedWaId: "",
+			contacts: "",
+			toastMessage: "",
+            labelType: "info",
+			msg: ''
 		}
 	},
 	created() {
@@ -241,10 +260,15 @@ export default {
 			return moment(date).format('DD-MM-YYYY h:mm');
 		},
 
+		clearMessage() {
+			this.toastMessage = ""
+		},
+
 		async getMessages(c) {
 
 			this.loading = true
 			this.selectedName = c.name
+			this.selectedWaId = c.wa_id
 
 			let wa_id = c.wa_id
 			const get = `${route('messages.list')}?wa_id=${wa_id}`
@@ -290,6 +314,42 @@ export default {
 
 			console.log(message)
 
+		},
+		async changeStatusBot($id){
+			this.loading = true
+			let rt = route('contacts.changestatusbot', $id);
+			axios.get(rt).then(response => {
+				if (response.status == 200) {
+					this.labelType = "success"
+					this.toastMessage = response.data.message
+					this.getContacts()
+				} 
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = 'Se ha producido un error'
+			})
+			this.loading = false
+		},
+		sendMessage(){
+			this.loading = true
+			
+			let rt = route('whatsapp.sendmessage');
+
+			axios.post(rt,{
+				wa_id: this.selectedWaId,
+                message: this.msg
+			}).then(response => {
+				if (response.status == 200) {
+					this.labelType = "success"
+					this.toastMessage = response.data.message
+					this.getContacts()
+					this.msg = ''
+				} 
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = 'Se ha producido un error'
+			})
+			this.loading = false
 		}
 	}
 }

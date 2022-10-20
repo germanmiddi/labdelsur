@@ -9,7 +9,11 @@ class Contact extends Model
 {
     protected $fillable = [
         'wa_id',
-        'name'
+        'name',
+        'fullname',
+        'nro_doc',
+        'nro_affiliate',
+        'bot_status'
     ];
 
     use HasFactory;

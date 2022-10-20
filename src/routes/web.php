@@ -36,6 +36,10 @@ Route::get('/whatsapp/sendtest', [WhatsappController::class,'sendTest' ])
         ->name('whatsapp.sendtest')
         ->middleware('auth');
 
+Route::post('/whatsapp/sendMessage', [WhatsappController::class,'sendMessage' ])
+        ->name('whatsapp.sendmessage')
+        ->middleware('auth');
+
 
 Route::get('/messages/list', [MessagesController::class,'list' ])
         ->name('messages.list')
@@ -47,6 +51,10 @@ Route::get('/contacts', [ContactsController::class,'index' ])
 
 Route::get('/contacts/list', [ContactsController::class,'list' ])
         ->name('contacts.list')
+        ->middleware('auth');
+
+Route::get('/contacts/changestatusbot/{id}', [ContactsController::class,'change_status_bot' ])
+        ->name('contacts.changestatusbot')
         ->middleware('auth');
 
 Route::get('/contacts/listdashboard', [ContactsController::class,'list_dashboard' ])

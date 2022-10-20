@@ -328,7 +328,6 @@ export default {
 					this.toastMessage = response.data.message
 				}
 			}).catch(error => {
-				console.log('OKOK -- '+error)
 				this.labelType = "danger"
 				this.toastMessage = 'Se ha producido un error'
 			})

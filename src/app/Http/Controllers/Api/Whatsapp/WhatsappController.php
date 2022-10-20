@@ -203,85 +203,123 @@ class WhatsappController extends Controller
 
             DB::beginTransaction();
             try {
+                
                 $a = json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]);
                 Log::info('soy un mensaje '. $a);
-
-                $wa_id = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']) 
-                    ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
-                    : '';
-
-                $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
-                    ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
-                    : '';
-
-                $session = Waidsession::where('wa_id',$wa_id)->first(); 
-    
-                if($session){
-                    Log::info('No se procesa por Session'); return;
-                }else{  
-                    Waidsession::create(['wa_id' => $wa_id]);
-                }                    
-
-                $contact = Contact::where('wa_id',$wa_id)->first(); 
+                Log::info('FILE: '. json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']));
+                switch (str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']))) {
+                    case 'text':
+                            $wa_id = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']) 
+                                ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
+                                : '';
+            
+                            $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
+                                ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
+                                : '';
+            
+                            $session = Waidsession::where('wa_id',$wa_id)->first(); 
                 
-                if(!$contact){
-                    $contact = Contact::create(['wa_id' => $wa_id, 
-                                    'name' => $name]);
+                            if($session){
+                                Log::info('No se procesa por Session'); return;
+                            }else{  
+                                Waidsession::create(['wa_id' => $wa_id]);
+                            }                    
+            
+                            $contact = Contact::where('wa_id',$wa_id)->first(); 
+                            
+                            if(!$contact){
+                                $contact = Contact::create(['wa_id' => $wa_id, 
+                                                'name' => $name]);
+                            }
+                            $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
+            
+                            // Si devuelve false, se cambia el signo para que procese el return
+                            if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
+                            
+                            $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
+                                    ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
+                                    : '' ;
+            
+                            // CONTROLA SI TIENE HABILITADO EL BOT
+                            if($contact->bot_status){
+            
+                                $response = $this->set_message($wa_id, $message);
+            
+                                $inbound_msj = new Message;
+                                $inbound_msj->wa_id     = $wa_id;
+                                $inbound_msj->contact_id= $contact->id;
+                                $inbound_msj->type      = 'in';
+                                $inbound_msj->body      = $message;
+                                $inbound_msj->status    = 'initial';
+                                $inbound_msj->response  = $response['id']; 
+                                $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
+                                $inbound_msj->timestamp = $timestamp;
+                                $inbound_msj->save();
+            
+                                
+                                $params = [ "messaging_product" => "whatsapp", 
+                                            "recipient_type"    => "individual",
+                                            "to"                => $wa_id, 
+                                            "type"              => "text",
+                                            "preview_url"       => false,             
+                                            "text"              => [ "body" => $response['text'] ]];
+                            
+                            
+                                $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+                                $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
+
+                                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
+                                                                'Content-Type'  => 'application/json'])->post($wp_url->value, $params);
+                                $outbound_msj = new Message;
+                                $outbound_msj->wa_id     = $wa_id;
+                                $outbound_msj->contact_id= $contact->id;
+                                $outbound_msj->type      = 'out';
+                                $outbound_msj->body      = $response['text']; //$message;
+                                $outbound_msj->status    = 'initial';
+                                $outbound_msj->response  = $response['id']; 
+                                $outbound_msj->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
+                                $outbound_msj->timestamp = \Carbon\Carbon::now()->timestamp;
+                                $outbound_msj->save();
+                                
+                            }else{
+                                $inbound_msj = new Message;
+                                $inbound_msj->wa_id     = $wa_id;
+                                $inbound_msj->contact_id= $contact->id;
+                                $inbound_msj->type      = 'in';
+                                $inbound_msj->body      = $message;
+                                $inbound_msj->status    = 'initial';
+                                $inbound_msj->response  = 'asesor'; 
+                                $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
+                                $inbound_msj->timestamp = $timestamp;
+                                $inbound_msj->save();
+            
+                                log::info('Contacto: '. $contact->wa_id .'tiene el chat con el Bot desactivado');
+                            }
+                            Waidsession::where('wa_id',$wa_id)->delete();
+                        break;
+                        
+                    case 'image':
+                            $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+                            $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
+
+                            $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['id']));
+
+                            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,//EAAMnvn93Q1ABALdBvkY0T4d57N3GsbXAQgHxvsE0teRq9FhlDLid2V0yNMNVOnH1ZCuYIEDLf2eK2iF8FPjLLaWV5UKJebCAuVJbOBzkzMM4O9Ex8EOoDOBS834XVyKUo5bHZCDSoQ3iSdOFZCV1H1ZC0RZBmQMhhpS8FBANM7YnzR8GUEFxANe3P6KBPlZAgZAPnjbPZBOOGAZDZD',
+                                                                'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
+                                
+                            log::info('Han enviado una imagen - ID: '. $http_post['url']);
+
+                            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,//EAAMnvn93Q1ABALdBvkY0T4d57N3GsbXAQgHxvsE0teRq9FhlDLid2V0yNMNVOnH1ZCuYIEDLf2eK2iF8FPjLLaWV5UKJebCAuVJbOBzkzMM4O9Ex8EOoDOBS834XVyKUo5bHZCDSoQ3iSdOFZCV1H1ZC0RZBmQMhhpS8FBANM7YnzR8GUEFxANe3P6KBPlZAgZAPnjbPZBOOGAZDZD',
+                                                                'Content-Type'  => 'application/json'])->get($http_post['url']);
+                        break;
+                        
+                    default:
+                            log::info('Han enviado un archivo desconocido');
+                        break;
                 }
-
-                $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
-
-                // Si devuelve false, se cambia el signo para que procese el return
-                if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
-            
-
-                $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
-                        ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
-                        : '' ;
-                $response = $this->set_message($wa_id, $message);
-
-                $inbound_msj = new Message;
-                $inbound_msj->wa_id     = $wa_id;
-                $inbound_msj->contact_id= $contact->id;
-                $inbound_msj->type      = 'in';
-                $inbound_msj->body      = $message;
-                $inbound_msj->status    = 'initial';
-                //$inbound_msj->response  = ''; 
-                $inbound_msj->response  = $response['id']; 
-                $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
-                $inbound_msj->timestamp = $timestamp;
-                $inbound_msj->save();
-
-                
-                $params = [ "messaging_product" => "whatsapp", 
-                            "recipient_type"    => "individual",
-                            "to"                => $wa_id, 
-                            "type"              => "text",
-                            "preview_url"       => false,             
-                            "text"              => [ "body" => $response['text'] ]];
-            
-            
-                $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
-                $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
-
-                //$url = 'https://graph.facebook.com/v14.0/107765322075657/messages';
-
-                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,//EAAMnvn93Q1ABALdBvkY0T4d57N3GsbXAQgHxvsE0teRq9FhlDLid2V0yNMNVOnH1ZCuYIEDLf2eK2iF8FPjLLaWV5UKJebCAuVJbOBzkzMM4O9Ex8EOoDOBS834XVyKUo5bHZCDSoQ3iSdOFZCV1H1ZC0RZBmQMhhpS8FBANM7YnzR8GUEFxANe3P6KBPlZAgZAPnjbPZBOOGAZDZD',
-                                                'Content-Type'  => 'application/json'])->post($wp_url->value, $params);
-                $outbound_msj = new Message;
-                $outbound_msj->wa_id     = $wa_id;
-                $outbound_msj->contact_id= $contact->id;
-                $outbound_msj->type      = 'out';
-                $outbound_msj->body      = $response['text']; //$message;
-                $outbound_msj->status    = 'initial';
-                $outbound_msj->response  = $response['id']; 
-                $outbound_msj->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
-                $outbound_msj->timestamp = \Carbon\Carbon::now()->timestamp;
-                $outbound_msj->save();
-                
-                Waidsession::where('wa_id',$wa_id)->delete();
                 DB::Commit();
             } catch (\Throwable $th) {
+                Log::info($th);
                 DB::rollBack();
             }
         }elseif( isset($request['entry'][0]['changes'][0]['value']['statuses'][0]['status']) ){
@@ -412,8 +450,13 @@ class WhatsappController extends Controller
 
     public function manager_turnos($wa_id, $message, $prev_step, $text = ''){
         
+        //Obtengo datos de Configuracion.
         $setting =  Setting::where('module', 'BOOKING')->where('key', 'cant_days_booking')->first();
+        
+        //Genero array para determinar si es el primer menu o submenu.
         $steps = explode('.', $prev_step);
+
+        //Almaceno el response raiz "Menu"
         if(count($steps) <= 1){
             $base_step = $prev_step.'.'.$message;
         }else{
@@ -422,11 +465,11 @@ class WhatsappController extends Controller
             $current_step = implode('.', $steps);
         }
         
-        //Obtengo el id del menu a buscar..
+        //Obtengo el id del Menu a buscar..
         unset($steps[0], $steps[1]);
         $current_step = implode('.', $steps);
         
-        
+        //Determina el siguiente menu.
         if($message === '#' || $prev_step == 0){
             $current_step = '';
         }else if($message === '*' || $prev_step == 0){
