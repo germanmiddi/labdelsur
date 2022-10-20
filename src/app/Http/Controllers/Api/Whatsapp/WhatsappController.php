@@ -20,6 +20,32 @@ use Carbon\Carbon;
 
 class WhatsappController extends Controller
 {
+    protected  $emojis;
+
+    public function __construct(){
+        $this->emojis[0] = "0️⃣";
+        $this->emojis[1] = "1️⃣";
+        $this->emojis[2] = "2️⃣";
+        $this->emojis[3] = "3️⃣";
+        $this->emojis[4] = "4️⃣";
+        $this->emojis[5] = "5️⃣";
+        $this->emojis[6] = "6️⃣";
+        $this->emojis[7] = "7️⃣";
+        $this->emojis[8] = "8️⃣";
+        $this->emojis[9] = "9️⃣";
+        $this->emojis[10] = "1️⃣0️⃣";
+        $this->emojis[11] = "1️⃣1️⃣";
+        $this->emojis[12] = "1️⃣2️⃣";
+        $this->emojis[13] = "1️⃣3️⃣";
+        $this->emojis[14] = "1️⃣4️⃣";
+        $this->emojis[15] = "1️⃣5️⃣";
+        $this->emojis[16] = "1️⃣6️⃣";
+        $this->emojis[17] = "1️⃣7️⃣";
+        $this->emojis[18] = "1️⃣8️⃣";
+        $this->emojis[19] = "1️⃣9️⃣";
+        $this->emojis[20] = "2️⃣0️⃣";
+    }
+
     public function receive_message(){
 
     }
@@ -35,11 +61,18 @@ class WhatsappController extends Controller
         $prev_menu = Message::where('wa_id', $wa_id)
                             ->where('response','!=','')   
                             ->orderBy('updated_at', 'desc')
+                       
                             ->first();
+        
+        //CHECK FECHA ULTIMO MENSAJE       
+        $last_date = false;
+        if($prev_menu){
+           $last_date = $this->check_last_date($prev_menu->created_at);
+        }
         
         $setting =  Setting::where('module', 'BOOKING')->where('key', 'cant_days_booking')->first();
         
-        if($prev_menu && $message != 0){
+        if($prev_menu && $message != 0 && $last_date){
             $prev_step = $prev_menu->response;
             $current_step = $prev_step . '.' . $message;
 
@@ -54,16 +87,16 @@ class WhatsappController extends Controller
         switch($step){
         
             case '0':
-                $text = "Buen día 👋, soy tu asistente virtual. \nPuedo ayudarte con los siguientes temas:\n";
-                $text .= "\n 1️⃣ Turno para atención *sólo para obra social UTA*.";
-                $text .= "\n 2️⃣ ¿Cómo obtener mis resultados?";
-                $text .= "\n 3️⃣ Horario de atención y ubicación.";
-                $text .= "\n 4️⃣ Extracciones a domicilio.";
-                $text .= "\n 5️⃣ COVID 19";
-                $text .= "\n 6️⃣ Indicaciones de estudios";
-                $text .= "\n 7️⃣ Coberturas";
-                $text .= "\n 8️⃣ Autorización de órdenes";
-                $text .= "\n 9️⃣ Presupuestos";
+                $text = "Buen día 👋, soy tu asistente virtual 🤖​. \nPuedo ayudarte con los siguientes temas:\n";
+                $text .= "\n ".$this->emojis[1]." Turno para atención *sólo para obra social UTA*.";
+                $text .= "\n ".$this->emojis[2]." ¿Cómo obtener mis resultados?";
+                $text .= "\n ".$this->emojis[3]." Horario de atención y ubicación.";
+                $text .= "\n ".$this->emojis[4]." Extracciones a domicilio.";
+                $text .= "\n ".$this->emojis[5]." COVID 19";
+                $text .= "\n ".$this->emojis[6]." Indicaciones de estudios";
+                $text .= "\n ".$this->emojis[7]." Coberturas";
+                $text .= "\n ".$this->emojis[8]." Autorización de órdenes";
+                $text .= "\n ".$this->emojis[9]." Presupuestos";
                 
                 break;
 
@@ -154,9 +187,18 @@ class WhatsappController extends Controller
 
     }
 
+    public function check_last_date($date){
+        $date->addHour(12);
+        $date_now = Carbon::now();//->tz('-3');
+        if($date >= $date_now){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public function receive(Request $request){
         
-        // return response($request['hub_challenge'], 200);
         if( isset($request['entry'][0]['changes'][0]['value']['messages'][0]) ){
 
             DB::beginTransaction();
@@ -196,10 +238,8 @@ class WhatsappController extends Controller
                 $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
                         ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
                         : '' ;
-                        log::info("ANTES RESPONSE: ". $message);
                 $response = $this->set_message($wa_id, $message);
 
-                log::info("RESPONSE: ");
                 $inbound_msj = new Message;
                 $inbound_msj->wa_id     = $wa_id;
                 $inbound_msj->contact_id= $contact->id;
@@ -242,7 +282,6 @@ class WhatsappController extends Controller
                 Waidsession::where('wa_id',$wa_id)->delete();
                 DB::Commit();
             } catch (\Throwable $th) {
-                log::info("TRY ". $th);
                 DB::rollBack();
             }
         }elseif( isset($request['entry'][0]['changes'][0]['value']['statuses'][0]['status']) ){
@@ -409,7 +448,7 @@ class WhatsappController extends Controller
                 if($bookings['code'] == 200){
                     $pos = 1;
                     foreach ($bookings['data'] as $booking) {
-                        $text .= "\n *".$pos." -* Dia ".Carbon::parse($booking)->format("d-m-Y").".";
+                        $text .= "\n ".$this->emojis[$pos].". Dia ".Carbon::parse($booking)->format("d-m-Y").".";
                         $pos++;
                     }
                 }else{
@@ -444,7 +483,8 @@ class WhatsappController extends Controller
                 //RECUPERO LA FECHA SELECCIONADA.
                 $options = preg_split('/\r\n|\r|\n/', $fecha_options->body);
 
-                $fecha = substr($options[intval($fecha->body)+2], 11, 10);
+                $fecha_parse = explode('.', $options[intval($fecha->body)+2]);
+                $fecha = substr($fecha_parse[1], 5, 10);
                 //VERIFICO LA DISPONIBILIDAD DEL TURNO.
                 $bookingController = new BookingController();
                 if(!$bookingController->check_booking_available($fecha)){
@@ -521,9 +561,9 @@ class WhatsappController extends Controller
                 $text .= "\n📌​ Si es PCR y desea los resultados en el día puede venir de ⌚ 11:00 a 12:00 hs. o los sábados de ⌚ 7:00 a 11:00 hs.";
                 $text .= "\n📌​ Si es antígeno demora 30 minutos el resultado.";
                 $text .= "\n\n *_Mas Información:_*";
-                $text .= "\n\n1️⃣ Importe del estudio particular.";
-                $text .= "\n2️⃣ Si desea realizarlo por obra social / prepaga.";
-                $text .= "\n3️⃣ Hisopados a domicilio.";
+                $text .= "\n\n".$this->emojis[1]." Importe del estudio particular.";
+                $text .= "\n".$this->emojis[2]." Si desea realizarlo por obra social / prepaga.";
+                $text .= "\n".$this->emojis[3]." Hisopados a domicilio.";
 
                 break;
 
@@ -585,16 +625,16 @@ class WhatsappController extends Controller
                 $text .= "\n✏️​ *Cortisol y Curva de glucemia:* La extracción debe realizarse a las 8:00 AM.";
                 $text .= "\n✏️​ *Prolactina:* debe tener dos horas de haberse levantado antes de venir al laboratorio y no haber realizado actividad física ni esfuerzo alguno.";
                 $text .= "\n\n🩺​ Si tiene que realizarse estudios de hormonas tiroideas y toma medicación para las tiroides ese día lo deberá tomar luego de la extracción.\n";
-                $text .= "\n1️⃣​ Urocultivo mujeres.";
-                $text .= "\n2️⃣​ Urocultivo hombres.";
-                $text .= "\n3️⃣​ Urocultivo bebés y niñas/os.";
-                $text .= "\n4️⃣​ Orina de 24 hs.";
-                $text .= "\n5️⃣​ Sangre oculta en materia fecal.";
-                $text .= "\n6️⃣​ Parasitológico o coprocultivo.";
-                $text .= "\n7️⃣​ Cultivo de flujo.";
-                $text .= "\n8️⃣​ Micológico.";
-                $text .= "\n9️⃣​ PSA.";
-                $text .= "\n1️⃣0️⃣​ Si necesita ayuda para interpretar la orden. Será contactado con un agente...";
+                $text .= "\n".$this->emojis[1]." Urocultivo mujeres.";
+                $text .= "\n".$this->emojis[2]." Urocultivo hombres.";
+                $text .= "\n".$this->emojis[3]." Urocultivo bebés y niñas/os.";
+                $text .= "\n".$this->emojis[4]." Orina de 24 hs.";
+                $text .= "\n".$this->emojis[5]." Sangre oculta en materia fecal.";
+                $text .= "\n".$this->emojis[6]." Parasitológico o coprocultivo.";
+                $text .= "\n".$this->emojis[7]." Cultivo de flujo.";
+                $text .= "\n".$this->emojis[8]." Micológico.";
+                $text .= "\n".$this->emojis[9]." PSA.";
+                $text .= "\n".$this->emojis[10]." Si necesita ayuda para interpretar la orden. Será contactado con un agente...";
 
                 break;  
 
