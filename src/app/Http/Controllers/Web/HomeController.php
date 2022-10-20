@@ -21,4 +21,15 @@ class HomeController extends Controller
         return  Inertia::render('Web/Home');
     }
 
+    public function faq()
+    {
+        return  Inertia::render('Web/Faq', [
+
+
+
+            
+        ]);
+    }    
+
+
 }

@@ -17,7 +17,7 @@
           <PopoverGroup as="nav" class="hidden md:flex space-x-10">
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS </a>
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> TURNOS </a>
+            <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES </a>
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a>
           </PopoverGroup>
         </div>
@@ -71,7 +71,7 @@
     </header>
 
     <main>
-      <div class="fixed z-50 bottom-10 right-10">
+      <div class="fixed z-50 bottom-10 right-20">
         <div class="bg-green-100 flex justify-center items-center rounded-full py-3 px-5 shadow-xl border-4 border-white cursor-pointer 
                       hover:bg-green-200">
           <img class="h-10 mr-2" src="/img/whatsapp.png" alt="">
@@ -106,16 +106,12 @@
       </div>
 
       <!-- Logo Cloud -->
-      <div class="bg-gray-100">
+      <!-- <div class="bg-gray-100">
         <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-          <!-- <p class="text-center text-sm font-semibold uppercase text-gray-500 tracking-wide">Trusted by over 5 very average small businesses</p> -->
           <div class="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
             <div class="col-span-2 flex justify-center md:col-span-2 md:col-start-4 lg:col-span-1">
               <img class="h-20 " src="/img/obrassociales/swiss.png" alt="" />
             </div>
-            <!-- <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-              <img class="h-20 " src="/img/obrassociales/bristol.png" alt="" />
-            </div> -->
             <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
               <img class="h-20 " src="/img/obrassociales/galeno.png" alt="" />
             </div>
@@ -130,13 +126,13 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="bg-gray-100">
           <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
             <div>
                 <h2 class="text-base font-semibold text-blue-600 uppercase tracking-wide">Lorem ipsum.</h2>
-                <p class="mt-2 text-3xl font-extrabold text-gray-900">Analisis Clinicos</p>
+                <p class="mt-2 text-3xl font-extrabold text-gray-900">Análisis Clinicos</p>
                 <p class="mt-4 text-lg text-gray-500">Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla nec.</p>
             </div>
             <div class="mt-12 lg:mt-0 lg:col-span-2">
@@ -155,10 +151,58 @@
           </div>
       </div>
 
-      <section class="text-gray-600 body-font relative">
+      <!-- Testimonial section -->
+      <div class="pb-16 bg-gradient-to-r from-blue-500 to-blue-800 lg:pb-0 lg:z-10 lg:relative">
+        <div class="lg:mx-auto lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-4 lg:gap-8">
+          <div class="relative lg:col-span-2 lg:-my-8 shadow-xl rounded-2xl overflow-hidden  ">
+              <iframe  width="100%" height="100%" 
+                                        style="border:0;" frameborder="0" marginheight="0" marginwidth="0" 
+                                        title="map" scrolling="no" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1081.944959699275!2d-58.39016251175489!3d-34.70911644321135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccd2349da42d1%3A0x5137a310ec6e1bbc!2sDEL%20SUR%20An%C3%A1lisis%20Cl%C3%ADnicos!5e0!3m2!1ses-419!2sar!4v1660225044066!5m2!1ses-419!2sar"></iframe>            
+          </div>
+          <div class="mt-12 lg:m-0 lg:col-span-2 lg:pl-8">
+            <div class="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 lg:px-0 lg:py-20 lg:max-w-none">
+            <!-- <div class="max-w-lg mx-auto"> -->
+              <h2 class="text-2xl font-extrabold tracking-tight text-gray-200 sm:text-3xl">Contactanos</h2>
+              <p class="mt-3 text-lg leading-6 text-gray-50">Nullam risus blandit ac aliquam justo ipsum. Quam mauris volutpat massa dictumst amet. Sapien tortor lacus arcu.</p>
+              <dl class="mt-8 text-base text-gray-100">
+                <div>
+                  <dt class="sr-only">Postal address</dt>
+                  <dd>
+                    <p>Margarita Weild 1200</p>
+                    <p>Lanús Este, Prov. Buenos Aires</p>
+                  </dd>
+                </div>
+                <div class="mt-6">
+                  <dt class="sr-only">Phone number</dt>
+                  <dd class="flex">
+                    <PhoneIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
+                    <span class="ml-3"> 4225-0789 / 4249-8651</span>
+                  </dd>
+                </div>
+                <div class="mt-3">
+                  <dt class="sr-only">Email</dt>
+                  <dd class="flex">
+                    <MailIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
+                    <span class="ml-3">labdelsur@yahoo.com.ar</span>
+                  </dd>
+                </div>
+                <div class="mt-3">
+                  <dt class="sr-only">Email</dt>
+                  <dd class="flex">
+                    <ClockIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
+                    <span class="ml-3">Lunes a Viernes 7:30 a 18:00 / Sábados 7:30 a 13:00</span>
+                  </dd>
+                </div>
+              </dl>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <section class="text-gray-600 body-font relative">
         <div class="absolute inset-0 bg-gray-300">
-          <iframe  width="100%" height="100%" style="border:0;" frameborder="0" marginheight="0" marginwidth="0" title="map" scrolling="no" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1081.944959699275!2d-58.39016251175489!3d-34.70911644321135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccd2349da42d1%3A0x5137a310ec6e1bbc!2sDEL%20SUR%20An%C3%A1lisis%20Cl%C3%ADnicos!5e0!3m2!1ses-419!2sar!4v1660225044066!5m2!1ses-419!2sar"></iframe>
         </div>
         <div class="container px-5 py-24 mx-auto flex">
           <div class="lg:w-1/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
@@ -195,15 +239,10 @@
                   </dd>
                 </div>
               </dl>
-              <!-- <p class="mt-6 text-base text-gray-500">
-                Looking for careers?
-                {{ ' ' }}
-                <a href="#" class="font-medium text-gray-700 underline">View all job openings</a>.
-              </p> -->
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
 
       <div class="bg-gray-50">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:py-16 sm:px-6 lg:px-8">
@@ -453,12 +492,12 @@ const features = [
     icon: UsersIcon,
   },
   {
-    name: 'Spam Report',
+    name: 'Resultados online',
     description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
     icon: TrashIcon,
   },
   {
-    name: 'Compose in Markdown',
+    name: '',
     description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
     icon: PencilAltIcon,
   },
@@ -466,22 +505,7 @@ const features = [
     name: 'Team Reporting',
     description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
     icon: DocumentReportIcon,
-  },
-  {
-    name: 'Saved Replies',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
-    icon: ReplyIcon,
-  },
-  {
-    name: 'Email Commenting',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
-    icon: ChatAltIcon,
-  },
-  {
-    name: 'Connect with Customers',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
-    icon: HeartIcon,
-  },
+  }
 ]
 const metrics = [
   { id: 1, stat: '8K+', emphasis: 'Companies', rest: 'use laoreet amet lacus nibh integer quis.' },
@@ -489,6 +513,7 @@ const metrics = [
   { id: 3, stat: '98%', emphasis: 'Customer satisfaction', rest: 'laoreet amet lacus nibh integer quis.' },
   { id: 4, stat: '12M+', emphasis: 'Issues resolved', rest: 'lacus nibh integer quis.' },
 ]
+
 const footerNavigation = {
   solutions: [
     { name: 'Marketing', href: '#' },

@@ -25,6 +25,9 @@ use App\Http\Controllers\Web\HomeController;
 Route::get('/',[HomeController::class, 'index'])
        ->name('home');
 
+Route::get('/preguntas-frecuentes',[HomeController::class, 'faq'])
+       ->name('preguntas-frecuentes');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard')
         ->middleware('auth');    
@@ -32,7 +35,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/whatsapp/sendtest', [WhatsappController::class,'sendTest' ])
         ->name('whatsapp.sendtest')
         ->middleware('auth');
-
 
 Route::get('/messages/list', [MessagesController::class,'list' ])
         ->name('messages.list')
