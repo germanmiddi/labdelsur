@@ -26,11 +26,11 @@ class DatabaseSeeder extends Seeder
         //     CitiesTableSeeder::class,
         // ]);
 
-        \App\Models\User::create([
-            'name' => 'German Middi',
-            'email' => 'g@gmail.com',
-            'password' => bcrypt('Inicio123')
-        ]);
+        // \App\Models\User::create([
+        //     'name' => 'German Middi',
+        //     'email' => 'g@gmail.com',
+        //     'password' => bcrypt('Inicio123')
+        // ]);
 
         \App\Models\DetailDay::create([
             'num_day' => '1',
