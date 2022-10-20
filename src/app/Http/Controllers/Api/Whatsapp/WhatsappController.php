@@ -87,16 +87,16 @@ class WhatsappController extends Controller
         switch($step){
         
             case '0':
-                $text = "Buen día 👋, soy tu asistente virtual 🤖​. \nPuedo ayudarte con los siguientes temas:\n";
+                $text = "Hola 👋 te comunicaste con *_DEL SUR ANALISIS CLINICOS_*, soy tu asistente virtual 🤖​. \nPuedo ayudarte con los siguientes temas:\n";
                 $text .= "\n ".$this->emojis[1]." Turno para atención *sólo para obra social UTA*.";
                 $text .= "\n ".$this->emojis[2]." ¿Cómo obtener mis resultados?";
                 $text .= "\n ".$this->emojis[3]." Horario de atención y ubicación.";
                 $text .= "\n ".$this->emojis[4]." Extracciones a domicilio.";
                 $text .= "\n ".$this->emojis[5]." COVID 19";
                 $text .= "\n ".$this->emojis[6]." Indicaciones de estudios";
-                $text .= "\n ".$this->emojis[7]." Coberturas";
+                /* $text .= "\n ".$this->emojis[7]." Coberturas";
                 $text .= "\n ".$this->emojis[8]." Autorización de órdenes";
-                $text .= "\n ".$this->emojis[9]." Presupuestos";
+                $text .= "\n ".$this->emojis[9]." Presupuestos"; */
                 
                 break;
 
@@ -145,7 +145,7 @@ class WhatsappController extends Controller
                 $text = $data['text'];
                 break;
 
-            case '0.7':
+            /* case '0.7':
                 $text = "";
                 break;
             
@@ -155,9 +155,9 @@ class WhatsappController extends Controller
             
             case '0.9':
                 $text = "";
-                break;
+                break; */
             default:
-                $text = "No entendi eso.";
+                $text = "No entendi eso 🤔​.";
                 break;
         }
 
@@ -429,17 +429,19 @@ class WhatsappController extends Controller
         
         if($message === '#' || $prev_step == 0){
             $current_step = '';
-        }else if($prev_step != 0 && intval($message) > 0 && intval($message) <= intval($setting->value)){
-                $current_step .= 'T';    
-            }else if($current_step === 'T'){
-                $current_step .= '.N';
-                }else if($current_step === 'T.N'){
-                    $current_step .= '.D';
-                    }else{ 
-                        $current_step .= '.'. $message;
-                    }
+        }else if($message === '*' || $prev_step == 0){
+            $current_step .= 'U';
+            }else if($prev_step != 0 && intval($message) > 0 && intval($message) <= intval($setting->value)){
+                    $current_step .= 'T';    
+                }else if($current_step === 'T'){
+                    $current_step .= '.N';
+                    }else if($current_step === 'T.N'){
+                        $current_step .= '.D';
+                        }else{ 
+                            $current_step .= '.'. $message;
+                        }
         
-                    switch ($current_step) {
+        switch ($current_step) {
             case '':
                 $text = "🗓️ Los próximos turnos disponibles son días en el horario de ⌚️ 7:30 a 10:00 hs. \nPara confirmar su turno digite el número del día que quiere asistir:\n";
                 $bookingController = new BookingController();
@@ -448,9 +450,10 @@ class WhatsappController extends Controller
                 if($bookings['code'] == 200){
                     $pos = 1;
                     foreach ($bookings['data'] as $booking) {
-                        $text .= "\n ".$this->emojis[$pos].". Dia ".Carbon::parse($booking)->format("d-m-Y").".";
+                        $text .= "\n".$this->emojis[$pos].". Dia ".Carbon::parse($booking)->format("d-m-Y").".";
                         $pos++;
                     }
+                    $text .= "\n*️⃣​ Necesito un turno más urgente.";
                 }else{
                     $text .= "\nNo tenemos disponbilidad de turnos intente con otra fecha.";
                 }
@@ -517,6 +520,10 @@ class WhatsappController extends Controller
                     $text = "⛔ No ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
                 } 
                 break;
+
+            case ('U'):
+                $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
+                break;
             
             default:
                 $text = "No entendi eso.";
@@ -524,7 +531,7 @@ class WhatsappController extends Controller
                 
         }
         if($current_step != ''){
-            $text .= "\n\n#️⃣ Presione para volver al menú de turnos.";
+            $text .= "\n\n#️⃣ Menú anterior.";
         }
 
         return ['id' => $current_step == '' ? $base_step : $base_step.'.'.$current_step,
@@ -587,7 +594,7 @@ class WhatsappController extends Controller
                 
         }
         if($current_step != ''){
-            $text .= "\n\n#️⃣ Presione para volver al menú anterior.";
+            $text .= "\n\n#️⃣ Menú anterior.";
         }
 
         return ['id' => $current_step == '' ? $base_step : $base_step.'.'.$current_step,
@@ -705,7 +712,7 @@ class WhatsappController extends Controller
                 
         }
         if($current_step != ''){
-            $text .= "\n\n#️⃣ Presione para volver al menú anterior.";
+            $text .= "\n\n#️⃣ Menú anterior.";
         }
 
         return ['id' => $current_step == '' ? $base_step : $base_step.'.'.$current_step,
