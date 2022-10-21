@@ -23,11 +23,13 @@ class HomeController extends Controller
 
     public function faq()
     {
-        return  Inertia::render('Web/Faq', [
+        return  Inertia::render('Web/Faq', [            
+        ]);
+    }    
 
-
-
-            
+    public function osociales()
+    {
+        return  Inertia::render('Web/ObrasSociales', [            
         ]);
     }    
 

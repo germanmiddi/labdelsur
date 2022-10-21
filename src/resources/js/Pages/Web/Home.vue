@@ -4,7 +4,7 @@
       <Popover class="relative bg-white">
         <div class="flex justify-between items-center max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
           <div class="flex justify-start lg:w-0 lg:flex-1">
-            <a href="#">
+            <a :href="route('home')">
               <img class="w-32" src="/img/logo.png" />
             </a>
           </div>
@@ -18,6 +18,7 @@
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS </a>
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
             <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES </a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a>
           </PopoverGroup>
         </div>
@@ -27,9 +28,6 @@
             <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white divide-y-2 divide-gray-50">
               <div class="pt-5 pb-6 px-5">
                 <div class="flex items-center justify-between">
-                  <div>
-                    <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-purple-600-to-blue-600.svg" alt="Workflow" />
-                  </div>
                   <div class="-mr-2">
                     <PopoverButton class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
                       <span class="sr-only">Close menu</span>
@@ -37,31 +35,14 @@
                     </PopoverButton>
                   </div>
                 </div>
-                <div class="mt-6">
-                  <nav class="grid grid-cols-1 gap-7">
-                    <a v-for="item in solutions" :key="item.name" :href="item.href" class="-m-3 p-3 flex items-center rounded-lg hover:bg-gray-50">
-                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-                        <component :is="item.icon" class="h-6 w-6" aria-hidden="true" />
-                      </div>
-                      <div class="ml-4 text-base font-medium text-gray-900">
-                        {{ item.name }}
-                      </div>
-                    </a>
-                  </nav>
-                </div>
               </div>
               <div class="py-6 px-5">
-                <div class="grid grid-cols-2 gap-4">
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700"> Pricing </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700"> Partners </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700"> Company </a>
-                </div>
-                <div class="mt-6">
-                  <a href="#" class="w-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:from-purple-700 hover:to-blue-700"> Sign up </a>
-                  <p class="mt-6 text-center text-base font-medium text-gray-500">
-                    Existing customer?
-                    <a href="#" class="text-gray-900"> Sign in </a>
-                  </p>
+                <div class="flex flex-col">
+                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> NOSOTROS </a>
+                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> RESULTADOS </a>
+                  <a :href="route('preguntas-frecuentes')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> PREGUNTAS FRECUENTES </a>
+                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
+                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> UBICACIÓN </a>
                 </div>
               </div>
             </div>
@@ -94,49 +75,20 @@
               </h1>
               <p class="mt-6 max-w-lg mx-auto text-center text-xl text-blue-200 sm:max-w-3xl">
                 Somos el laboratorio reconocido por brindar servicios de calidad y confiables, por la calidez de nuestra atención y la rapidez en la entrega de protocolos.</p>
-              <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
-                <div class="space-y-4 sm:space-y-0 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5">
-                  <a href="#" class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-700 bg-white hover:bg-blue-50 sm:px-8 tracking-wide"> Resultados</a>
-                  <a href="#" class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 bg-opacity-60 hover:bg-opacity-70 sm:px-8 tracking-wide">TURNOS</a>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Logo Cloud -->
-      <!-- <div class="bg-gray-100">
-        <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-          <div class="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
-            <div class="col-span-2 flex justify-center md:col-span-2 md:col-start-4 lg:col-span-1">
-              <img class="h-20 " src="/img/obrassociales/swiss.png" alt="" />
-            </div>
-            <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-              <img class="h-20 " src="/img/obrassociales/galeno.png" alt="" />
-            </div>
-            <div class="col-span-1 flex justify-center md:col-span-2 md:col-start-2 lg:col-span-1">
-              <img class="h-20 " src="/img/obrassociales/medife.png" alt="" />
-            </div>
-            <div class="col-span-2 flex justify-center md:col-span-2 md:col-start-4 lg:col-span-1">
-              <img class="h-20 " src="/img/obrassociales/pami.png" alt="" />
-            </div>
-            <div class="col-span-2 flex justify-center md:col-span-2 md:col-start-4 lg:col-span-1">
-              <img class="h-20 " src="/img/obrassociales/sancorsalud.png" alt="" />
-            </div>
-          </div>
-        </div>
-      </div> -->
-
       <div class="bg-gray-100">
-          <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
+          <div class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
             <div>
                 <h2 class="text-base font-semibold text-blue-600 uppercase tracking-wide">Lorem ipsum.</h2>
                 <p class="mt-2 text-3xl font-extrabold text-gray-900">Análisis Clinicos</p>
                 <p class="mt-4 text-lg text-gray-500">Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla nec.</p>
             </div>
             <div class="mt-12 lg:mt-0 lg:col-span-2">
-                <dl class="space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:grid-rows-4 sm:grid-flow-col sm:gap-x-6 sm:gap-y-10 lg:gap-x-8">
+                <dl class="space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:grid-flow-col sm:gap-x-6 sm:gap-y-10 lg:gap-x-8">
                     <div v-for="feature in features" :key="feature.name" class="relative">
                         <dt>
                             <CheckIcon class="absolute h-6 w-6 text-green-500" aria-hidden="true" />
@@ -151,7 +103,7 @@
           </div>
       </div>
 
-      <!-- Testimonial section -->
+      <!-- Contacto -->
       <div class="pb-16 bg-gradient-to-r from-blue-500 to-blue-800 lg:pb-0 lg:z-10 lg:relative">
         <div class="lg:mx-auto lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-4 lg:gap-8">
           <div class="relative lg:col-span-2 lg:-my-8 shadow-xl rounded-2xl overflow-hidden  ">
@@ -201,79 +153,84 @@
         </div>
       </div>
 
-      <!-- <section class="text-gray-600 body-font relative">
-        <div class="absolute inset-0 bg-gray-300">
-        </div>
-        <div class="container px-5 py-24 mx-auto flex">
-          <div class="lg:w-1/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
-            <div class="max-w-lg mx-auto">
-              <h2 class="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">Contactanos</h2>
-              <p class="mt-3 text-lg leading-6 text-gray-500">Nullam risus blandit ac aliquam justo ipsum. Quam mauris volutpat massa dictumst amet. Sapien tortor lacus arcu.</p>
-              <dl class="mt-8 text-base text-gray-500">
-                <div>
-                  <dt class="sr-only">Postal address</dt>
-                  <dd>
-                    <p>Margarita Weild 1200</p>
-                    <p>Lanús Este, Prov. Buenos Aires</p>
-                  </dd>
-                </div>
-                <div class="mt-6">
-                  <dt class="sr-only">Phone number</dt>
-                  <dd class="flex">
-                    <PhoneIcon class="flex-shrink-0 h-6 w-6 text-blue-500" aria-hidden="true" />
-                    <span class="ml-3"> 4225-0789 / 4249-8651</span>
-                  </dd>
-                </div>
-                <div class="mt-3">
-                  <dt class="sr-only">Email</dt>
-                  <dd class="flex">
-                    <MailIcon class="flex-shrink-0 h-6 w-6 text-blue-500" aria-hidden="true" />
-                    <span class="ml-3">labdelsur@yahoo.com.ar</span>
-                  </dd>
-                </div>
-                <div class="mt-3">
-                  <dt class="sr-only">Email</dt>
-                  <dd class="flex">
-                    <ClockIcon class="flex-shrink-0 h-6 w-6 text-blue-500" aria-hidden="true" />
-                    <span class="ml-3">Lunes a Viernes 7:30 a 18:00 / Sábados 7:30 a 13:00</span>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-        </div>
-      </section> -->
-
+      <!-- FAQ -->
       <div class="bg-gray-50">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:py-16 sm:px-6 lg:px-8">
-          <div class="max-w-3xl mx-auto divide-y-2 divide-gray-200">
-            <h2 class="text-center text-3xl font-extrabold text-gray-900 sm:text-4xl">Preguntas Frecuentes
-              <p class="mt-3 text-lg leading-6 font-normal text-gray-500">Aquí encontrará las respuestas a las consultas más comunes, si no encuentra la información que necesita puede contactarnos por whatsapp.</p>  
-            </h2>
-            
-            <dl class="mt-6 space-y-6 divide-y divide-gray-200">
-              <Disclosure as="div" v-for="faq in faqs" :key="faq.question" class="pt-6" v-slot="{ open }">
-                <dt class="text-lg">
-                  <DisclosureButton class="text-left w-full flex justify-between items-start text-gray-400">
-                    <span class="font-medium text-gray-900">
-                      {{ faq.question }}
-                    </span>
-                    <span class="ml-6 h-7 flex items-center">
-                      <ChevronDownIcon :class="[open ? '-rotate-180' : 'rotate-0', 'h-6 w-6 transform']" aria-hidden="true" />
-                    </span>
-                  </DisclosureButton>
+        <div class="max-w-7xl mx-auto py-16 px-4 divide-y-2 divide-gray-200 sm:py-24 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center">
+            <h2 class="text-3xl font-extrabold text-gray-900">Preguntas Frecuentes</h2>
+            <a :href="route('obras-sociales')" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
+          </div>
+          
+          <div class="mt-6 pt-10">
+            <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+              <div v-for="faq in faqs" :key="faq.id">
+                <dt class="text-lg leading-6 font-medium text-gray-900">
+                  {{ faq.question }}
                 </dt>
-                <DisclosurePanel as="dd" class="mt-2 pr-12">
-                  <p class="text-base text-gray-500">
-                    {{ faq.answer }}
-                  </p>
-                </DisclosurePanel>
-              </Disclosure>
+                <dd class="mt-2 text-base text-gray-500">
+                  {{ faq.answer }}
+                </dd>
+              </div>
             </dl>
           </div>
         </div>
       </div>
 
+      <!-- Obras Sociales -->
+      <div class="bg-white">
+        <div class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+              <h3 class="mb-8 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Atendemos más de 50 obras sociales</h3>
+              <a :href="route('obras-sociales')" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/uta.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/ioma.jpeg" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/galeno.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/pami.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/omint.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/sancorsalud.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/swiss.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/osmecon.jpeg" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/osde.png" alt="" />
+              </div>
+            </div>
+
+        </div>
+      </div>
+
+      <div class="bg-white relative pb-4">
+        <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-24 bg-gray-50" />  
+        <div class="relative max-w-4xl mx-auto py-14  px-6  sm:px-6 sm:py-18 lg:max-w-7xl lg:px-8 lg:flex lg:items-center lg:justify-between bg-gray-200 rounded-2xl shadow-lg">
+            <h2 class="tracking-tight  sm:text-4xl">
+            <span class="text-3xl font-extrabold block text-gray-500">Si sos paciente de UTA</span>
+            <span class="text-4xl font-extrabold block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">No olvides sacar tu turno de atención</span>
+            </h2>
+            <div class=" space-y-4 sm:space-y-0 sm:flex sm:space-x-5">
+            <a href="https://wa.me/5491126887264?text=Hola" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">TURNOS UTA</a>
+            </div>
+        </div>
+      </div>
+
+      <!-- Nosotros -->
       <div class="overflow-hidden relative">
         <div aria-hidden="true" class="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-gray-50 " />
         <div class="relative max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
@@ -326,7 +283,7 @@
         </div>
       </div>
 
-      <!-- <div class="bg-gray-50 pt-12 sm:pt-16">
+      <!-- <div class="bg-white pt-12 sm:pt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="max-w-4xl mx-auto text-center">
             <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Trusted by developers from over 80 planets</h2>
@@ -368,11 +325,10 @@
             <span class="block bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">Accede desde aquí al portal de resultados</span>
             </h2>
             <div class="mt-6 space-y-4 sm:space-y-0 sm:flex sm:space-x-5">
-            <a href="#" class="flex items-center justify-center bg-gradient-to-r from-blue-700 to-blue-500 bg-origin-border px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white hover:from-purple-700 hover:to-blue-700">INGRESAR</a>
-            <a href="#" class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-800 bg-blue-50 hover:bg-blue-100">Consultas</a>
+            <a href="#" class="flex items-center justify-center bg-blue-500 bg-origin-border px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white hover:bg-blue-600">INGRESAR</a>
+            <a href="https://wa.me/5491126887264?text=Hola" class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-800 bg-blue-50 hover:bg-blue-100">Más información</a>
             </div>
         </div>
-                
       </div>
 
     </main>
@@ -383,11 +339,12 @@
         <div class="mb-8">
           <img class="w-52" src="/img/logo.png" />
         </div>
-        <div class="w-1/2">
-          <ul class="flex justify-between text-gray-700">
+        <div class="w-1/2 md:w-5/6">
+          <ul class="flex justify-between text-gray-700 flex-col items-center md:flex-row">
             <li>NOSOTROS</li>
             <li>RESULTADOS</li>
-            <li>TURNOS</li>
+            <li>PREGUNTAS FRECUENTES</li>
+            <li>OBRAS SOCIALES</li>
             <li>UBICACIÓN</li>
           </ul>
         </div>
@@ -396,6 +353,7 @@
         </div>
       </div>
     </footer>
+
   </div>
 </template>
 
@@ -446,17 +404,7 @@ const faqs = [
     answer:
       'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
   },
-  {
-    question: 'How do you make holy water?',
-    answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
-  },
-  {
-    question: 'How do you make holy water?',
-    answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
-  },
-  // More questions...
+
 ]
 
 const solutions = [
@@ -495,11 +443,6 @@ const features = [
     name: 'Resultados online',
     description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
     icon: TrashIcon,
-  },
-  {
-    name: '',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
-    icon: PencilAltIcon,
   },
   {
     name: 'Team Reporting',

@@ -65,24 +65,61 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="relative shadow-xl sm:rounded-2xl sm:overflow-hidden">
             <div class="absolute inset-0">
-              <img class="h-full w-full object-cover" src="/img/faq.jpg" alt="" />
+              <img class="h-full w-full object-cover" src="/img/os.jpeg" alt="" />
               <div class="absolute inset-0 bg-gradient-to-r from-blue-800 to-gray-500 mix-blend-multiply" />
             </div>
             <div class="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8">
               <h1 class="text-center text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                <span class="block text-white">PREGUNTAS FRECUENTES</span>
+                <span class="block text-white">OBRAS SOCIALES</span>
               </h1>
-
-              <div class="mt-10 max-w-sm mx-auto flex justify-center">
+              <p class="mt-6 max-w-lg mx-auto text-center text-2xl text-blue-200 sm:max-w-3xl">Atendemos más de 50 obras sociales</p>
+              <!-- <div class="mt-10 max-w-sm mx-auto flex justify-center">
                   <input class="w-64 rounded-md mr-2" type="text"  v-model="filtro"/>
                   <a href="#" 
                      @click="filtroInput"
                      class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">BUSCAR</a>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
       </div>
+
+      <div class="bg-white">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+           
+            <div class="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/uta.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/ioma.jpeg" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/galeno.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/pami.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/omint.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/sancorsalud.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/swiss.png" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/osmecon.jpeg" alt="" />
+              </div>
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+                <img class="h-20 " src="/img/obrassociales/osde.png" alt="" />
+              </div>
+            </div>
+
+        </div>
+      </div>
+
 
       <div class="bg-gradient-to-b from-white to-gray-100">
        
@@ -97,14 +134,14 @@
 
           <div v-if="!this.faqsFiltered" class="mt-8">
             <dl class="divide-y divide-gray-200">
-              <div v-for="faq in faqs" :key="faq.id" >
+              <div v-for="faq in os" :key="faq.id" >
                 <div v-if="faq.show" class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
                   <dt class="text-base font-medium text-blue-900 md:col-span-5">
-                    {{ faq.question }}
+                    {{ faq.name }}
                   </dt>
                   <dd class="mt-2 md:mt-0 md:col-span-7">
                     <p class="text-base text-gray-500">
-                      {{ faq.answer }}
+                      {{ faq.description }}
                     </p>
                   </dd>
                 </div>
@@ -112,16 +149,16 @@
             </dl>
           </div>
 
-          <div v-if="this.faqsFiltered" class="mt-8">
+          <div v-if="this.osFiltered" class="mt-8">
             <dl class="divide-y divide-gray-200">
-              <div v-for="faq in faqsFiltered" :key="faq.id" >
+              <div v-for="faq in osFiltered" :key="faq.id" >
                 <div v-if="faq.show" class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
                   <dt class="text-base font-medium text-gray-900 md:col-span-5">
-                    {{ faq.question }}
+                    {{ faq.name }}
                   </dt>
                   <dd class="mt-2 md:mt-0 md:col-span-7">
                     <p class="text-base text-gray-500">
-                      {{ faq.answer }}
+                      {{ faq.description }}
                     </p>
                   </dd>
                 </div>
@@ -152,7 +189,7 @@
     </main>
  
 
-<footer class="bg-gray-50" aria-labelledby="footer-heading">
+    <footer class="bg-gray-50" aria-labelledby="footer-heading">
       <div class="max-w-7xl mx-auto pt-12 pb-8 px-4 sm:px-6 lg:pt-20 lg:px-8 flex flex-col items-center">
         <div class="mb-8">
           <img class="w-52" src="/img/logo.png" />
@@ -201,141 +238,406 @@ import {
 
 import { CheckIcon } from '@heroicons/vue/outline'
 
-const faqs = [
+const os = [
   { 
-    question: '¿CUÁL ES EL HORARIO DE ATENCIÓN?',
-    answer:   'LUNES A VIERNES DE 7:30 A 18:00 HS. SÁBADOS DE 7:30 A 13:00 HS.',
+    name: 'GALENO',
+    description: 'Obra Social ....',
     show: true
   },
-  { 
-    question: '¿CUAL ES EL HORARIO DE EXTRACCIÓN?',
-    answer: 'LUNES A SÁBADOS DE 7:30 A 10:00 HS.',
+  {  
+    name: 'PAMI',
+    description: 'Obra Social ....',
     show: true
   },
-  { 
-    question: '¿Necesito orden médica para realizar un hisopado de detección de Covid?',
-    answer: 'No es necesario contar con orden médica. Puede consultar presupuesto y horarios por WhatsApp al cel: 1127714569.',
+  {  
+    name: 'OMINT',
+    description: 'Obra Social ....',
     show: true
+  },
+  {  
+    name: 'OSDE',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'SWISS MEDICAL',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'SANCOR',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSMECOM',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'UTA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSSEG',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'COMEI',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'CENTRO MEDICO PUEYRREDON',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSMECON',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPLAD',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: '',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'SANCOR',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSDOP',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPILM',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSFATUN',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'AMFFA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'SADAIC',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'LUIS PASTEUR',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSDEPYM',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPTV',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'ENSALUD',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'PREVENCION SALUD',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPRERA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSAPM',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSJERA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'AVALIAN/ACA SALUD',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'SANCOR',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPEPBA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPPRA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'ESCRIBANOS',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPESA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OPDEA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPIM',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'AMEBPBA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPPCYQ',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSEIV',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSAP',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPEDYC',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'CASA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'UNO SALUD',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'CEA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'APSOT',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'FUTBOLISTAS',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'STAFF MEDICO',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'PODER JUDICIAL',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSIAD',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'APOC',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'SIMA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'SOEME',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'SOSBA',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'COMEI',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'OSPOCE',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: 'AMCI',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: '',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: '',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {  
+    name: '',
+    description: 'Obra Social ....',
+    show: true
+  },
+  {
+    name:'OSFATLYF',
+    description:'Obra Social ....',
+    show:true
   },
 
-  {  
-    question: '¿Cuántas horas de ayuno necesito?',
-    answer: '12 hs. de ayuno, cuando se analice: Colesterol, Triglicéridos, HDL, LDL o Hepatograma. 8 hs. de ayuno para el resto de los análisis. Cortisol y curva de glucemia: La extracción debe realizarse entre las 7:30 y las 8:00 AM con 8 hs de ayuno. Prolactina: 8 hs de ayuno y concurrir al laboratorio con 2 horas de haberse levantado, sin haber hecho esfuerzo ni actividad física.',
-    show: true
+  {
+    name:'OSFOT',
+    description:'Obra Social ....',
+    show:true
   },
-  {  
-    question: '¿Qué requisitos necesitan las recetas médicas de obras sociales o prepagas?',
-    answer: 'Todas las órdenes deben contar con fecha, firma, sello del médico, datos personales, número de afiliado y diagnóstico.',
-    show: true
+
+  {
+    name:'OSEMM',
+    description:'Obra Social ....',
+    show:true
   },
-  {  
-    question: '¿Qué validez tienen las recetas?',
-    answer: 'SWISS MEDICAL, PAMI, OSDEPYM: 90 días. OSDE, GALENO: 60 días. UTA: 60 días desde su autorización. PREVENCIÓN SALUD, OSMECON: 30 días. Esto varía según su cobertura, puede consultar por whatsapp al 1127714569. ',
-    show: true
+
+  {
+    name:'FATFA',
+    description:'Obra Social ....',
+    show:true
   },
-  {  
-    question: 'Como puedo realizarme estudios si no cuento con obra social ni prepaga',
-    answer: 'Si no posee obra social o la suya no está dentro de coberturas, puede enviar una foto de su orden por WhatsApp al 1127714569 y le informaremos el importe y formas de pago',
-    show: true
+
+  {
+    name:'JERARQUICOS SALUD',
+    description:'Obra Social ....',
+    show:true
   },
-  {  
-    question: '¿Con qué Obras sociales y prepagas trabajan?',
-    answer: 'Puede consultar las coberturas aqui (link)',
-    show: true
+
+  {
+    name:'CAJA NOTARIAL',
+    description:'Obra Social ....',
+    show:true
   },
-  {  
-    question: 'Cómo hacer la recolección de orina?',
-    answer: 'Para recolectar la muestra de sedimento u orina completa utilice el envase que prefiera y recolecte la primera orina de su mañana o en su defecto una orina con 4 hs. de retencion previas',
-    show: true
+
+  {
+    name:'GRUPO SAN NICOLAS',
+    description:'Obra Social ....',
+    show:true
   },
-  {  
-    question: '¿Cómo hacer la recolección de orina 24 horas?',
-    answer: 'Debe descartar la primer orina, luego recolectar todas las restantes durante 24 horas hasta la primera del día siguiente inclusive. La misma debe recolectarse en botellas de agua mineral o gaseosa bien lavadas. Recuerde que es indispensable contar el total de la orina en ese periodo',
-    show: true
-  },
-  {  
-    question: '¿Cuál es la preparación y la muestra para sangre oculta en materia fecal?',
-    answer: 'Condiciones previas a la recolección de la muestra:   Durante tres días consecutivos el/la paciente evitará comer carne roja y alimentos que contengan sangre. Deberá evitarse la ingestión de: rábanos, nabos y cacao. Los analgésicos y antirreumáticos no son aconsejables durante estos tres días. Al cuarto día recolectar en un frasco de boca ancha bien limpio y seco una porción de una deposición espontánea  (no recolectar orina). Aclarar si el paciente sufre de hemorroides. Rotular con nombre y apellido. Podrá retirar el frasco en cualquiera de nuestras sucursales presentando la orden/DNI del paciente.',
-    show: true
-  },
-  {  
-    question: 'Me indicaron un análisis Parasitológico o de Coprocultivo, ¿dónde debo retirar el frasco?¿Cuáles son las indicaciones?',
-    answer: 'Puede acercarse cualquier día en nuestro horario de atención para retirar los materiales y las instrucciones necesarias',
-    show: true
-  },
-  {  
-    question: '¿Debo dejar de tomar mi medicación habitual para realizar los estudios?',
-    answer: 'Si toma medicación para las tiroides y le piden estudios para el dosaje de las mismas debe tomar la medicación del día luego de la extracción. En caso de que tome otras medicaciones su médica/o le indicará cómo proceder.',
-    show: true
-  },
-  {  
-    question: '¿Cómo puedo ver mis resultados?',
-    answer: '',
-    show: true
-  },
-  {  
-    question: '¿Puede retirar los resultados otra persona?',
-    answer: 'Si, se pueden retirar con el ticket que se le entregó en el momento de la extracción.',
-    show: true
-  },
-  {  
-    question: 'Mi resultado aún no figura online.',
-    answer: 'Si ya se cumplió el tiempo previsto para la entrega de su resultado y aún no figura o figura en proceso, envíe un WhatsApp al 1127714569',
-    show: true
-  },
-  {  
-    question: '¿Cuáles son las indicaciones para el estudio micológico de uñas?',
-      answer: `3 días antes de concurrir al Laboratorio se deben hacer baños de agua tibia y sal, 3 veces por día durante 15 minutos en la uña o uñas afectadas. El día del estudio no debe tener esmaltes ni cremas. 
-              ¿Cuáles son las indicaciones para el análisis bacteriológico de orina? (Urocultivo)
-              Para mujeres o personas con vulva: 
-              Recolectar la primera orina de la mañana o en su defecto la orina con una retención no menor a  tres horas.
-              a) Se practicará un cuidadoso lavado de la zona genital  con abundante agua y jabón .
-              b) Secar con una toalla limpia y planchada, o con toallitas descartables.
-              c) Taponar el orificio vaginal con algodón o con un tampón vaginal.
-              d) Separar los labios y orinar desechando el primer chorro de la micción.
-              e) Recolectar la porción media de la micción en un frasco estéril.
-              f) Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.`,
-    show: true
-  },
-  {  
-    question: 'Para hombres o personas con pene:',
-      answer: `Recolectar la primera orina de la mañana o en su defecto la orina con una retención no menor a  tres horas.
-              a) Se practicará un cuidadoso lavado del pene con abundante agua y jabón.
-              b) Secar con una toalla limpia y planchada, o con toallitas descartables.
-              c) Rebatir el prepucio y orinar, desechando el primer chorro de la micción.
-              d) Recolectar la porción media de la micción en un frasco estéril.
-              e) Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.`,
-    show: true              
-  },
- 
-  {  
-    question: 'Bebés, niños y/o adultos que no controlan esfínteres:',
-      answer: `- Higienizar muy bien los genitales externos con agua y jabón.
-               - Recoger orina AL ACECHO en frasco estéril (una sola micción, no importa que la cantidad sea escasa). Tapar inmediatamente el frasco y conservar en heladera.`,
-       show: true
-  },
-  {  
-    question: '¿Hasta qué hora puedo realizar una curva de sobrecarga de glucosa?',
-      answer: `Este análisis puede hacerse entre las 7.30 y 8.30 horas.`,
-    show: true
-  },
-  {  
-    question: '¿Cuáles son las indicaciones para realizarme un cultivo de flujo?',
-      answer: `Durante las 72 hs. anteriores al estudio: 
-                - no tomar antibióticos.
-                - no colocarse ningún tipo de crema, talco, óvulos, etc. 
-                - no mantener relaciones sexuales. 
-                - no realizarse ecografías transvaginales. 
-                - no estar menstruando. 
-                El día del estudio: no utilizar bidet. 
-                ¿Cuáles son las indicaciones para realizarme un análisis de Antígeno Prostático Específico (PSA)?
-                Ayuno de 8 hs. (si tiene otros estudios como hepatograma o colesteroles considere que esto puede modificarse) 
-                Abstinencia sexual al menos 48 hs. previas a la extracción.
-                No haberse realizado en la semana previa tacto rectal o ecografía transrectal o biopsia.
-                No haber realizado ejercicios sentado (como andar en bicicleta o a caballo) al menos 48 hs. previas a la extracción.`,
-    show: true
-  }
+
+  {
+    name:'OSPSA',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'IOSFA',
+  description: 'Obra Social ....',
+  show:true},
+  {
+    name:'COLEGIO DE FARMACEUTICOS',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'ANDREANI',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'UPCN',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'MUNICIPALIDAD DE LANUS',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'DASMI',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'OSIAD',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'APOC',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'ATGGBA ',
+  description: 'Obra Social ....',
+  show:true},
+
+  {
+    name:'AMEM ',
+  description: 'Obra Social ....',
+  show:true}
+
+
+
 ]
+
+
+
+
+
 
 
 
@@ -462,7 +764,7 @@ export default {
   setup() {
     return {
       footerNavigation,
-      faqs,     
+      os,     
       
     }
   },
@@ -474,15 +776,15 @@ export default {
   },
   methods:{
     clearFilter(){
-      this.faqsFiltered = ""
+      this.osFiltered = ""
       this.filtro = ""
     },
 
     filtroInput(){
       let f = this.filtro
-      this.faqsFiltered = this.faqs.filter(function(obj){
-        if (obj.question.includes(f) 
-         || obj.answer.includes(f) ){
+      this.osFiltered = this.os.filter(function(obj){
+        if (obj.name.includes(f) 
+         || obj.description.includes(f) ){
           return obj
         }
       })

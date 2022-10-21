@@ -31,6 +31,9 @@ Route::get('/',[HomeController::class, 'index'])
 Route::get('/preguntas-frecuentes',[HomeController::class, 'faq'])
        ->name('preguntas-frecuentes');
 
+Route::get('/obras-sociales',[HomeController::class, 'osociales'])
+       ->name('obras-sociales');       
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard')
         ->middleware('auth');    
