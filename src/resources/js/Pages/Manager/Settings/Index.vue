@@ -36,9 +36,9 @@
 									</th>
 								</tr>
 								<tr v-for="day in list_days"
-									class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center hover:bg-gray-100 focus-within:bg-gray-100">
+									class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
 									<th scope="row"
-										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
 										{{day.description}}
 									</th>
 									<td class="py-4 px-6">
@@ -108,9 +108,9 @@
 									</th>
 								</tr>
 								<tr v-for="holiday in list_holidays"
-									class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center hover:bg-gray-100 focus-within:bg-gray-100">
+									class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
 									<th scope="row"
-										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap ">
 										{{format(holiday.date)}}
 
 									</th>

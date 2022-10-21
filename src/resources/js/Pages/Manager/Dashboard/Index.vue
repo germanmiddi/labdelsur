@@ -38,27 +38,31 @@
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer"
 								:class="[(c.message.status != 'read' ? 'bg-gradient-to-r from-blue-500 to-blue-300 hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-200' : '')]"
 								>
-								<div class="w-1/6 mr-4" @click="getMessages(c)">
+								<div class="w-2/12 mr-4" @click="getMessages(c)">
 									<div
 										class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
 										{{c.name.substr(0,2).toUpperCase()}}</div>
 								</div>
-								<div class="w-4/6" @click="getMessages(c)">
-									<div class="text-sm font-semibold text-white"
+								<div class="w-7/12" @click="getMessages(c)">
+									<div class="text-sm font-semibold text-white" 
 										:class="[(c.message.status != 'read' ? 'text-white' : 'text-black')]">{{ c.name
 										}}<br>
-										<span class="text-sm font-normal"
+										<span class="text-sm font-normal" 
 											:class="[(c.message.status != 'read' ? 'text-white' : 'text-gray-700')]">{{
 											c.wa_id }}</span>
 									</div>
 									
 								</div>
-								<div class="w-1/6">
-									<a type="button" @click="changeStatusBot(c.id)" title="Chat con asesor"
-									class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-									:class="c.bot_status ? 'bg-red-300 hover:bg-red-700' : 'bg-green-300 hover:bg-green-700'"
+								<div class="w-3/12 text-sm">
+									<a v-if="c.bot_status" type="button" @click="changeStatusBot(c.id)" title="Chat con asesor"
+									class="inline-flex items-center p-1 border border-transparent rounded-full bg-orange-300 hover:bg-orange-700 shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 									>
-									<Icons name="chat" class="h-4 w-4"></Icons>
+									<Icons name="cog" class="h-5 w-5"></Icons> Bot
+									</a>
+									<a v-else type="button" @click="changeStatusBot(c.id)" title="Chat con bot"
+									class="inline-flex items-center p-1 border border-transparent bg-green-300 hover:bg-green-700 rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+									>
+									<Icons name="chat" class="h-5 w-5"></Icons> Asesor
 									</a>
 								</div>
 							</div>
