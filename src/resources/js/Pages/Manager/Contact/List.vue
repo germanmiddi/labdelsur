@@ -93,9 +93,9 @@
 							</th>
 						</tr>
 						<tr v-for="contact in contacts.data"
-							class="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-center hover:bg-gray-100 focus-within:bg-gray-100">
+							class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
 							<th scope="row"
-								class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+								class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
 								{{contact.id}}
 							</th>
 							<td class="py-4 px-6">
@@ -109,14 +109,16 @@
 							</td>
 
 							<td class="py-4 px-6">
-								<a type="button" @click="changeStatusBot(contact.id)" title="Chat con asesor"
-									class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-									:class="contact.bot_status ? 'bg-red-300 hover:bg-red-700' : 'bg-green-300 hover:bg-green-700'"
-									
+								<a v-if="contact.bot_status" type="button" @click="changeStatusBot(contact.id)" title="Chat con asesor"
+									class="inline-flex items-center p-1 border border-transparent rounded-full bg-orange-300 hover:bg-orange-700 shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 									>
-									
-									<Icons name="chat" class="h-5 w-5"></Icons>
-								</a>
+									<Icons name="cog" class="h-5 w-5"></Icons> Bot
+									</a>
+									<a v-else type="button" @click="changeStatusBot(contact.id)" title="Chat con bot"
+									class="inline-flex items-center p-1 border border-transparent bg-green-300 hover:bg-green-700 rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+									>
+									<Icons name="chat" class="h-5 w-5"></Icons> Asesor
+									</a>
 							</td>
 						</tr>
 					</table>

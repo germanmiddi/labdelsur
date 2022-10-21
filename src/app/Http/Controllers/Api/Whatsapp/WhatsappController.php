@@ -60,7 +60,7 @@ class WhatsappController extends Controller
         
         $prev_menu = Message::where('wa_id', $wa_id)
                             ->where('response','!=','')   
-                            ->orderBy('updated_at', 'desc')
+                            ->orderBy('created_at', 'desc')
                        
                             ->first();
         
@@ -72,13 +72,17 @@ class WhatsappController extends Controller
         
         $setting =  Setting::where('module', 'BOOKING')->where('key', 'cant_days_booking')->first();
         
-        if($prev_menu && $message != 0 && $last_date){
+        if($prev_menu && $message != 0 && $last_date && $prev_menu != 'asesor'){
             $prev_step = $prev_menu->response;
             $current_step = $prev_step . '.' . $message;
 
             //GENERO UNA VARIABLE PARA EL SWITCH
             $steps = explode('.', $current_step);
             $step = $steps[0].'.'.$steps[1];
+            if($steps[0] == 'asesor'){
+                $current_step = 0;
+                $step = 0;
+            }
         }else{
             $current_step = 0;
             $step = 0;
@@ -207,7 +211,9 @@ class WhatsappController extends Controller
                 $a = json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]);
                 Log::info('soy un mensaje '. $a);
                 Log::info('FILE: '. json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']));
-                switch (str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']))) {
+                $type_msg = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']));
+                
+                switch ($type_msg) {
                     case 'text':
                             $wa_id = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']) 
                                 ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
@@ -228,11 +234,12 @@ class WhatsappController extends Controller
                             $contact = Contact::where('wa_id',$wa_id)->first(); 
                             
                             if(!$contact){
-                                $contact = Contact::create(['wa_id' => $wa_id, 
+                                $contact = Contact::firstOrCreate(['wa_id' => $wa_id, 
                                                 'name' => $name]);
+                                $contact = Contact::where('wa_id',$wa_id)->first();
                             }
                             $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
-            
+                            Log::info("CONTACT ".$contact);
                             // Si devuelve false, se cambia el signo para que procese el return
                             if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
                             
@@ -260,7 +267,7 @@ class WhatsappController extends Controller
                                 $params = [ "messaging_product" => "whatsapp", 
                                             "recipient_type"    => "individual",
                                             "to"                => $wa_id, 
-                                            "type"              => "text",
+                                            "type"              => $type_msg,
                                             "preview_url"       => false,             
                                             "text"              => [ "body" => $response['text'] ]];
                             
