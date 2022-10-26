@@ -71,13 +71,14 @@
 						<!-- end chat list -->
 
 						<!-- message -->
-						<div class="w-full px-5 flex flex-col justify-between overflow-y-auto max-h-[70vh]"
+						<div class="w-full px-5 flex flex-col justify-between overflow-y-auto max-h-[70vh]" @scroll="handleScroll"
 							ref="container" id="message-box">
 
 							<div class="flex flex-col mt-5">
 								<div v-if="loading" class="mx-auto">
 									<Icons name="loading" class="h-12 w-12 text-opacity-50" />
 								</div>
+								
 								<div v-else v-for="m in messages" :key="m.id">
 
 									<div class="flex mb-2" :class="m.type == 'in' ? 'justify-start' : 'justify-end' ">
@@ -252,13 +253,23 @@ export default {
 			contacts: "",
 			toastMessage: "",
             labelType: "info",
-			msg: ''
+			msg: '',
+			contact: ''
 		}
 	},
 	created() {
 		this.getContacts()
 	},
 	methods: {
+		handleScroll: function(el) {
+			if((el.srcElement.offsetHeight + el.srcElement.scrollTop) == el.srcElement.scrollHeight) {
+				//this.getMessages(this.contact)
+			}else{
+				clearInterval(this.intervalId);
+				// iberar nuestro inervalId de la variable
+				this.intervalId = null;
+			}
+		},
 
 		format(date) {
 			return moment(date).format('DD-MM-YYYY h:mm');
@@ -269,7 +280,7 @@ export default {
 		},
 
 		async getMessages(c) {
-
+			this.contact = c
 			this.loading = true
 			this.selectedName = c.name
 			this.selectedWaId = c.wa_id
@@ -302,6 +313,13 @@ export default {
 			setInterval(function () {
 				axios.get(get)
 					.then(response => {
+						if(this.selectedWaId){
+							var elemento = response.data.data.find(el => el.wa_id =  this.selectedWaId);
+							if(elemento.message.status != 'read'){
+								this.getMessages(this.contact);
+							}
+						}
+							
 						console.log(response.data.data)
 						this.contacts = response.data.data
 					})
@@ -346,12 +364,13 @@ export default {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
-					this.getContacts()
+					this.getMessages(this.contact)
 					this.msg = ''
 				} 
 			}).catch(error => {
 				this.labelType = "danger"
 				this.toastMessage = 'Se ha producido un error'
+				this.getMessages(this.contact)
 			})
 			this.loading = false
 		}

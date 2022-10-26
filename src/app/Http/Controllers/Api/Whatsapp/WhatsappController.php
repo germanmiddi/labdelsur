@@ -249,9 +249,10 @@ class WhatsappController extends Controller
             
                             // CONTROLA SI TIENE HABILITADO EL BOT
                             if($contact->bot_status){
+                                log::info("DENTRO DEL BOT");
             
                                 $response = $this->set_message($wa_id, $message);
-            
+                                log::info("DENTRO DEL BOT1");
                                 $inbound_msj = new Message;
                                 $inbound_msj->wa_id     = $wa_id;
                                 $inbound_msj->contact_id= $contact->id;
@@ -262,7 +263,7 @@ class WhatsappController extends Controller
                                 $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
                                 $inbound_msj->timestamp = $timestamp;
                                 $inbound_msj->save();
-            
+                                log::info("DENTRO DEL BOT2");
                                 
                                 $params = [ "messaging_product" => "whatsapp", 
                                             "recipient_type"    => "individual",
@@ -270,13 +271,15 @@ class WhatsappController extends Controller
                                             "type"              => $type_msg,
                                             "preview_url"       => false,             
                                             "text"              => [ "body" => $response['text'] ]];
-                            
+                                            log::info("DENTRO DEL BOT3");
                             
                                 $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
                                 $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
 
+                                log::info("DENTRO DEL BOT4");
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                                                 'Content-Type'  => 'application/json'])->post($wp_url->value, $params);
+                                                                log::info("MESSges: ".$http_post);
                                 $outbound_msj = new Message;
                                 $outbound_msj->wa_id     = $wa_id;
                                 $outbound_msj->contact_id= $contact->id;
@@ -287,7 +290,6 @@ class WhatsappController extends Controller
                                 $outbound_msj->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
                                 $outbound_msj->timestamp = \Carbon\Carbon::now()->timestamp;
                                 $outbound_msj->save();
-                                
                             }else{
                                 $inbound_msj = new Message;
                                 $inbound_msj->wa_id     = $wa_id;
@@ -318,6 +320,29 @@ class WhatsappController extends Controller
 
                             $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,//EAAMnvn93Q1ABALdBvkY0T4d57N3GsbXAQgHxvsE0teRq9FhlDLid2V0yNMNVOnH1ZCuYIEDLf2eK2iF8FPjLLaWV5UKJebCAuVJbOBzkzMM4O9Ex8EOoDOBS834XVyKUo5bHZCDSoQ3iSdOFZCV1H1ZC0RZBmQMhhpS8FBANM7YnzR8GUEFxANe3P6KBPlZAgZAPnjbPZBOOGAZDZD',
                                                                 'Content-Type'  => 'application/json'])->get($http_post['url']);
+
+                           /*  $url_ldap = env('URL_LDAP') . '/gruposUser';
+
+                            $fields = array('usuario' => $request->email, 
+                                            'clave'   => $request->password); */
+                    
+                            /* $fields_string = http_build_query($fields);
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL, "http://10.100.18.136:8096/gruposUser");
+                            curl_setopt($ch, CURLOPT_POST, 1);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string );
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch, CURLOPT_HEADER, false);
+                            $data = curl_exec($ch);
+                            curl_close($ch);
+                             */
+                            /* $a = explode('.',$http_post);
+                            $b = base64_decode($a[1]);
+                            $c = json_decode($b);
+                            Log::info('IMAGE  '.$c); */
+
+                            Storage::disk('local')->put('arjunphp_laravel.png', file_get_contents($http_post));
+                           // return $c;
                         break;
                         
                     default:
