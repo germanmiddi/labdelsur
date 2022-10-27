@@ -213,11 +213,15 @@ class WhatsappController extends Controller
                 Log::info('FILE: '. json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']));
                 $type_msg = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']));
                 
+                $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+                $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
+
+                $wa_id = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']) 
+                    ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
+                    : '';
+
                 switch ($type_msg) {
                     case 'text':
-                            $wa_id = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']) 
-                                ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
-                                : '';
             
                             $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
                                 ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
@@ -273,9 +277,7 @@ class WhatsappController extends Controller
                                             "text"              => [ "body" => $response['text'] ]];
                                             log::info("DENTRO DEL BOT3");
                             
-                                $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
-                                $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
-
+                                
                                 log::info("DENTRO DEL BOT4");
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                                                 'Content-Type'  => 'application/json'])->post($wp_url->value, $params);
@@ -308,41 +310,43 @@ class WhatsappController extends Controller
                         break;
                         
                     case 'image':
-                            $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
-                            $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
 
-                            $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['id']));
+                            $type_image = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['mime_type']));
+                            $type_image = explode('/', $type_image);
+                            if($type_image[1] == 'jpeg' || $type_image[1] == 'jpg' || $type_image[1] == 'png'){
+                                $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['id']));
+    
+                                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
+                                                                    'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
+                                    
+                                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
+                                'Content-Type'  => 'application/json'])->get($http_post['url']);
+                                Storage::disk('public')->put($wa_id.'/'.Carbon::now()->format("Ymdhis").'-WP.'.$type_image[1], $http_post);
+                            }else{ 
+                                Log::info("Imagen no es un formato permitido");
+                            }
 
-                            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,//EAAMnvn93Q1ABALdBvkY0T4d57N3GsbXAQgHxvsE0teRq9FhlDLid2V0yNMNVOnH1ZCuYIEDLf2eK2iF8FPjLLaWV5UKJebCAuVJbOBzkzMM4O9Ex8EOoDOBS834XVyKUo5bHZCDSoQ3iSdOFZCV1H1ZC0RZBmQMhhpS8FBANM7YnzR8GUEFxANe3P6KBPlZAgZAPnjbPZBOOGAZDZD',
-                                                                'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
+                        break;
+
+                        case 'document':
+                            $type_doc = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['document']['mime_type']));
+                            $type_doc = explode('/', $type_doc);
+                            if($type_doc[1] == 'pdf'){
+                                $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['document']['id']));
+
+                                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
+                                                                    'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
+                                    
+                                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
+                                            'Content-Type'  => 'application/json'
+                                            ])->get($http_post['url']);
                                 
-                            log::info('Han enviado una imagen - ID: '. $http_post['url']);
-
-                            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,//EAAMnvn93Q1ABALdBvkY0T4d57N3GsbXAQgHxvsE0teRq9FhlDLid2V0yNMNVOnH1ZCuYIEDLf2eK2iF8FPjLLaWV5UKJebCAuVJbOBzkzMM4O9Ex8EOoDOBS834XVyKUo5bHZCDSoQ3iSdOFZCV1H1ZC0RZBmQMhhpS8FBANM7YnzR8GUEFxANe3P6KBPlZAgZAPnjbPZBOOGAZDZD',
-                                                                'Content-Type'  => 'application/json'])->get($http_post['url']);
-
-                           /*  $url_ldap = env('URL_LDAP') . '/gruposUser';
-
-                            $fields = array('usuario' => $request->email, 
-                                            'clave'   => $request->password); */
-                    
-                            /* $fields_string = http_build_query($fields);
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL, "http://10.100.18.136:8096/gruposUser");
-                            curl_setopt($ch, CURLOPT_POST, 1);
-                            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string );
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            curl_setopt($ch, CURLOPT_HEADER, false);
-                            $data = curl_exec($ch);
-                            curl_close($ch);
-                             */
-                            /* $a = explode('.',$http_post);
-                            $b = base64_decode($a[1]);
-                            $c = json_decode($b);
-                            Log::info('IMAGE  '.$c); */
-
-                            Storage::disk('local')->put('arjunphp_laravel.png', file_get_contents($http_post));
-                           // return $c;
+                                Storage::disk('public')->put($wa_id.'/'.Carbon::now()->format("Ymdhis").'wp.pdf', $http_post);
+                            }else{
+                                Log::info("Documento no es un pdf");
+                            }
+                            
+                           
                         break;
                         
                     default:
@@ -458,7 +462,7 @@ class WhatsappController extends Controller
                         "type"              => "text",
                         "preview_url"       => false,             
                         "text"              => [ "body" =>  $body]];
-            //}
+            
 
             $url = 'https://graph.facebook.com/v14.0/107765322075657/messages';
 

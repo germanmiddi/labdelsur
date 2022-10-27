@@ -15,7 +15,7 @@
 					</div>
 
 					<div class="flex text-sm" v-if="selectedName">
-						<Icons name="user" class="h-6 w-6 text-opacity-50" /> - {{this.selectedName}}
+						<Icons name="user" class="h-6 w-6 text-opacity-50" /> - {{ this.selectedName }}
 					</div>
 				</div>
 
@@ -36,33 +36,32 @@
 							<!-- user list -->
 							<div v-for="c in contacts" :key="c.id"
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer"
-								:class="[(c.message.status != 'read' ? 'bg-gradient-to-r from-blue-500 to-blue-300 hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-200' : '')]"
-								>
+								:class="[(c.message.status != 'read' ? 'bg-gradient-to-r from-blue-500 to-blue-300 hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-200' : '')]">
 								<div class="w-2/12 mr-4" @click="getMessages(c)">
 									<div
 										class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
-										{{c.name.substr(0,2).toUpperCase()}}</div>
+										{{ c.name.substr(0, 2).toUpperCase() }}</div>
 								</div>
 								<div class="w-7/12" @click="getMessages(c)">
-									<div class="text-sm font-semibold text-white" 
+									<div class="text-sm font-semibold text-white"
 										:class="[(c.message.status != 'read' ? 'text-white' : 'text-black')]">{{ c.name
 										}}<br>
-										<span class="text-sm font-normal" 
+										<span class="text-sm font-normal"
 											:class="[(c.message.status != 'read' ? 'text-white' : 'text-gray-700')]">{{
-											c.wa_id }}</span>
+													c.wa_id
+											}}</span>
 									</div>
-									
+
 								</div>
 								<div class="w-3/12 text-sm">
-									<a v-if="c.bot_status" type="button" @click="changeStatusBot(c.id)" title="Chat con asesor"
-									class="inline-flex items-center p-1 border border-transparent rounded-full bg-orange-300 hover:bg-orange-700 shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-									>
-									<Icons name="cog" class="h-5 w-5"></Icons> Bot
+									<a v-if="c.bot_status" type="button" @click="changeStatusBot(c.id)"
+										title="Chat con asesor"
+										class="inline-flex items-center p-1 border border-transparent rounded-full bg-orange-300 hover:bg-orange-700 shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										<Icons name="cog" class="h-5 w-5"></Icons> Bot
 									</a>
 									<a v-else type="button" @click="changeStatusBot(c.id)" title="Chat con bot"
-									class="inline-flex items-center p-1 border border-transparent bg-green-300 hover:bg-green-700 rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-									>
-									<Icons name="chat" class="h-5 w-5"></Icons> Asesor
+										class="inline-flex items-center p-1 border border-transparent bg-green-300 hover:bg-green-700 rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										<Icons name="chat" class="h-5 w-5"></Icons> Asesor
 									</a>
 								</div>
 							</div>
@@ -71,43 +70,82 @@
 						<!-- end chat list -->
 
 						<!-- message -->
-						<div class="w-full px-5 flex flex-col justify-between overflow-y-auto max-h-[70vh]" @scroll="handleScroll"
-							ref="container" id="message-box">
+						<div class="w-full px-5 flex flex-col justify-between overflow-y-auto max-h-[70vh]"
+							@scroll="handleScroll" ref="container" id="message-box">
 
 							<div class="flex flex-col mt-5">
 								<div v-if="loading" class="mx-auto">
 									<Icons name="loading" class="h-12 w-12 text-opacity-50" />
 								</div>
-								
+
 								<div v-else v-for="m in messages" :key="m.id">
 
-									<div class="flex mb-2" :class="m.type == 'in' ? 'justify-start' : 'justify-end' ">
-										<div v-html="m.body.replace(/\n/g, '<br>')"  class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400' 
-										: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
-										
+									<div class="flex mb-2" :class="m.type == 'in' ? 'justify-start' : 'justify-end'">
+										<div v-html="m.body.replace(/\n/g, '<br>')"
+											class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400'
+											: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
+
 										</div>
 									</div>
 									<div class="flex text-sm mb-4 text-gray-600"
 										:class="m.type == 'in' ? 'justify-start ml-2' : 'justify-end mr-2'">
-										{{this.format(m.created_at)}}
+										{{ this.format(m.created_at) }}
 									</div>
 								</div>
 							</div>
 
 
-							<div class="py-5 border-t mt-20 grid grid-cols-10 gap-4"
-								:class="this.selectedWaId == '' ? 'pointer-events-none bg-red-50' : ''">
-								<div class="col-span-9">
-									<textarea rows="2" class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none" v-model="msg"
-									type="text" placeholder="Escribe tu mensaje aquí..." />
+							<div v-show="this.selectedWaId" class="py-5 border-t mt-20 grid grid-cols-12 gap-4">
+
+								<div class="col-span-10">
+									<textarea rows="1"
+										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
+										v-model="msg" type="text" placeholder="Escribe tu mensaje aquí..." />
+								</div>
+								<div class="col-span-1">
+									<a type="button" title="Adjuntar Archivo" @click="adjunt = !adjunt"
+										class="cursor-pointer py-3 px-3 mt-1 ml-3 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										<Icons name="paper-clip" class="h-4 w-4"></Icons>
+									</a>
 								</div>
 								<div class="col-span-1">
 									<a type="button" title="Enviar Mensaje" @click="sendMessage()"
-										class="cursor-pointer py-3 px-3 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-										<Icons name="send" class="h-5 w-5"></Icons>
+										class="cursor-pointer py-3 px-3 mt-1 inline-flex items-center p-1 border border-transparent rounded-full shadow-xl text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										<Icons name="send" class="h-4 w-4"></Icons>
 									</a>
 								</div>
-								
+								<div v-show="adjunt" class="col-span-12">
+
+
+									<!-- <div>
+										<label class="block text-sm font-medium text-gray-700">Archivo</label>
+										<div
+											class="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+											<div class="space-y-1 text-center">
+												<svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor"
+													fill="none" viewBox="0 0 48 48" aria-hidden="true">
+													<path
+														d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+														stroke-width="2" stroke-linecap="round"
+														stroke-linejoin="round" />
+												</svg>
+												<div class="flex text-sm text-gray-600">
+													<label for="file-upload"
+														class="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500">
+														<span>Archivo</span>
+														<input id="file-upload" name="file-upload" type="file"
+															class="sr-only" />
+													</label>
+												</div>
+												<p class="text-xs text-gray-500">PNG, JPG, JPEG, PDF | 10MB</p>
+											</div>
+										</div>
+									</div>
+ -->
+									<input rows="1"
+										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
+										type="file" placeholder="Escribe tu mensaje aquí..." />
+								</div>
 							</div>
 						</div>
 						<!-- end message -->
@@ -252,19 +290,21 @@ export default {
 			selectedWaId: "",
 			contacts: "",
 			toastMessage: "",
-            labelType: "info",
+			labelType: "info",
 			msg: '',
-			contact: ''
+			contact: '',
+			adjunt: false,
+			file_upload: ''
 		}
 	},
 	created() {
 		this.getContacts()
 	},
 	methods: {
-		handleScroll: function(el) {
-			if((el.srcElement.offsetHeight + el.srcElement.scrollTop) == el.srcElement.scrollHeight) {
+		handleScroll: function (el) {
+			if ((el.srcElement.offsetHeight + el.srcElement.scrollTop) == el.srcElement.scrollHeight) {
 				//this.getMessages(this.contact)
-			}else{
+			} else {
 				clearInterval(this.intervalId);
 				// iberar nuestro inervalId de la variable
 				this.intervalId = null;
@@ -313,13 +353,13 @@ export default {
 			setInterval(function () {
 				axios.get(get)
 					.then(response => {
-						if(this.selectedWaId){
-							var elemento = response.data.data.find(el => el.wa_id =  this.selectedWaId);
-							if(elemento.message.status != 'read'){
+						if (this.selectedWaId) {
+							var elemento = response.data.data.find(el => el.wa_id = this.selectedWaId);
+							if (elemento.message.status != 'read') {
 								this.getMessages(this.contact);
 							}
 						}
-							
+
 						console.log(response.data.data)
 						this.contacts = response.data.data
 					})
@@ -337,7 +377,7 @@ export default {
 			console.log(message)
 
 		},
-		async changeStatusBot($id){
+		async changeStatusBot($id) {
 			this.loading = true
 			let rt = route('contacts.changestatusbot', $id);
 			axios.get(rt).then(response => {
@@ -345,28 +385,28 @@ export default {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
 					this.getContacts()
-				} 
+				}
 			}).catch(error => {
 				this.labelType = "danger"
 				this.toastMessage = 'Se ha producido un error'
 			})
 			this.loading = false
 		},
-		sendMessage(){
+		sendMessage() {
 			this.loading = true
-			
+
 			let rt = route('whatsapp.sendmessage');
 
-			axios.post(rt,{
+			axios.post(rt, {
 				wa_id: this.selectedWaId,
-                message: this.msg
+				message: this.msg
 			}).then(response => {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
 					this.getMessages(this.contact)
 					this.msg = ''
-				} 
+				}
 			}).catch(error => {
 				this.labelType = "danger"
 				this.toastMessage = 'Se ha producido un error'

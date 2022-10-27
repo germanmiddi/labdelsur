@@ -41,6 +41,7 @@ class WhatsappController extends Controller
 
         DB::beginTransaction();
         try {
+
             //Obtengo Configuraciones
             $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
             $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
@@ -48,6 +49,12 @@ class WhatsappController extends Controller
             //Datos del contacto
             $contact = Contact::where('wa_id',$request['wa_id'])->first(); 
 
+
+            //dd("SEND");
+            
+
+            //https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/220px-Image_created_with_a_mobile_phone.png
+            
             //Formateo los parametros de WP
             $params = [ "messaging_product" => "whatsapp", 
                                 "recipient_type"    => "individual",
@@ -75,10 +82,23 @@ class WhatsappController extends Controller
             Contact::where('id', $contact->id)->update([
                 'bot_status' => false
             ]);
+
+            // ENVIO DE IMAGEN
+            /* $params = [ "messaging_product" => "whatsapp", 
+                        "recipient_type"    => "individual",
+                        "to"                => $contact->wa_id, 
+                        "type"              => 'image',         
+                        "image"              => [ "id" => '1231663287380285' ]
+                    ];
+
+            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token
+                                            ,'Content-Type'  => 'application/json'
+                                            ])->post($wp_url, $params); */
             
             DB::Commit();
             return response()->json(['message'=>'Mensaje enviado correctamente'], 200);
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollBack();
             return response()->json(['message'=>'Se ha producido un error'], 500);
         }
