@@ -87,7 +87,7 @@
 											: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
 												<a type="button" title="Ver Imagen" @click="getUrl(m.id)"
 													class="cursor-pointer py-3 px-3 mt-1 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-													<Icons name="photo" class="h-10 w-10"></Icons>
+													<Icons name="photo" class="h-6 w-6"></Icons>
 												</a>
 											</div>
 										</div>
@@ -104,7 +104,7 @@
 											: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
 												<a type="button" title="Ver Archivo" @click="getUrl(m.id)"
 													class="cursor-pointer py-3 px-3 mt-1 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-													<Icons name="document" class="h-10 w-10"></Icons>
+													<Icons name="document" class="h-6 w-6"></Icons>
 												</a>
 											</div>
 										</div>
@@ -454,6 +454,7 @@ export default {
 						this.toastMessage = response.data.message
 						this.getMessages(this.contact)
 						this.msg.text = ''
+						this.msg.image = ''
 					}
 				}).catch(error => {
 					this.labelType = "danger"

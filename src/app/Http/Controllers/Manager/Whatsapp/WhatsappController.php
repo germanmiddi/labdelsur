@@ -65,7 +65,7 @@ class WhatsappController extends Controller
                 //ALMACENO FILE
                 $extension = $request->image->getClientOriginalExtension();
                 $nombre = 'out_'.Carbon::now()->format("Ymdhis").'-wp.'.$extension;
-                $path = Storage::disk('public')->put($request->wa_id.'/'.$nombre,file_get_contents($request->image->getPathName()));
+                $path = Storage::disk('wp')->put($request->wa_id.'/'.$nombre,file_get_contents($request->image->getPathName()));
                 
                 if(!$path){    
                     return response()->json(['message'=>'No se ha podido almacenar la imagen'], 500);
@@ -76,19 +76,19 @@ class WhatsappController extends Controller
                 }elseif($extension == 'pdf'){
                         $type_file = 'document';
                 }
-
+                //dd($nombre);
                 // Obtengo PATH
-                $url_file = Storage::disk('public')->path($request->wa_id.'/'.$nombre);
-                //dd($path);
-                // GENERO EL ID DE IMAGEN EN WP.
+                $url_file = Storage::disk('wp')->path($request->wa_id.'/'.$nombre);
+                //dd($url_file);
+                //GENERO EL ID DE IMAGEN EN WP.
                 $ch2 = curl_init();
                 $params = array("messaging_product" => "whatsapp", 
                                 "file"              => curl_file_create($url_file, mime_content_type($url_file))
                         );
-                //dd($params);
+                //dd($wp_token);
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
-                curl_setopt($ch2, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $wp_token));
+                curl_setopt($ch2, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $wp_token->value));
                 curl_setopt($ch2, CURLOPT_URL,'https://graph.facebook.com/v15.0/107765322075657/media');
                 curl_setopt($ch2, CURLOPT_POST, true);
                 curl_setopt($ch2, CURLOPT_CUSTOMREQUEST, "POST");
@@ -98,19 +98,31 @@ class WhatsappController extends Controller
                 
                 curl_close ($ch2);
                 $data = json_decode($server_output);
+                //dd($server_output);
                 $id_file = $data->id;
 
                 // ENVIO DE IMAGEN
-                $params = [ "messaging_product" => "whatsapp", 
-                "recipient_type"    => "individual",
-                "to"                => $contact->wa_id, 
-                "type"              => 'image',         
-                "image"             => [ "id" => $id_file ]
-                ];
+                if($type_file == "document"){
+                    $params = [ "messaging_product" => "whatsapp", 
+                        "recipient_type"    => "individual",
+                        "to"                => $contact->wa_id, 
+                        "type"              => 'document',         
+                        "document"             => [ "id" => $id_file, "filename" => "LabSur-".Carbon::now()->format("Ymdhis")]
+                    ];
+                }else if($type_file == "image"){
+                    
+                    $params = [ "messaging_product" => "whatsapp", 
+                        "recipient_type"    => "individual",
+                        "to"                => $contact->wa_id, 
+                        "type"              => 'image',         
+                        "image"             => [ "id" => $id_file]
+                    ];
+                }
+                
 
-                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token
+                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value
                 ,'Content-Type'  => 'application/json'
-                ])->post($wp_url, $params); 
+                ])->post($wp_url->value, $params); 
 
             }
             //VERIFICO SI POSEE TEXTO PARA ENVIAR
