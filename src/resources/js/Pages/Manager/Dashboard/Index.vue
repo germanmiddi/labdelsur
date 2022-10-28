@@ -80,73 +80,109 @@
 
 								<div v-else v-for="m in messages" :key="m.id">
 
-									<div class="flex mb-2" :class="m.type == 'in' ? 'justify-start' : 'justify-end'">
-										<div v-html="m.body.replace(/\n/g, '<br>')"
-											class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400'
+									<div v-if="m.type_msg == 'image'">
+										<div class="flex mb-2"
+											:class="m.type == 'in' ? 'justify-start' : 'justify-end'">
+											<div class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400'
 											: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
-
-										</div>
-									</div>
-									<div class="flex text-sm mb-4 text-gray-600"
-										:class="m.type == 'in' ? 'justify-start ml-2' : 'justify-end mr-2'">
-										{{ this.format(m.created_at) }}
-									</div>
-								</div>
-							</div>
-
-
-							<div v-show="this.selectedWaId" class="py-5 border-t mt-20 grid grid-cols-12 gap-4">
-
-								<div class="col-span-10">
-									<textarea rows="1"
-										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
-										v-model="msg" type="text" placeholder="Escribe tu mensaje aquí..." />
-								</div>
-								<div class="col-span-1">
-									<a type="button" title="Adjuntar Archivo" @click="adjunt = !adjunt"
-										class="cursor-pointer py-3 px-3 mt-1 ml-3 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-										<Icons name="paper-clip" class="h-4 w-4"></Icons>
-									</a>
-								</div>
-								<div class="col-span-1">
-									<a type="button" title="Enviar Mensaje" @click="sendMessage()"
-										class="cursor-pointer py-3 px-3 mt-1 inline-flex items-center p-1 border border-transparent rounded-full shadow-xl text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-										<Icons name="send" class="h-4 w-4"></Icons>
-									</a>
-								</div>
-								<div v-show="adjunt" class="col-span-12">
-
-
-									<!-- <div>
-										<label class="block text-sm font-medium text-gray-700">Archivo</label>
-										<div
-											class="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
-											<div class="space-y-1 text-center">
-												<svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor"
-													fill="none" viewBox="0 0 48 48" aria-hidden="true">
-													<path
-														d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-														stroke-width="2" stroke-linecap="round"
-														stroke-linejoin="round" />
-												</svg>
-												<div class="flex text-sm text-gray-600">
-													<label for="file-upload"
-														class="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500">
-														<span>Archivo</span>
-														<input id="file-upload" name="file-upload" type="file"
-															class="sr-only" />
-													</label>
-												</div>
-												<p class="text-xs text-gray-500">PNG, JPG, JPEG, PDF | 10MB</p>
+												<a type="button" title="Ver Imagen" @click="getUrl(m.id)"
+													class="cursor-pointer py-3 px-3 mt-1 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+													<Icons name="photo" class="h-10 w-10"></Icons>
+												</a>
 											</div>
 										</div>
+										<div class="flex text-sm mb-4 text-gray-600"
+											:class="m.type == 'in' ? 'justify-start ml-2' : 'justify-end mr-2'">
+											{{ this.format(m.created_at) }}
+										</div>
 									</div>
- -->
-									<input rows="1"
-										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
-										type="file" placeholder="Escribe tu mensaje aquí..." />
+
+									<div v-else-if="m.type_msg == 'document'">
+										<div class="flex mb-2"
+											:class="m.type == 'in' ? 'justify-start' : 'justify-end'">
+											<div class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400'
+											: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
+												<a type="button" title="Ver Archivo" @click="getUrl(m.id)"
+													class="cursor-pointer py-3 px-3 mt-1 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+													<Icons name="document" class="h-10 w-10"></Icons>
+												</a>
+											</div>
+										</div>
+										<div class="flex text-sm mb-4 text-gray-600"
+											:class="m.type == 'in' ? 'justify-start ml-2' : 'justify-end mr-2'">
+											{{ this.format(m.created_at) }}
+										</div>
+									</div>
+
+									<div v-else>
+										<div class="flex mb-2"
+											:class="m.type == 'in' ? 'justify-start' : 'justify-end'">
+											<div v-html="m.body.replace(/\n/g, '<br>')"
+												class="text-white py-3 px-4 max-w-md" :class="m.type == 'in' ? 'ml-2 rounded-br-3xl rounded-tr-3xl rounded-tl-xl bg-gray-400'
+												: 'mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-blue-400'">
+
+											</div>
+										</div>
+										<div class="flex text-sm mb-4 text-gray-600"
+											:class="m.type == 'in' ? 'justify-start ml-2' : 'justify-end mr-2'">
+											{{ this.format(m.created_at) }}
+										</div>
+									</div>
 								</div>
 							</div>
+
+
+								<form v-show="this.selectedWaId" class="py-5 border-t mt-20 grid grid-cols-12 gap-4"
+                                    enctype="multipart/form-data">
+									<div class="col-span-10">
+										<textarea rows="1"
+											class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
+											v-model="msg.text" type="text" placeholder="Escribe tu mensaje aquí..." />
+									</div>
+									<div class="col-span-1">
+										<a type="button" title="Adjuntar Archivo" @click="adjunt = !adjunt, this.$refs.file.value = null"
+											class="cursor-pointer py-3 px-3 mt-1 ml-3 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+											<Icons name="paper-clip" class="h-4 w-4"></Icons>
+										</a>
+									</div>
+									<div class="col-span-1">
+										<a type="button" title="Enviar Mensaje" @click.prevent="sendMessage"
+											class="cursor-pointer py-3 px-3 mt-1 inline-flex items-center p-1 border border-transparent rounded-full shadow-xl text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+											<Icons name="send" class="h-4 w-4"></Icons>
+										</a>
+									</div>
+									<div v-show="adjunt" class="col-span-12">
+										<!-- <div>
+											<label class="block text-sm font-medium text-gray-700">Archivo</label>
+											<div
+												class="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+												<div class="space-y-1 text-center">
+													<svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor"
+														fill="none" viewBox="0 0 48 48" aria-hidden="true">
+														<path
+															d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+															stroke-width="2" stroke-linecap="round"
+															stroke-linejoin="round" />
+													</svg>
+													<div class="flex text-sm text-gray-600">
+														<label for="file-upload"
+															class="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500">
+															<span>Archivo</span>
+															<input id="file-upload" name="file-upload" type="file"
+																class="sr-only" />
+														</label>
+													</div>
+													<p class="text-xs text-gray-500">PNG, JPG, JPEG, PDF | 10MB</p>
+												</div>
+											</div>
+										</div>
+	-->
+										<input v-on:change="onFileChange"
+											class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
+											id="file_input" type="file" name="file_input" ref="file" :ref="file"/>
+									</div>
+								</form>
+							
 						</div>
 						<!-- end message -->
 
@@ -291,17 +327,26 @@ export default {
 			contacts: "",
 			toastMessage: "",
 			labelType: "info",
-			msg: '',
 			contact: '',
 			adjunt: false,
-			file_upload: ''
+			file_upload: '',
+			msg: {
+                text: '',
+                image: ''
+            }
 		}
 	},
 	created() {
 		this.getContacts()
 	},
 	methods: {
+		onFileChange(e){
+			let file = e.target.files[0];
+            this.msg.image = file;
+		},
+
 		handleScroll: function (el) {
+			console.log("1: "+ el.srcElement.offsetHeight +"  2- " + el.srcElement.scrollTop + "  3- "+ el.srcElement.scrollHeight)
 			if ((el.srcElement.offsetHeight + el.srcElement.scrollTop) == el.srcElement.scrollHeight) {
 				//this.getMessages(this.contact)
 			} else {
@@ -395,22 +440,46 @@ export default {
 		sendMessage() {
 			this.loading = true
 
+			let formData = new FormData();
+			formData.append('wa_id', this.selectedWaId);
+            formData.append('text', this.msg.text);
+            formData.append('image', this.msg.image);
+           
 			let rt = route('whatsapp.sendmessage');
-
-			axios.post(rt, {
-				wa_id: this.selectedWaId,
-				message: this.msg
-			}).then(response => {
+			
+			axios.post(rt, formData)
+				.then(response => {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
 					this.getMessages(this.contact)
-					this.msg = ''
+					this.msg.text = ''
 				}
 			}).catch(error => {
 				this.labelType = "danger"
 				this.toastMessage = 'Se ha producido un error'
 				this.getMessages(this.contact)
+			})
+			this.$refs.file.value = null
+			this.loading = false
+		},
+		getUrl(idMsg) {
+			this.loading = true
+
+			let formData = new FormData();
+			formData.append('wa_id', this.selectedWaId);
+            formData.append('id_msg', idMsg);
+            
+			let rt = route('whatsapp.geturl');
+			
+			axios.post(rt, formData)
+				.then(response => {
+				if (response.status == 200) {
+					window.open(response.data.data, '_blank');
+				}
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = 'Se ha producido un error'
 			})
 			this.loading = false
 		}

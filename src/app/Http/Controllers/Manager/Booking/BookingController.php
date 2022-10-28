@@ -218,19 +218,33 @@ class BookingController extends Controller
     }
 }
 
-public function check_booking_available($date){
-    
-    $date = Carbon::parse($date);
-    $cant_orders = DetailDay::select('cant_orders')->where('num_day', '=', date('w', strtotime($date)))->first();
+    public function check_booking_available($date){
+        
+        $date = Carbon::parse($date);
+        $cant_orders = DetailDay::select('cant_orders')->where('num_day', '=', date('w', strtotime($date)))->first();
 
-    Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count();
-    
-    if(Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count() < $cant_orders['cant_orders']){
-        return true;
+        Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count();
+        
+        if(Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count() < $cant_orders['cant_orders']){
+            return true;
+        }
+
+        return false;
+        
     }
 
-    return false;
-    
-}
+    public function get_bookings($wa_id){
+        $contact = Contact::where('wa_id', $wa_id)->first();
+        $bookings = Booking::where('contact_id',$contact->id)->where('status_id', 1)->get();
+        $date = array();
+        log::info("BOOK");
+
+        foreach ($bookings as $b) {
+            log::info("BOOKI: ". Carbon::parse($b['date'])->format("d-m-Y"));
+            $date[] = $b['date'];
+        }
+        
+        return $date;
+    }   
 
 }

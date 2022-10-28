@@ -91,7 +91,8 @@ class WhatsappController extends Controller
         switch($step){
         
             case '0':
-                $text = "Hola 👋 te comunicaste con *_DEL SUR ANALISIS CLINICOS_*, soy tu asistente virtual 🤖​. \nPuedo ayudarte con los siguientes temas:\n";
+                $text = "Hola 👋 te comunicaste con *_DEL SUR ANALISIS CLINICOS_*, soy tu asistente virtual 🤖​."; 
+                $text .= "\nIndique la opción deseada:\n";
                 $text .= "\n ".$this->emojis[1]." Turno para atención *sólo para obra social UTA*.";
                 $text .= "\n ".$this->emojis[2]." ¿Cómo obtener mis resultados?";
                 $text .= "\n ".$this->emojis[3]." Horario de atención y ubicación.";
@@ -201,6 +202,28 @@ class WhatsappController extends Controller
         }
     }
 
+    public function send_message($params){
+        $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+        $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
+        
+        return Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
+                                            'Content-Type'  => 'application/json'])->post($wp_url->value, $params); 
+    }
+
+    public function store_message($data){
+        $msj = new Message;
+            $msj->wa_id         = $data['wa_id'];
+            $msj->contact_id    = $data['contact_id'];
+            $msj->type          = $data['type'];
+            $msj->type_msg   = $data['type_msg'];
+            $msj->body          = $data['body'];
+            $msj->status        = $data['status'];
+            $msj->response      = $data['response']; 
+            $msj->wamid         = $data['wamid'];
+            $msj->timestamp     = $data['timestamp'];
+            $msj->save();
+    }
+
     public function receive(Request $request){
         
         if( isset($request['entry'][0]['changes'][0]['value']['messages'][0]) ){
@@ -210,7 +233,6 @@ class WhatsappController extends Controller
                 
                 $a = json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]);
                 Log::info('soy un mensaje '. $a);
-                Log::info('FILE: '. json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']));
                 $type_msg = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']));
                 
                 $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
@@ -220,44 +242,61 @@ class WhatsappController extends Controller
                     ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
                     : '';
 
+                    $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
+                    ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
+                    : '';
+
+                $session = Waidsession::where('wa_id',$wa_id)->first(); 
+    
+                if($session){
+                    Log::info('No se procesa por Session'); return;
+                }else{  
+                    Waidsession::create(['wa_id' => $wa_id]);
+                }                    
+
+                $contact = Contact::where('wa_id',$wa_id)->first(); 
+                
+                if(!$contact){
+                    $contact = Contact::firstOrCreate(['wa_id' => $wa_id, 
+                                    'name' => $name]);
+                    $contact = Contact::where('wa_id',$wa_id)->first();
+                }
+                $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
+                
+                // Si devuelve false, se cambia el signo para que procese el return
+                if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
+                
+
                 switch ($type_msg) {
                     case 'text':
             
-                            $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
-                                ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
-                                : '';
-            
-                            $session = Waidsession::where('wa_id',$wa_id)->first(); 
-                
-                            if($session){
-                                Log::info('No se procesa por Session'); return;
-                            }else{  
-                                Waidsession::create(['wa_id' => $wa_id]);
-                            }                    
-            
-                            $contact = Contact::where('wa_id',$wa_id)->first(); 
-                            
-                            if(!$contact){
-                                $contact = Contact::firstOrCreate(['wa_id' => $wa_id, 
-                                                'name' => $name]);
-                                $contact = Contact::where('wa_id',$wa_id)->first();
-                            }
-                            $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
-                            Log::info("CONTACT ".$contact);
-                            // Si devuelve false, se cambia el signo para que procese el return
-                            if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
-                            
                             $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
                                     ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
                                     : '' ;
             
                             // CONTROLA SI TIENE HABILITADO EL BOT
                             if($contact->bot_status){
-                                log::info("DENTRO DEL BOT");
             
                                 $response = $this->set_message($wa_id, $message);
-                                log::info("DENTRO DEL BOT1");
-                                $inbound_msj = new Message;
+                                // STORE MESSAGES IN
+                                $data_msg = [
+                                    "wa_id"         => $wa_id,
+                                    "contact_id"    => $contact->id,
+                                    "type"          => 'in',
+                                    "type_msg"      => $type_msg,
+                                    "body"          => $message,
+                                    "status"        => 'initial',
+                                    "response"      => $response['id'], 
+                                    "wamid"         => $request['entry'][0]['changes'][0]['value']['messages'][0]['id'],
+                                    "timestamp"     => $timestamp,
+                                ];
+
+                                $this->store_message($data_msg);
+                                // SEND MESSAGES
+
+                                // STORE MESSAGES OUT
+
+                                /* $inbound_msj = new Message;
                                 $inbound_msj->wa_id     = $wa_id;
                                 $inbound_msj->contact_id= $contact->id;
                                 $inbound_msj->type      = 'in';
@@ -266,8 +305,7 @@ class WhatsappController extends Controller
                                 $inbound_msj->response  = $response['id']; 
                                 $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
                                 $inbound_msj->timestamp = $timestamp;
-                                $inbound_msj->save();
-                                log::info("DENTRO DEL BOT2");
+                                $inbound_msj->save(); */
                                 
                                 $params = [ "messaging_product" => "whatsapp", 
                                             "recipient_type"    => "individual",
@@ -275,14 +313,21 @@ class WhatsappController extends Controller
                                             "type"              => $type_msg,
                                             "preview_url"       => false,             
                                             "text"              => [ "body" => $response['text'] ]];
-                                            log::info("DENTRO DEL BOT3");
                             
                                 
-                                log::info("DENTRO DEL BOT4");
-                                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
-                                                                'Content-Type'  => 'application/json'])->post($wp_url->value, $params);
-                                                                log::info("MESSges: ".$http_post);
-                                $outbound_msj = new Message;
+                                /*  $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
+                                                                'Content-Type'  => 'application/json'])->post($wp_url->value, $params); */
+                                $http_post = $this->send_message($params);
+                                log::info('DATA: '.$http_post);
+                                $data_msg['type'] = 'out';
+                                $data_msg['body'] = $response['text'];
+                                $data_msg['reponse'] = $response['id'];
+                                $data_msg['wamid'] = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
+                                $data_msg['timestamp'] = \Carbon\Carbon::now()->timestamp;
+                                
+                                $this->store_message($data_msg);
+
+                                /* $outbound_msj = new Message;
                                 $outbound_msj->wa_id     = $wa_id;
                                 $outbound_msj->contact_id= $contact->id;
                                 $outbound_msj->type      = 'out';
@@ -291,9 +336,22 @@ class WhatsappController extends Controller
                                 $outbound_msj->response  = $response['id']; 
                                 $outbound_msj->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
                                 $outbound_msj->timestamp = \Carbon\Carbon::now()->timestamp;
-                                $outbound_msj->save();
+                                $outbound_msj->save(); */
                             }else{
-                                $inbound_msj = new Message;
+                                $data_msg = [
+                                    "wa_id"         => $wa_id,
+                                    "contact_id"    => $contact->id,
+                                    "type"          => 'in',
+                                    "type_msg"      => $type_msg,
+                                    "body"          => $message,
+                                    "status"        => 'initial',
+                                    "response"      => 'asesor', 
+                                    "wamid"         => $request['entry'][0]['changes'][0]['value']['messages'][0]['id'],
+                                    "timestamp"     => $timestamp,
+                                ];
+                                $this->store_message($data_msg);
+                                
+                                /* $inbound_msj = new Message;
                                 $inbound_msj->wa_id     = $wa_id;
                                 $inbound_msj->contact_id= $contact->id;
                                 $inbound_msj->type      = 'in';
@@ -302,26 +360,45 @@ class WhatsappController extends Controller
                                 $inbound_msj->response  = 'asesor'; 
                                 $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
                                 $inbound_msj->timestamp = $timestamp;
-                                $inbound_msj->save();
+                                $inbound_msj->save(); */
             
                                 log::info('Contacto: '. $contact->wa_id .'tiene el chat con el Bot desactivado');
                             }
-                            Waidsession::where('wa_id',$wa_id)->delete();
+                            
                         break;
                         
                     case 'image':
 
                             $type_image = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['mime_type']));
                             $type_image = explode('/', $type_image);
+
                             if($type_image[1] == 'jpeg' || $type_image[1] == 'jpg' || $type_image[1] == 'png'){
                                 $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['id']));
     
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                                                     'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
-                                    
+                                
+                                $image_name = Carbon::now()->format("Ymdhis").'-WP.'.$type_image[1];
+                                
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
-                                'Content-Type'  => 'application/json'])->get($http_post['url']);
-                                Storage::disk('public')->put($wa_id.'/'.Carbon::now()->format("Ymdhis").'-WP.'.$type_image[1], $http_post);
+                                    'Content-Type'  => 'application/json'])->get($http_post['url']);
+                                Storage::disk('public')->put($wa_id.'/'.$image_name, $http_post);
+
+                                // ALMACENO MENSAJE
+                                $data_msg = [
+                                    "wa_id"         => $wa_id,
+                                    "contact_id"    => $contact->id,
+                                    "type"          => 'in',
+                                    "type_msg"      => $type_msg,
+                                    "body"          => $image_name,
+                                    "status"        => 'initial',
+                                    "response"      => 'asesor', 
+                                    "wamid"         => $request['entry'][0]['changes'][0]['value']['messages'][0]['id'],
+                                    "timestamp"     => $timestamp,
+                                ];
+
+                                $this->store_message($data_msg);
+                                
                             }else{ 
                                 Log::info("Imagen no es un formato permitido");
                             }
@@ -346,13 +423,15 @@ class WhatsappController extends Controller
                                 Log::info("Documento no es un pdf");
                             }
                             
-                           
+                            
                         break;
                         
                     default:
                             log::info('Han enviado un archivo desconocido');
                         break;
                 }
+                Waidsession::where('wa_id',$wa_id)->delete();
+
                 DB::Commit();
             } catch (\Throwable $th) {
                 Log::info($th);
@@ -510,19 +589,23 @@ class WhatsappController extends Controller
             $current_step = '';
         }else if($message === '*' || $prev_step == 0){
             $current_step .= 'U';
-            }else if($prev_step != 0 && intval($message) > 0 && intval($message) <= intval($setting->value)){
-                    $current_step .= 'T';    
-                }else if($current_step === 'T'){
-                    $current_step .= '.N';
-                    }else if($current_step === 'T.N'){
-                        $current_step .= '.D';
-                        }else{ 
-                            $current_step .= '.'. $message;
-                        }
+            }else if($message === '?' || $prev_step == 0){
+                $current_step .= 'M';
+                }else if($prev_step != 0 && intval($message) > 0 && intval($message) <= intval($setting->value)){
+                        $current_step .= 'T';    
+                    }else if($current_step === 'T'){
+                        $current_step .= '.N';
+                        }else if($current_step === 'T.N'){
+                            $current_step .= '.D';
+                            }else{ 
+                                $current_step .= '.'. $message;
+                            }
         
         switch ($current_step) {
             case '':
-                $text = "🗓️ Los próximos turnos disponibles son días en el horario de ⌚️ 7:30 a 10:00 hs. \nPara confirmar su turno digite el número del día que quiere asistir:\n";
+                
+                $text = "🗓️ Los próximos turnos disponibles son días en el horario de ⌚️ 7:30 a 10:00 hs."; 
+                $text .= "\nIndique la opción deseada:\n";
                 $bookingController = new BookingController();
                 $bookings = $bookingController->days_available();
                 
@@ -533,6 +616,7 @@ class WhatsappController extends Controller
                         $pos++;
                     }
                     $text .= "\n*️⃣​ Necesito un turno más urgente.";
+                    $text .= "\n​❓​​ Mis Turnos.";
                 }else{
                     $text .= "\nNo tenemos disponbilidad de turnos intente con otra fecha.";
                 }
@@ -594,10 +678,26 @@ class WhatsappController extends Controller
                 $bookingController = new BookingController();
                 $bookings = $bookingController->store_booking($form);
                 if($bookings['code'] == 200){
-                    $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.".";
+                    $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:00 hs.";
                 }else{
                     $text = "⛔ No ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
                 } 
+                break;
+
+            case ('M'):
+                $bookingController = new BookingController();
+                $bookings = $bookingController->get_bookings($wa_id);
+                if($bookings){
+                    $pos = 1;
+                    $text = "🗓️ Usted posee los siguientes turnos agendados:\n";
+                    foreach ($bookings as $b) {
+                        $text .= "\n".$this->emojis[$pos].". Dia ".Carbon::parse($b)->format("d-m-Y").".";
+                        $pos++;
+                    }
+                    
+                }else{
+                    $text = "🗓️ Usted No posee turnos agengados:";
+                }
                 break;
 
             case ('U'):
@@ -711,6 +811,7 @@ class WhatsappController extends Controller
                 $text .= "\n✏️​ *Cortisol y Curva de glucemia:* La extracción debe realizarse a las 8:00 AM.";
                 $text .= "\n✏️​ *Prolactina:* debe tener dos horas de haberse levantado antes de venir al laboratorio y no haber realizado actividad física ni esfuerzo alguno.";
                 $text .= "\n\n🩺​ Si tiene que realizarse estudios de hormonas tiroideas y toma medicación para las tiroides ese día lo deberá tomar luego de la extracción.\n";
+                $text .= "\n\n Indique la opción deseada:";
                 $text .= "\n".$this->emojis[1]." Urocultivo mujeres.";
                 $text .= "\n".$this->emojis[2]." Urocultivo hombres.";
                 $text .= "\n".$this->emojis[3]." Urocultivo bebés y niñas/os.";
