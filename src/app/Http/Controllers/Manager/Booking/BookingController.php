@@ -235,16 +235,33 @@ class BookingController extends Controller
 
     public function get_bookings($wa_id){
         $contact = Contact::where('wa_id', $wa_id)->first();
-        $bookings = Booking::where('contact_id',$contact->id)->where('status_id', 1)->get();
-        $date = array();
-        log::info("BOOK");
-
-        foreach ($bookings as $b) {
-            log::info("BOOKI: ". Carbon::parse($b['date'])->format("d-m-Y"));
-            $date[] = $b['date'];
+        $booking = Booking::where('contact_id',$contact->id)->where('status_id', 1)->first();
+        if($booking){
+            return Carbon::parse($booking->date)->format("d-m-Y");
         }
-        
-        return $date;
-    }   
+        return '';
+    }  
+    
+    public function cancel_booking($wa_id){
+        try {
+            $contact = Contact::where('wa_id', $wa_id)->first();
+    
+            $status = BookingStatus::where('status', 'CANCELADO')->first();
+            Booking::where('contact_id',$contact->id)->where('status_id', 1)->first()->update([
+                    'status_id' => $status->id
+                ]);
+
+            return $data = [
+                'code' => 200,
+                'message' => 'Se ha actualizado correctamente'
+            ];
+        } catch (\Throwable $th) {
+            log::info($th);
+            return $data = [
+                'code' => 500,
+                'message' => 'Se ha producido un erro'
+            ];
+        }
+    }
 
 }

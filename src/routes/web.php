@@ -36,7 +36,7 @@ Route::get('/whatsapp/sendtest', [WhatsappController::class,'sendTest' ])
         ->name('whatsapp.sendtest')
         ->middleware('auth');
 
-Route::post('/whatsapp/getUrl', [WhatsappController::class,'getUrl' ])
+Route::get('/whatsapp/{id}/getUrl', [WhatsappController::class,'getUrl' ])
         ->name('whatsapp.geturl')
         ->middleware('auth');
 

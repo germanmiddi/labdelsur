@@ -269,14 +269,13 @@ class WhatsappController extends Controller
 
                 switch ($type_msg) {
                     case 'text':
-            
-                            $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
-                                    ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
+                        $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
+                        ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
                                     : '' ;
             
                             // CONTROLA SI TIENE HABILITADO EL BOT
                             if($contact->bot_status){
-            
+                                
                                 $response = $this->set_message($wa_id, $message);
                                 // STORE MESSAGES IN
                                 $data_msg = [
@@ -290,7 +289,9 @@ class WhatsappController extends Controller
                                     "wamid"         => $request['entry'][0]['changes'][0]['value']['messages'][0]['id'],
                                     "timestamp"     => $timestamp,
                                 ];
-
+                                
+                                log::info("ADENTE");
+                                
                                 $this->store_message($data_msg);
                                 // SEND MESSAGES
 
@@ -378,11 +379,11 @@ class WhatsappController extends Controller
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                                                     'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
                                 
-                                $image_name = Carbon::now()->format("Ymdhis").'-WP.'.$type_image[1];
+                                $image_name = 'in_'.Carbon::now()->format("Ymdhis").'_wp.'.$type_image[1];
                                 
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                     'Content-Type'  => 'application/json'])->get($http_post['url']);
-                                Storage::disk('public')->put($wa_id.'/'.$image_name, $http_post);
+                                Storage::disk('wp')->put($wa_id.'/'.$image_name, $http_post);
 
                                 // ALMACENO MENSAJE
                                 $data_msg = [
@@ -413,12 +414,29 @@ class WhatsappController extends Controller
 
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                                                     'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
-                                    
+                                
+                                $document_name = 'in_'.Carbon::now()->format("Ymdhis").'_wp.'.$type_doc[1];
+
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                             'Content-Type'  => 'application/json'
                                             ])->get($http_post['url']);
                                 
-                                Storage::disk('public')->put($wa_id.'/'.Carbon::now()->format("Ymdhis").'wp.pdf', $http_post);
+                                Storage::disk('wp')->put($wa_id.'/'.$document_name, $http_post);
+
+                                 // ALMACENO MENSAJE
+                                 $data_msg = [
+                                    "wa_id"         => $wa_id,
+                                    "contact_id"    => $contact->id,
+                                    "type"          => 'in',
+                                    "type_msg"      => $type_msg,
+                                    "body"          => $document_name,
+                                    "status"        => 'initial',
+                                    "response"      => 'asesor', 
+                                    "wamid"         => $request['entry'][0]['changes'][0]['value']['messages'][0]['id'],
+                                    "timestamp"     => $timestamp,
+                                ];
+
+                                $this->store_message($data_msg);
                             }else{
                                 Log::info("Documento no es un pdf");
                             }
@@ -680,24 +698,32 @@ class WhatsappController extends Controller
                 if($bookings['code'] == 200){
                     $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:00 hs.";
                 }else{
-                    $text = "⛔ No ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
+                    $text = "⛔ No se ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
                 } 
                 break;
 
             case ('M'):
                 $bookingController = new BookingController();
-                $bookings = $bookingController->get_bookings($wa_id);
-                if($bookings){
-                    $pos = 1;
-                    $text = "🗓️ Usted posee los siguientes turnos agendados:\n";
-                    foreach ($bookings as $b) {
-                        $text .= "\n".$this->emojis[$pos].". Dia ".Carbon::parse($b)->format("d-m-Y").".";
-                        $pos++;
-                    }
+                $booking = $bookingController->get_bookings($wa_id);
+                if($booking){
+
+                    $text = "🗓️ Usted posee el siguiente turno agendado:\n";
+                    $text .= "\n - Dia ".Carbon::parse($booking)->format("d-m-Y").".";
+                    $text .= "\n\n".$this->emojis[9]." para cancelar su *Turno* ⛔";
                     
                 }else{
                     $text = "🗓️ Usted No posee turnos agengados:";
                 }
+                break;
+            case ('M.9'):
+                    $bookingController = new BookingController();
+                    $booking = $bookingController->cancel_booking($wa_id);
+                    if($booking['code'] == 200){
+                        $text = "✅ Estimado/a su turno a sido correctamente cancelado";
+                    }else{
+                        $text = "⛔ No se ha sido posible realizar la operacion, por favor comuniquese con un asesor.";
+                    } 
+                
                 break;
 
             case ('U'):

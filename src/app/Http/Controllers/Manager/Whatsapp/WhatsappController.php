@@ -33,32 +33,38 @@ class WhatsappController extends Controller
                     ];
 
         $http_post = Http::withHeaders([
-            'Authorization' => 'Bearer EAAMnvn93Q1ABANVg3VEjDXlhqj7PO9a4I9j7zDwLZCxgZCl7vjmK0tiB2LIHs9uZBfqZBoZA1RMko4lX2pmXlpTI6px1A7P88ivXTQKmLfOE6EllcwPdYFvK4MpOy3qkSZBHuYROOfWU4vn6qAgLxZBQCfek96erTIxOXQzGe18TxZBuLkteRw80L06w8EZC1jpkRG3PgyJsd9gZDZD', //'Basic ' . $token,
+            'Authorization' => 'Bearer TOKEN', //'Basic ' . $token,
             'Content-Type'  => 'application/json'])
             ->post($url, $params);
         
         return json_decode($http_post);
     }
 
-    public function getUrl(Request $request){
+    public function getUrl($id_msg){
        
-        $message = Message::where('id',$request->id_msg)->first();
-        $patch = Storage::disk('public')->url($request->wa_id.'/'.$message->body);
-        
-        $url = Storage::disk('imagenes')->download($archivo['nombre']);
-        return $url;
-        
-        return response()->json(['message'=>'Se ha procesado correctamente','data'=>$patch], 200);
+        $message = Message::where('id',$id_msg)->first();
+        $patch = Storage::disk('wp')->path($message->wa_id.'/'.$message->body);
+        $url = Storage::disk('wp')->download($message->wa_id.'/'.$message->body);
+        return response()->download($patch,'imagen.jpg');
+        //return $url;
     }
 
     public function sendMessage(Request $request){
 
         DB::beginTransaction();
         try {
+            //Obtengo Configuraciones
+            $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+            $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
+
+            //Datos del contacto
+            $contact = Contact::where('wa_id',$request->wa_id)->first();  
+
             $type_file = '';
             if (is_file($request->image)) {
+                //ALMACENO FILE
                 $extension = $request->image->getClientOriginalExtension();
-                $nombre = 'out_'.Carbon::now()->format("Ymdhis").'-WP.'.$extension;
+                $nombre = 'out_'.Carbon::now()->format("Ymdhis").'-wp.'.$extension;
                 $path = Storage::disk('public')->put($request->wa_id.'/'.$nombre,file_get_contents($request->image->getPathName()));
                 
                 if(!$path){    
@@ -70,39 +76,43 @@ class WhatsappController extends Controller
                 }elseif($extension == 'pdf'){
                         $type_file = 'document';
                 }
-            }
-            //Obtengo Configuraciones
-            $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
-            $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
 
-            //Datos del contacto
-            $contact = Contact::where('wa_id',$request->wa_id)->first();  
-
-            $message = Message::where('id',86)->first();
-
-            $patch = Storage::disk('public')->path($request->wa_id.'/'.$message->body);
-
+                // Obtengo PATH
+                $url_file = Storage::disk('public')->path($request->wa_id.'/'.$nombre);
+                //dd($path);
+                // GENERO EL ID DE IMAGEN EN WP.
                 $ch2 = curl_init();
                 $params = array("messaging_product" => "whatsapp", 
-                                "file"              => curl_file_create($patch, mime_content_type($patch))
+                                "file"              => curl_file_create($url_file, mime_content_type($url_file))
                         );
-
-                $token = 'EAAMnvn93Q1ABAFr9sddWVwY38ZC3edwRqOcJvip8L2w2hHpiSHD7ZCsfSNJVEhAKS6xKHJ2KV7jVO48erB0QltoVueNiRnEZCbupKy8DjBdn2gVMppxtAcVC5ZAiQwC6F3bxyaucnHY6IhD2Q9oRCKO2Rp5MyHe172knm4cRo6CnRNM7mFAV';
+                //dd($params);
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
-                curl_setopt($ch2, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $token));
+                curl_setopt($ch2, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $wp_token));
                 curl_setopt($ch2, CURLOPT_URL,'https://graph.facebook.com/v15.0/107765322075657/media');
                 curl_setopt($ch2, CURLOPT_POST, true);
                 curl_setopt($ch2, CURLOPT_CUSTOMREQUEST, "POST");
-                //$params_data=array('id_bandeja_salida'=>$value['id'], 'mail'=>''.$value['mail'].'', 'cuerpo_mail'=>''.$value['cuerpo_mail'].'', 'asunto_mail'=>''.$value['asunto_mail'].'');
                 curl_setopt($ch2, CURLOPT_POSTFIELDS,$params);
                 curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
                 $server_output = curl_exec($ch2);
                 
                 curl_close ($ch2);
                 $data = json_decode($server_output);
-                dd($data->id);  
+                $id_file = $data->id;
 
+                // ENVIO DE IMAGEN
+                $params = [ "messaging_product" => "whatsapp", 
+                "recipient_type"    => "individual",
+                "to"                => $contact->wa_id, 
+                "type"              => 'image',         
+                "image"             => [ "id" => $id_file ]
+                ];
+
+                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token
+                ,'Content-Type'  => 'application/json'
+                ])->post($wp_url, $params); 
+
+            }
             //VERIFICO SI POSEE TEXTO PARA ENVIAR
             if($request->text != ''){
                 //Formateo los parametros de WP TEXT
@@ -130,20 +140,6 @@ class WhatsappController extends Controller
                 $outbound_msj->save();
             }
 
-
-            
-            // ENVIO DE IMAGEN
-            $params = [ "messaging_product" => "whatsapp", 
-                "recipient_type"    => "individual",
-                "to"                => $contact->wa_id, 
-                "type"              => 'image',         
-                "image"             => [ "id" => '1261088398065244' ]
-            ];
-        
-            $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token
-                ,'Content-Type'  => 'application/json'
-            ])->post($wp_url, $params); 
-        
         //Almaceno el Mensaje de IMAGEN / PDF
         if($type_file != ''){
             $outbound_msj = new Message;

@@ -132,27 +132,28 @@
 							</div>
 
 
-								<form v-show="this.selectedWaId" class="py-5 border-t mt-20 grid grid-cols-12 gap-4"
-                                    enctype="multipart/form-data">
-									<div class="col-span-10">
-										<textarea rows="1"
-											class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
-											v-model="msg.text" type="text" placeholder="Escribe tu mensaje aquí..." />
-									</div>
-									<div class="col-span-1">
-										<a type="button" title="Adjuntar Archivo" @click="adjunt = !adjunt, this.$refs.file.value = null"
-											class="cursor-pointer py-3 px-3 mt-1 ml-3 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-											<Icons name="paper-clip" class="h-4 w-4"></Icons>
-										</a>
-									</div>
-									<div class="col-span-1">
-										<a type="button" title="Enviar Mensaje" @click.prevent="sendMessage"
-											class="cursor-pointer py-3 px-3 mt-1 inline-flex items-center p-1 border border-transparent rounded-full shadow-xl text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-											<Icons name="send" class="h-4 w-4"></Icons>
-										</a>
-									</div>
-									<div v-show="adjunt" class="col-span-12">
-										<!-- <div>
+							<form v-show="this.selectedWaId" class="py-5 border-t mt-20 grid grid-cols-12 gap-4"
+								enctype="multipart/form-data">
+								<div class="col-span-10">
+									<textarea rows="1"
+										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
+										v-model="msg.text" type="text" placeholder="Escribe tu mensaje aquí..." />
+								</div>
+								<div class="col-span-1">
+									<a type="button" title="Adjuntar Archivo"
+										@click="adjunt = !adjunt, this.$refs.file.value = null"
+										class="cursor-pointer py-3 px-3 mt-1 ml-3 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										<Icons name="paper-clip" class="h-4 w-4"></Icons>
+									</a>
+								</div>
+								<div class="col-span-1">
+									<a type="button" title="Enviar Mensaje" @click.prevent="sendMessage"
+										class="cursor-pointer py-3 px-3 mt-1 inline-flex items-center p-1 border border-transparent rounded-full shadow-xl text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										<Icons name="send" class="h-4 w-4"></Icons>
+									</a>
+								</div>
+								<div v-show="adjunt" class="col-span-12">
+									<!-- <div>
 											<label class="block text-sm font-medium text-gray-700">Archivo</label>
 											<div
 												class="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
@@ -177,12 +178,12 @@
 											</div>
 										</div>
 	-->
-										<input v-on:change="onFileChange"
-											class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
-											id="file_input" type="file" name="file_input" ref="file" :ref="file"/>
-									</div>
-								</form>
-							
+									<input v-on:change="onFileChange"
+										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
+										id="file_input" type="file" name="file_input" ref="file" :ref="file" />
+								</div>
+							</form>
+
 						</div>
 						<!-- end message -->
 
@@ -331,22 +332,21 @@ export default {
 			adjunt: false,
 			file_upload: '',
 			msg: {
-                text: '',
-                image: ''
-            }
+				text: '',
+				image: ''
+			}
 		}
 	},
 	created() {
 		this.getContacts()
 	},
 	methods: {
-		onFileChange(e){
+		onFileChange(e) {
 			let file = e.target.files[0];
-            this.msg.image = file;
+			this.msg.image = file;
 		},
 
 		handleScroll: function (el) {
-			console.log("1: "+ el.srcElement.offsetHeight +"  2- " + el.srcElement.scrollTop + "  3- "+ el.srcElement.scrollHeight)
 			if ((el.srcElement.offsetHeight + el.srcElement.scrollTop) == el.srcElement.scrollHeight) {
 				//this.getMessages(this.contact)
 			} else {
@@ -442,24 +442,24 @@ export default {
 
 			let formData = new FormData();
 			formData.append('wa_id', this.selectedWaId);
-            formData.append('text', this.msg.text);
-            formData.append('image', this.msg.image);
-           
+			formData.append('text', this.msg.text);
+			formData.append('image', this.msg.image);
+
 			let rt = route('whatsapp.sendmessage');
-			
+
 			axios.post(rt, formData)
 				.then(response => {
-				if (response.status == 200) {
-					this.labelType = "success"
-					this.toastMessage = response.data.message
+					if (response.status == 200) {
+						this.labelType = "success"
+						this.toastMessage = response.data.message
+						this.getMessages(this.contact)
+						this.msg.text = ''
+					}
+				}).catch(error => {
+					this.labelType = "danger"
+					this.toastMessage = 'Se ha producido un error'
 					this.getMessages(this.contact)
-					this.msg.text = ''
-				}
-			}).catch(error => {
-				this.labelType = "danger"
-				this.toastMessage = 'Se ha producido un error'
-				this.getMessages(this.contact)
-			})
+				})
 			this.$refs.file.value = null
 			this.loading = false
 		},
@@ -468,19 +468,26 @@ export default {
 
 			let formData = new FormData();
 			formData.append('wa_id', this.selectedWaId);
-            formData.append('id_msg', idMsg);
-            
-			let rt = route('whatsapp.geturl');
-			
-			axios.post(rt, formData)
-				.then(response => {
-				if (response.status == 200) {
-					window.open(response.data.data, '_blank');
-				}
-			}).catch(error => {
-				this.labelType = "danger"
-				this.toastMessage = 'Se ha producido un error'
-			})
+			formData.append('id_msg', idMsg);
+
+			let rt = route('whatsapp.geturl', idMsg);
+			axios({
+				url: rt,
+				method: 'GET',
+				responseType: 'blob',
+			}).then((response) => {
+				var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+				var fileLink = document.createElement('a');
+				const extension = response.data.type.split('/');
+
+				fileLink.href = fileURL;
+				fileLink.setAttribute('download', 'data.' + extension[1]);
+				document.body.appendChild(fileLink);
+
+				fileLink.click();
+			});
+
+
 			this.loading = false
 		}
 	}
