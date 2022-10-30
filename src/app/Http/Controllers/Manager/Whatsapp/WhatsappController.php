@@ -22,8 +22,12 @@ class WhatsappController extends Controller
     
     
     public function sendTest(){
+
+        //Obtengo Configuraciones
+        $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+        $wp_url_media = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+        $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
                 
-        $url    = 'https://graph.facebook.com/v13.0/106419748818148/messages';
         $params = [ "messaging_product" => "whatsapp", 
                         "to"               => "5491138175235", 
                         "type"             => "template", 
@@ -33,9 +37,9 @@ class WhatsappController extends Controller
                     ];
 
         $http_post = Http::withHeaders([
-            'Authorization' => 'Bearer TOKEN', //'Basic ' . $token,
+            'Authorization' => 'Bearer '.$wp_token->value, 
             'Content-Type'  => 'application/json'])
-            ->post($url, $params);
+            ->post($wp_url->value, $params);
         
         return json_decode($http_post);
     }
@@ -55,6 +59,7 @@ class WhatsappController extends Controller
         try {
             //Obtengo Configuraciones
             $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+            $wp_url_media = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
             $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
 
             //Datos del contacto
@@ -89,7 +94,7 @@ class WhatsappController extends Controller
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
                 curl_setopt($ch2, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $wp_token->value));
-                curl_setopt($ch2, CURLOPT_URL,'https://graph.facebook.com/v15.0/107765322075657/media');
+                curl_setopt($ch2, CURLOPT_URL,$wp_url_media->value);
                 curl_setopt($ch2, CURLOPT_POST, true);
                 curl_setopt($ch2, CURLOPT_CUSTOMREQUEST, "POST");
                 curl_setopt($ch2, CURLOPT_POSTFIELDS,$params);

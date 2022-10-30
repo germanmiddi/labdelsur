@@ -21,7 +21,7 @@
 				<div class="grid grid-cols-2 gap-2">
 					<div class=" col-span-1">
 						<h1 class="text-center font-semibold text-2xl">Configuración por Dia</h1>
-						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
+						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5 h-[55vh] overflow-y-auto">
 
 							<table class="w-full whitespace-nowrap">
 								<tr class="text-left font-bold bg-indigo-600 text-white">
@@ -94,7 +94,7 @@
 
 					<div class=" col-span-1">
 						<h1 class="text-center font-semibold text-2xl">Listado de Feriados</h1>
-						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
+						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5 h-[55vh] overflow-y-auto">
 							<table class="w-full whitespace-nowrap">
 								<tr class="text-left font-bold bg-indigo-600 text-white">
 									<th scope="col" class="py-3 px-6">
@@ -172,7 +172,7 @@
 
 					<div class=" col-span-1">
 						<h1 class="text-center font-semibold text-2xl">Configuración de Turnos</h1>
-						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
+						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5 h-[65vh] overflow-y-auto">
 							<form action="#" method="POST">
 
 								<div class="px-4 py-5 bg-white sm:p-6">
@@ -180,7 +180,7 @@
 										<div class="col-span-6 sm:col-span-6">
 											<label for="google_area1"
 												class="block text-sm font-medium text-gray-700">Cantidad de dias</label>
-											<input type="number" name="cant_days_booking" id="cant_days_booking"
+											<input type="number" max="9" min="0" name="cant_days_booking" id="cant_days_booking"
 												v-model="cant_days_booking.value"
 												class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
 										</div>
@@ -214,6 +214,13 @@
 
 										<div class="col-span-6 sm:col-span-6">
 											<label for="google_area1"
+												class="block text-sm font-medium text-gray-700">URL | WhatsApp Media</label>
+											<input type="text" name="wp_url_media" id="wp_url_media" v-model="wp_url_media.value"
+												class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+										</div>
+
+										<div class="col-span-6 sm:col-span-6">
+											<label for="google_area1"
 												class="block text-sm font-medium text-gray-700">Token | WhatsApp</label>
 											<input type="text" name="wp_token" id="wp_token" v-model="wp_token.value"
 												class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
@@ -225,6 +232,68 @@
 											</a>
 										</div>
 
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<div class=" col-span-1">
+						<h1 class="text-center font-semibold text-2xl">Mensajes Predefinidos</h1>
+						<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5 h-[65vh] overflow-y-auto">
+							<table class="w-full whitespace-nowrap">
+								<tr class="text-left font-bold bg-indigo-600 text-white">
+									<th scope="col" class="py-3 px-6">
+										Mensaje
+									</th>
+									<th scope="col" class="py-3 px-6">
+										Acción
+									</th>
+								</tr>
+								<tr v-for="message in list_messages"
+									class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
+									<th scope="row"
+										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap ">
+										{{message.description}}
+									</th>
+									<td class="py-4 px-6">
+										<a type="button" @click="deleteMessage(message.id)"
+											class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+											<Icons name="trash" class="h-5 w-5"></Icons>
+										</a>
+									</td>
+								</tr>
+							</table>
+							<div class="mt-6 flex flex-col justify-stretch">
+								<a type="button" @click="newMessage = true" v-show="!newMessage"
+									class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Nuevo
+									Mensaje</a>
+							</div>
+
+							<form v-show="newMessage" action="#" method="POST">
+								<div class="shadow overflow-hidden sm:rounded-md mt-2 ">
+									<div class="px-4 py-5 bg-white sm:p-6">
+										<div class="grid grid-cols-6 gap-6">
+
+											<div class="col-span-6 sm:col-span-6">
+												<label for="google_postal_code"
+													class="block text-sm font-medium text-gray-700">Mensaje
+												</label>
+												<input type="text" name="description" id="description"
+													v-model="form_message.description"
+													class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+											</div>
+
+											<div class="col-span-6 sm:col-span-6">
+												<a type="button" @click="storeMessage()"
+													class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar
+												</a>
+												<a type="button" @click="newMessage = false"
+													class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Cancelar
+												</a>
+											</div>
+
+										</div>
 									</div>
 								</div>
 							</form>
@@ -250,6 +319,7 @@ import Toast from '@/Layouts/Components/Toast.vue'
 export default {
 	props: {
 		holidays: Object,
+		messages: Object,
 		days: Object,
 		settings: Object
 	},
@@ -282,6 +352,7 @@ export default {
 		var day_limit_booking = list_settings.filter(obj => obj.key == 'day_limit_booking')
 		var wp_token = list_settings.filter(obj => obj.key == 'wp_token')
 		var wp_url = list_settings.filter(obj => obj.key == 'wp_url')
+		var wp_url_media = list_settings.filter(obj => obj.key == 'wp_url_media')
 
 		return {
 			cant_days_booking: cant_days_booking[0],
@@ -289,12 +360,16 @@ export default {
 			day_limit_booking: day_limit_booking[0],
 			wp_token: wp_token[0],
 			wp_url: wp_url[0],
+			wp_url_media: wp_url_media[0],
 			newHoliday: false,
+			newMessage: false,
 			editDay: false,
 			form_day: {},
 			form_holiday: {},
+			form_message: {},
 			list_days: this.days,
 			list_holidays: this.holidays,
+			list_messages: this.messages,
 			toastMessage: "",
 			labelType: "info",
 		}
@@ -306,6 +381,7 @@ export default {
 	created() {
 		this.list_day = this.days
 		this.list_holiday = this.holidays
+		this.list_messages = this.messages
 		this.formatHora();
 	},
 	methods: {
@@ -369,6 +445,39 @@ export default {
 			const response = await fetch(get, { method: 'GET' })
 			this.list_holidays = await response.json()
 		},
+		storeMessage() {
+			this.newMessage = false
+
+			let rt = route('settings.storemessage');
+
+			axios.post(rt, {
+				form: this.form_message,
+			}).then(response => {
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+				this.listMessage()
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = error.response.data.message
+			})
+		},
+		deleteMessage(id) {
+			let rt = route('settings.deletemessage', id);
+			axios.get(rt).then(response => {
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+				this.listMessage()
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = error.response.data.message
+			})
+		},
+		async listMessage() {
+			const get = `${route('settings.listmessage')}`
+
+			const response = await fetch(get, { method: 'GET' })
+			this.list_messages = await response.json()
+		},
 		async listDay() {
 			const get = `${route('settings.listday')}`
 
@@ -421,6 +530,10 @@ export default {
 			{
 				'id':this.wp_url.id,
 				'value': this.wp_url.value
+			},
+			{
+				'id':this.wp_url_media.id,
+				'value': this.wp_url_media.value
 			}
 			
 			];

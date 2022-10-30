@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Models\Setting;
 use App\Models\Contact;
 use App\Models\Holiday;
+use App\Models\DefaultMessage;
 use App\Models\DetailDay;
 
 class SettingController extends Controller
@@ -25,6 +26,7 @@ class SettingController extends Controller
         return Inertia::render('Manager/Settings/Index', 
         [
             'holidays' => Holiday::all(),
+            'messages' => DefaultMessage::all(),
             'days' => DetailDay::all(),
             'settings' => Setting::get()
         ]); 
@@ -69,6 +71,33 @@ class SettingController extends Controller
             return response()->json(['message'=>'Se ha producido un error'], 500);
         }
     }
+
+    public function store_message(Request $request){
+
+        try {
+            DefaultMessage::create(array(
+                'description' => $request->form['description']
+            ));
+            return response()->json(['message'=>'Mensaje predefinido creado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }  
+
+    public function delete_message($id){
+        try {
+            $message = DefaultMessage::find($id);
+            $message->delete();
+            return response()->json(['message'=>'Mensaje predeterminado eliminado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+    public function list_message(){
+        return DefaultMessage::all();
+    }
+   
 
     public function list_holiday(){
         return Holiday::all();

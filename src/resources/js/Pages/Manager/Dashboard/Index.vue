@@ -134,10 +134,16 @@
 
 							<form v-show="this.selectedWaId" class="py-5 border-t mt-20 grid grid-cols-12 gap-4"
 								enctype="multipart/form-data">
-								<div class="col-span-10">
+								<div class="col-span-9">
 									<textarea rows="1"
 										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
 										v-model="msg.text" type="text" placeholder="Escribe tu mensaje aquí..." />
+								</div>
+								<div class="col-span-1">
+									<a type="button" title="Mensaje Predefinido" @click="open = true"
+										class="cursor-pointer py-3 px-3 mt-1 ml-4 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										<Icons name="chat" class="h-4 w-4"></Icons>
+									</a>
 								</div>
 								<div class="col-span-1">
 									<a type="button" title="Adjuntar Archivo"
@@ -207,6 +213,60 @@
 			</div>
 		</template>
 	</AppLayout>
+	<TransitionRoot as="template" :show="open">
+		<Dialog as="div" class="fixed inset-0 overflow-hidden" @close="open = false">
+			<div class="absolute inset-0 overflow-hidden">
+				<DialogOverlay class="absolute inset-0" />
+
+				<div class="fixed inset-y-0 pl-16 max-w-full right-0 flex">
+					<TransitionChild as="template" enter="transform transition ease-in-out duration-500 sm:duration-700"
+						enter-from="translate-x-full" enter-to="translate-x-0"
+						leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0"
+						leave-to="translate-x-full">
+						<div class="w-screen max-w-md">
+							<form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl">
+								<div class="flex-1 h-0 overflow-y-auto">
+									<div class="py-7 px-4 bg-gray-500 sm:px-6">
+										<div class="flex items-center justify-between">
+											<DialogTitle class="text-lg font-medium text-white">
+												Mensajes Predefinidos
+											</DialogTitle>
+											<div class="ml-3 h-7 flex items-center">
+												<button type="button"
+													class="bg-gray-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+													@click="open = false">
+													<span class="sr-only">Cerrar</span>
+													<Icons name="x" class="h-5 w-5"></Icons>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="flex-1 flex flex-col justify-between">
+										<div class="px-4 divide-y divide-gray-200 sm:px-6 font-medium">
+											<table class="w-full whitespace-nowrap">
+												<tr v-for="message in messageDefaults"
+													class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
+													<th scope="row" @click="msg.text = message.description"
+														class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap text-left">
+														{{ message.description }}
+													</th>
+												</tr>
+											</table>
+										</div>
+									</div>
+								</div>
+								<!-- <div class="flex-shrink-0 px-4 py-4 flex justify-end">
+									<button type="button"
+										class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+										@click="open = false">Cancelar</button>
+								</div> -->
+							</form>
+						</div>
+					</TransitionChild>
+				</div>
+			</div>
+		</Dialog>
+	</TransitionRoot>
 </template>
 
 
@@ -222,6 +282,9 @@ import {
 	PopoverPanel,
 	TransitionChild,
 	TransitionRoot,
+	Dialog,
+	DialogOverlay,
+	DialogTitle,
 } from '@headlessui/vue'
 
 import {
@@ -288,6 +351,9 @@ export default {
 		PopoverPanel,
 		TransitionChild,
 		TransitionRoot,
+		DialogOverlay,
+		DialogTitle,
+		Dialog,
 		ArrowNarrowLeftIcon,
 		BellIcon,
 		HomeIcon,
@@ -334,11 +400,14 @@ export default {
 			msg: {
 				text: '',
 				image: ''
-			}
+			},
+			open: false,
+			messageDefaults: ""
 		}
 	},
 	created() {
-		this.getContacts()
+		this.getContacts(),
+			this.getMessagesDefaults()
 	},
 	methods: {
 		onFileChange(e) {
@@ -409,6 +478,20 @@ export default {
 						this.contacts = response.data.data
 					})
 			}.bind(this), 3000)
+
+		},
+
+		async getMessagesDefaults() {
+
+			const get = `${route('settings.listmessage')}`
+
+
+			axios.get(get)
+				.then(response => {
+					console.log(response.data)
+					this.messageDefaults = response.data
+				})
+
 
 		},
 

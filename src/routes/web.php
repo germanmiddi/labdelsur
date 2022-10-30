@@ -75,11 +75,19 @@ Route::post('/settings/updateday', [SettingController::class, 'update_day'])
 
 Route::post('/settings/updateholiday', [SettingController::class, 'store_holiday'])
         ->name('settings.storeholiday')
-        ->middleware('auth'); 
+        ->middleware('auth');
+        
+Route::post('/settings/storemessage', [SettingController::class, 'store_message'])
+        ->name('settings.storemessage')
+        ->middleware('auth');
 
 Route::get('/settings/listholiday', [SettingController::class, 'list_holiday'])
         ->name('settings.listholiday')
-        ->middleware('auth'); 
+        ->middleware('auth');
+        
+Route::get('/settings/listmessage', [SettingController::class, 'list_message'])
+        ->name('settings.listmessage')
+        ->middleware('auth');
 
 Route::get('/settings/listday', [SettingController::class, 'list_day'])
         ->name('settings.listday')
@@ -87,6 +95,10 @@ Route::get('/settings/listday', [SettingController::class, 'list_day'])
 
 Route::get('/settings/deleteholiday/{id}', [SettingController::class, 'delete_holiday'])
         ->name('settings.deleteholiday')
+        ->middleware('auth');
+
+Route::get('/settings/deletemessage/{id}', [SettingController::class, 'delete_message'])
+        ->name('settings.deletemessage')
         ->middleware('auth');
 
 Route::post('/settings/update', [SettingController::class, 'update_setting'])
