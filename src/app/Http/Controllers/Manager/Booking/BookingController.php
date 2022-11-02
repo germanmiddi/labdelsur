@@ -259,7 +259,26 @@ class BookingController extends Controller
             log::info($th);
             return $data = [
                 'code' => 500,
-                'message' => 'Se ha producido un erro'
+                'message' => 'Se ha producido un error'
+            ];
+        }
+    }
+
+    public function update_status(Request $request){
+        try {
+            Booking::where('id',$request->form['id'])->update([
+                    'status_id' => $request->form['status_id']
+                ]);
+
+            return $data = [
+                'code' => 200,
+                'message' => 'Se ha actualizado correctamente'
+            ];
+        } catch (\Throwable $th) {
+            log::info($th);
+            return $data = [
+                'code' => 500,
+                'message' => 'Se ha producido un error'
             ];
         }
     }

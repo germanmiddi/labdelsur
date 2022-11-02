@@ -625,37 +625,37 @@ class WhatsappController extends Controller
         }else if($message === '*' || $prev_step == 0){
             log::info("2");
             $current_step .= 'U';
-            }else if($message === '?' || $prev_step == 0){
+            }else if($message === '9' || $prev_step == 0){
                 log::info("3");
-                $current_step .= 'M';
+                $current_step .= '.M';
                 }else if($prev_step == "0.1"){
                     log::info("4");
                     $current_step .= $message;
                     }else if($prev_step == '0.1.1' && intval($message) > 0 && intval($message) <= intval($setting->value)){
                         log::info("5");
-                            $current_step .= '.L';    
-                        }else if($current_step === '1.L'){
-                            log::info("6");
-                            $current_step .= '.T';
-                            }else if($current_step === '1.L.T'){
-                                log::info("7");
-                                $current_step .= '.N';
-                                }else if($current_step === '1.L.T.N'){
-                                    log::info("8");
-                                    $current_step .= '.D';
-                                    }else{ log::info("9");
-                                        $current_step .= '.'. $message;
-                                    }
+                            $current_step .= '.L';     
+                            }else if($current_step === '1.L'){
+                                log::info("6");
+                                $current_step .= '.T';
+                                }else if($current_step === '1.L.T'){
+                                    log::info("7");
+                                    $current_step .= '.N';
+                                    }else if($current_step === '1.L.T.N'){
+                                        log::info("8");
+                                        $current_step .= '.D';
+                                        }else{ log::info("9");
+                                            $current_step .= '.'. $message;
+                                        }
         log::info("SALIDA: ". $current_step);
         switch ($current_step) {
             case '':
                 
                 $text .= "\nIndique la opción deseada:\n";
-                $text .= "\n ".$this->emojis[1]." UTA";
-                $text .= "\n ".$this->emojis[2]." PAMI";
-                $text .= "\n ".$this->emojis[3]." IOMA";
-                $text .= "\n ".$this->emojis[4]." SWISS Medical, OSDE";
-                $text .= "\n ".$this->emojis[5]." Otras";
+                $text .= "\n".$this->emojis[1]." UTA";
+                $text .= "\n".$this->emojis[2]." PAMI";
+                $text .= "\n".$this->emojis[3]." IOMA";
+                $text .= "\n".$this->emojis[4]." SWISS Medical, OSDE";
+                $text .= "\n".$this->emojis[5]." Otras";
 
                 break;
             case '1':
@@ -671,8 +671,8 @@ class WhatsappController extends Controller
                         $text .= "\n".$this->emojis[$pos].". Dia ".Carbon::parse($booking)->format("d-m-Y").".";
                         $pos++;
                     }
+                    $text .= "\n".$this->emojis[9]." Mis Turnos.";
                     $text .= "\n*️⃣​ Necesito un turno más urgente.";
-                    $text .= "\n​❓​​ Mis Turnos.";
                 }else{
                     $text .= "\nNo tenemos disponbilidad de turnos intente con otra fecha.";
                 }
@@ -700,6 +700,9 @@ class WhatsappController extends Controller
                 break;
             
             case ('1.L.T.N'):
+                $data = $this->manager_analisis($wa_id, $message, $prev_step);
+                $current_step = $data['id'];
+                $text = $data['text'];
                 
                 //OBTENGO LAS OPCIONES DE FECHA..
                 $fecha_options = Message::where('wa_id', $wa_id)
@@ -748,25 +751,28 @@ class WhatsappController extends Controller
                 $bookings = $bookingController->store_booking($form);
                 if($bookings['code'] == 200){
                     $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:00 hs.";
+                    
+                    $text .= "\n🤔​ Recuerde consultar las indicaciones para su estudio.";
+                    $text .= "\n\nPresione ".$this->emojis[0]." para volver ver el menu de 🔬 Indicaciones de estudios";
                 }else{
                     $text = "⛔ No se ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
                 } 
                 break;
 
-            case ('M'):
+            case ('1.M'):
                 $bookingController = new BookingController();
                 $booking = $bookingController->get_bookings($wa_id);
                 if($booking){
 
                     $text = "🗓️ Usted posee el siguiente turno agendado:\n";
                     $text .= "\n - Dia ".Carbon::parse($booking)->format("d-m-Y").".";
-                    $text .= "\n\n".$this->emojis[9]." para cancelar su *Turno* ⛔";
+                    $text .= "\n\n".$this->emojis[1]." para cancelar su *Turno* ⛔";
                     
                 }else{
                     $text = "🗓️ Usted No posee turnos agengados:";
                 }
                 break;
-            case ('M.9'):
+            case ('1.M.1'):
                     $bookingController = new BookingController();
                     $booking = $bookingController->cancel_booking($wa_id);
                     if($booking['code'] == 200){

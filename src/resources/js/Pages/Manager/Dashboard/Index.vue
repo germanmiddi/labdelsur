@@ -246,7 +246,7 @@
 											<table class="w-full whitespace-nowrap">
 												<tr v-for="message in messageDefaults"
 													class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
-													<th scope="row" @click="msg.text = message.description"
+													<th scope="row" @click="msg.text = message.description, open=false"
 														class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap text-left">
 														{{ message.description }}
 													</th>

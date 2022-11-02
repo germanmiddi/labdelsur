@@ -246,17 +246,17 @@
 									<th scope="col" class="py-3 px-6">
 										Mensaje
 									</th>
-									<th scope="col" class="py-3 px-6">
+									<th scope="col" class="py-3 px-6 text-center">
 										Acción
 									</th>
 								</tr>
 								<tr v-for="message in list_messages"
-									class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
+									class="bg-white border-b text-left text-xs font-light hover:bg-gray-100 focus-within:bg-gray-100">
 									<th scope="row"
 										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap ">
 										{{message.description}}
 									</th>
-									<td class="py-4 px-6">
+									<td class="py-4 px-6 text-center">
 										<a type="button" @click="deleteMessage(message.id)"
 											class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
 											<Icons name="trash" class="h-5 w-5"></Icons>
@@ -279,7 +279,7 @@
 												<label for="google_postal_code"
 													class="block text-sm font-medium text-gray-700">Mensaje
 												</label>
-												<input type="text" name="description" id="description"
+												<textarea rows="3" type="text" name="description" id="description"
 													v-model="form_message.description"
 													class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
 											</div>
