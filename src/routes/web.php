@@ -31,6 +31,9 @@ Route::get('/',[HomeController::class, 'index'])
 Route::get('/preguntas-frecuentes',[HomeController::class, 'faq'])
        ->name('preguntas-frecuentes');
 
+Route::get('/estudios',[HomeController::class, 'estudios'])
+       ->name('estudios');
+
 Route::get('/obras-sociales',[HomeController::class, 'osociales'])
        ->name('obras-sociales');       
 

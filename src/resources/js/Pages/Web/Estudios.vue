@@ -2,35 +2,47 @@
   <div class="bg-white">
     <header>
       <Popover class="relative bg-white">
-        <div class="flex justify-between items-center max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
+        <div
+          class="flex justify-between items-center max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
           <div class="flex justify-start lg:w-0 lg:flex-1">
             <a :href="route('home')">
               <img class="w-32" src="/img/logo.png" />
             </a>
           </div>
           <div class="-mr-2 -my-2 md:hidden">
-            <PopoverButton class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+            <PopoverButton
+              class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
               <span class="sr-only">Open menu</span>
               <MenuIcon class="h-6 w-6" aria-hidden="true" />
             </PopoverButton>
           </div>
           <PopoverGroup as="nav" class="hidden md:flex space-x-10">
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
-            <a :href="route('estudios')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
-            <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES </a>
-            <a :href="route('obras-sociales')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS
+            </a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS
+            </a>
+            <a :href="route('estudios')"
+              class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
+            <a :href="route('preguntas-frecuentes')"
+              class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES
+            </a>
+            <a :href="route('obras-sociales')"
+              class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN
+            </a>
           </PopoverGroup>
         </div>
 
-        <transition enter-active-class="duration-200 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="duration-100 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+        <transition enter-active-class="duration-200 ease-out" enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100" leave-active-class="duration-100 ease-in"
+          leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
           <PopoverPanel focus class="absolute z-30 top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden">
             <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white divide-y-2 divide-gray-50">
               <div class="pt-5 pb-6 px-5">
                 <div class="flex items-center justify-between">
                   <div class="-mr-2">
-                    <PopoverButton class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                    <PopoverButton
+                      class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
                       <span class="sr-only">Close menu</span>
                       <XIcon class="h-6 w-6" aria-hidden="true" />
                     </PopoverButton>
@@ -41,7 +53,8 @@
                 <div class="flex flex-col">
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> NOSOTROS </a>
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> RESULTADOS </a>
-                  <a :href="route('preguntas-frecuentes')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> PREGUNTAS FRECUENTES </a>
+                  <a :href="route('preguntas-frecuentes')"
+                    class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> PREGUNTAS FRECUENTES </a>
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> UBICACIÓN </a>
                 </div>
@@ -71,14 +84,13 @@
             </div>
             <div class="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8">
               <h1 class="text-center text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                <span class="block text-white">PREGUNTAS FRECUENTES</span>
+                <span class="block text-white">Estudios</span>
               </h1>
 
               <div class="mt-10 max-w-sm mx-auto flex justify-center">
-                  <input class="w-64 rounded-md mr-2" type="text"  v-model="filtro"/>
-                  <a href="#" 
-                     @click="filtroInput"
-                     class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">BUSCAR</a>
+                <input class="w-64 rounded-md mr-2" type="text" v-model="filtro" />
+                <a href="#" @click="filtroInput"
+                  class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">BUSCAR</a>
               </div>
             </div>
           </div>
@@ -86,45 +98,44 @@
       </div>
 
       <div class="bg-gradient-to-b from-white to-gray-100">
-       
-        <div v-if="this.faqsFiltered" class="max-w-7xl flex justify-end px-6 mt-10" >
-          <a href="#" @click="clearFilter"
-             class="flex items-center justify-center bg-blue-400 hover:bg-hover-500
+
+        <div v-if="this.estudiosFiltered" class="max-w-7xl flex justify-end px-6 mt-10">
+          <a href="#" @click="clearFilter" class="flex items-center justify-center bg-blue-400 hover:bg-hover-500
                     px-2 py-1 text-base font-bold rounded-md shadow-sm text-white sm:px-8 tracking-wide">VER TODO</a>
         </div>
 
-
         <div class="max-w-7xl mx-auto py-12 px-4 divide-y divide-gray-200 sm:px-6 lg:py-16 lg:px-8">
 
-          <div v-if="!this.faqsFiltered" class="mt-8">
+          <div class="mt-8 d-block">
+            <p class="text-xl font-medium text-blue-900 md:col-span-5">Búsqueda rápida por palabras claves:</p>
+            <div class="divide-y divide-gray-200 mt-2">
+              <div v-for="estudio in estudios" :key="estudio.id" class="bg-white pb-4 contents text-white">
+                <span
+                  class="p-2 mt-2 mr-2 text-xl font-extrabold block bg-gray-300 float-left rounded-full">{{ estudio.name }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="!this.estudiosFiltered" class="mt-8">
             <dl class="divide-y divide-gray-200">
-              <div v-for="faq in faqs" :key="faq.id" >
-                <div v-if="faq.show" class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
+              <div v-for="estudio in estudios" :key="estudio.id">
+                <div class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
                   <dt class="text-base font-medium text-blue-900 md:col-span-5">
-                    {{ faq.question }}
+                    {{ estudio.name }}
                   </dt>
-                  <dd class="mt-2 md:mt-0 md:col-span-7">
-                    <p class="text-base text-gray-500">
-                      {{ faq.answer }}
-                    </p>
-                  </dd>
                 </div>
               </div>
             </dl>
           </div>
 
-          <div v-if="this.faqsFiltered" class="mt-8">
+          <div v-if="this.estudiosFiltered" class="mt-8">
             <dl class="divide-y divide-gray-200">
-              <div v-for="faq in faqsFiltered" :key="faq.id" >
-                <div v-if="faq.show" class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
+              <div v-for="estudio in estudiosFiltered" :key="estudio.id">
+                <div v-if="estudio.show" class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
                   <dt class="text-base font-medium text-gray-900 md:col-span-5">
-                    {{ faq.question }}
+                    {{ estudio.name }}
                   </dt>
-                  <dd class="mt-2 md:mt-0 md:col-span-7">
-                    <p class="text-base text-gray-500">
-                      {{ faq.answer }}
-                    </p>
-                  </dd>
                 </div>
               </div>
             </dl>
@@ -151,9 +162,9 @@
       </div> -->
 
     </main>
- 
 
-<footer class="bg-gray-50" aria-labelledby="footer-heading">
+
+    <footer class="bg-gray-50" aria-labelledby="footer-heading">
       <div class="max-w-7xl mx-auto pt-12 pb-8 px-4 sm:px-6 lg:pt-20 lg:px-8 flex flex-col items-center">
         <div class="mb-8">
           <img class="w-52" src="/img/logo.png" />
@@ -169,7 +180,8 @@
           </ul>
         </div>
         <div class="mt-12 border-t border-gray-200 pt-8 lg:mt-12 w-full">
-          <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1 text-center">&copy; 2022 - Diseño y Desarrollo por onMedia.</p>
+          <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1 text-center">&copy; 2022 - Diseño y Desarrollo por
+            onMedia.</p>
         </div>
       </div>
     </footer>
@@ -203,140 +215,52 @@ import {
 
 import { CheckIcon } from '@heroicons/vue/outline'
 
-const faqs = [
-  { 
-    question: '¿CUÁL ES EL HORARIO DE ATENCIÓN?',
-    answer:   'LUNES A VIERNES DE 7:30 A 18:00 HS. SÁBADOS DE 7:30 A 13:00 HS.',
-    show: true
+const estudios = [
+  {
+    name: 'Estudios de COVID-19'
   },
-  { 
-    question: '¿CUAL ES EL HORARIO DE EXTRACCIÓN?',
-    answer: 'LUNES A SÁBADOS DE 7:30 A 10:00 HS.',
-    show: true
+  {
+    name: 'Embarazo y Coronavirus'
   },
-  { 
-    question: '¿Necesito orden médica para realizar un hisopado de detección de Covid?',
-    answer: 'No es necesario contar con orden médica. Puede consultar presupuesto y horarios por WhatsApp al cel: 1127714569.',
-    show: true
+  {
+    name: 'Diabetes'
   },
-
-  {  
-    question: '¿Cuántas horas de ayuno necesito?',
-    answer: '12 hs. de ayuno, cuando se analice: Colesterol, Triglicéridos, HDL, LDL o Hepatograma. 8 hs. de ayuno para el resto de los análisis. Cortisol y curva de glucemia: La extracción debe realizarse entre las 7:30 y las 8:00 AM con 8 hs de ayuno. Prolactina: 8 hs de ayuno y concurrir al laboratorio con 2 horas de haberse levantado, sin haber hecho esfuerzo ni actividad física.',
-    show: true
+  {
+    name: 'Hipotiroidismo'
   },
-  {  
-    question: '¿Qué requisitos necesitan las recetas médicas de obras sociales o prepagas?',
-    answer: 'Todas las órdenes deben contar con fecha, firma, sello del médico, datos personales, número de afiliado y diagnóstico.',
-    show: true
+  {
+    name: 'Dislipemias'
   },
-  {  
-    question: '¿Qué validez tienen las recetas?',
-    answer: 'SWISS MEDICAL, PAMI, OSDEPYM: 90 días. OSDE, GALENO: 60 días. UTA: 60 días desde su autorización. PREVENCIÓN SALUD, OSMECON: 30 días. Esto varía según su cobertura, puede consultar por whatsapp al 1127714569. ',
-    show: true
+  {
+    name: 'Estudios de Fertilidad Femenina'
   },
-  {  
-    question: 'Como puedo realizarme estudios si no cuento con obra social ni prepaga',
-    answer: 'Si no posee obra social o la suya no está dentro de coberturas, puede enviar una foto de su orden por WhatsApp al 1127714569 y le informaremos el importe y formas de pago',
-    show: true
+  {
+    name: 'Estudios de Fertilidad Masculina'
   },
-  {  
-    question: '¿Con qué Obras sociales y prepagas trabajan?',
-    answer: 'Puede consultar las coberturas aqui (link)',
-    show: true
+  {
+    name: 'Trombofilia'
   },
-  {  
-    question: 'Cómo hacer la recolección de orina?',
-    answer: 'Para recolectar la muestra de sedimento u orina completa utilice el envase que prefiera y recolecte la primera orina de su mañana o en su defecto una orina con 4 hs. de retencion previas',
-    show: true
+  {
+    name: 'Test ADN Prenetal'
   },
-  {  
-    question: '¿Cómo hacer la recolección de orina 24 horas?',
-    answer: 'Debe descartar la primer orina, luego recolectar todas las restantes durante 24 horas hasta la primera del día siguiente inclusive. La misma debe recolectarse en botellas de agua mineral o gaseosa bien lavadas. Recuerde que es indispensable contar el total de la orina en ese periodo',
-    show: true
+  {
+    name: 'Espermograma Computarizado'
   },
-  {  
-    question: '¿Cuál es la preparación y la muestra para sangre oculta en materia fecal?',
-    answer: 'Condiciones previas a la recolección de la muestra:   Durante tres días consecutivos el/la paciente evitará comer carne roja y alimentos que contengan sangre. Deberá evitarse la ingestión de: rábanos, nabos y cacao. Los analgésicos y antirreumáticos no son aconsejables durante estos tres días. Al cuarto día recolectar en un frasco de boca ancha bien limpio y seco una porción de una deposición espontánea  (no recolectar orina). Aclarar si el paciente sufre de hemorroides. Rotular con nombre y apellido. Podrá retirar el frasco en cualquiera de nuestras sucursales presentando la orden/DNI del paciente.',
-    show: true
+  {
+    name: 'Celiaquía'
   },
-  {  
-    question: 'Me indicaron un análisis Parasitológico o de Coprocultivo, ¿dónde debo retirar el frasco?¿Cuáles son las indicaciones?',
-    answer: 'Puede acercarse cualquier día en nuestro horario de atención para retirar los materiales y las instrucciones necesarias',
-    show: true
+  {
+    name: 'Estudios de HPV'
   },
-  {  
-    question: '¿Debo dejar de tomar mi medicación habitual para realizar los estudios?',
-    answer: 'Si toma medicación para las tiroides y le piden estudios para el dosaje de las mismas debe tomar la medicación del día luego de la extracción. En caso de que tome otras medicaciones su médica/o le indicará cómo proceder.',
-    show: true
+  {
+    name: 'Estudios de TDBH'
   },
-  {  
-    question: '¿Cómo puedo ver mis resultados?',
-    answer: '',
-    show: true
+  {
+    name: 'Estudios de Rast'
   },
-  {  
-    question: '¿Puede retirar los resultados otra persona?',
-    answer: 'Si, se pueden retirar con el ticket que se le entregó en el momento de la extracción.',
-    show: true
+  {
+    name: 'Dengue, Zika y Chikungunya'
   },
-  {  
-    question: 'Mi resultado aún no figura online.',
-    answer: 'Si ya se cumplió el tiempo previsto para la entrega de su resultado y aún no figura o figura en proceso, envíe un WhatsApp al 1127714569',
-    show: true
-  },
-  {  
-    question: '¿Cuáles son las indicaciones para el estudio micológico de uñas?',
-      answer: `3 días antes de concurrir al Laboratorio se deben hacer baños de agua tibia y sal, 3 veces por día durante 15 minutos en la uña o uñas afectadas. El día del estudio no debe tener esmaltes ni cremas. 
-              ¿Cuáles son las indicaciones para el análisis bacteriológico de orina? (Urocultivo)
-              Para mujeres o personas con vulva: 
-              Recolectar la primera orina de la mañana o en su defecto la orina con una retención no menor a  tres horas.
-              a) Se practicará un cuidadoso lavado de la zona genital  con abundante agua y jabón .
-              b) Secar con una toalla limpia y planchada, o con toallitas descartables.
-              c) Taponar el orificio vaginal con algodón o con un tampón vaginal.
-              d) Separar los labios y orinar desechando el primer chorro de la micción.
-              e) Recolectar la porción media de la micción en un frasco estéril.
-              f) Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.`,
-    show: true
-  },
-  {  
-    question: 'Para hombres o personas con pene:',
-      answer: `Recolectar la primera orina de la mañana o en su defecto la orina con una retención no menor a  tres horas.
-              a) Se practicará un cuidadoso lavado del pene con abundante agua y jabón.
-              b) Secar con una toalla limpia y planchada, o con toallitas descartables.
-              c) Rebatir el prepucio y orinar, desechando el primer chorro de la micción.
-              d) Recolectar la porción media de la micción en un frasco estéril.
-              e) Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.`,
-    show: true              
-  },
- 
-  {  
-    question: 'Bebés, niños y/o adultos que no controlan esfínteres:',
-      answer: `- Higienizar muy bien los genitales externos con agua y jabón.
-               - Recoger orina AL ACECHO en frasco estéril (una sola micción, no importa que la cantidad sea escasa). Tapar inmediatamente el frasco y conservar en heladera.`,
-       show: true
-  },
-  {  
-    question: '¿Hasta qué hora puedo realizar una curva de sobrecarga de glucosa?',
-      answer: `Este análisis puede hacerse entre las 7.30 y 8.30 horas.`,
-    show: true
-  },
-  {  
-    question: '¿Cuáles son las indicaciones para realizarme un cultivo de flujo?',
-      answer: `Durante las 72 hs. anteriores al estudio: 
-                - no tomar antibióticos.
-                - no colocarse ningún tipo de crema, talco, óvulos, etc. 
-                - no mantener relaciones sexuales. 
-                - no realizarse ecografías transvaginales. 
-                - no estar menstruando. 
-                El día del estudio: no utilizar bidet. 
-                ¿Cuáles son las indicaciones para realizarme un análisis de Antígeno Prostático Específico (PSA)?
-                Ayuno de 8 hs. (si tiene otros estudios como hepatograma o colesteroles considere que esto puede modificarse) 
-                Abstinencia sexual al menos 48 hs. previas a la extracción.
-                No haberse realizado en la semana previa tacto rectal o ecografía transrectal o biopsia.
-                No haber realizado ejercicios sentado (como andar en bicicleta o a caballo) al menos 48 hs. previas a la extracción.`,
-    show: true
-  }
 ]
 
 
@@ -459,32 +383,31 @@ export default {
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
-  
+
   },
   setup() {
     return {
       footerNavigation,
-      faqs,     
-      
+      estudios,
+
     }
   },
-  data(){
-    return{
-      filtro:"",
-      faqsFiltered: ""
+  data() {
+    return {
+      filtro: "",
+      estudiosFiltered: ""
     }
   },
-  methods:{
-    clearFilter(){
-      this.faqsFiltered = ""
+  methods: {
+    clearFilter() {
+      this.estudiosFiltered = ""
       this.filtro = ""
     },
 
-    filtroInput(){
+    filtroInput() {
       let f = this.filtro
-      this.faqsFiltered = this.faqs.filter(function(obj){
-        if (obj.question.includes(f) 
-         || obj.answer.includes(f) ){
+      this.estudiosFiltered = this.estudios.filter(function (obj) {
+        if (obj.name.includes(f)) {
           return obj
         }
       })
