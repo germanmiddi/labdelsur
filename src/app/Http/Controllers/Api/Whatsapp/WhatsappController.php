@@ -21,6 +21,7 @@ use Carbon\Carbon;
 class WhatsappController extends Controller
 {
     protected  $emojis;
+    protected  $dias;
 
     public function __construct(){
         $this->emojis[0] = "0️⃣";
@@ -44,6 +45,14 @@ class WhatsappController extends Controller
         $this->emojis[18] = "1️⃣8️⃣";
         $this->emojis[19] = "1️⃣9️⃣";
         $this->emojis[20] = "2️⃣0️⃣";
+
+        $this->dias[1] = "Lunes";
+        $this->dias[2] = "Martes";
+        $this->dias[3] = "Miercoles";
+        $this->dias[4] = "Jueves";
+        $this->dias[5] = "Viernes";
+        $this->dias[6] = "Sabado";
+        $this->dias[7] = "Domingo";
     }
 
     public function receive_message(){
@@ -61,13 +70,13 @@ class WhatsappController extends Controller
         $prev_menu = Message::where('wa_id', $wa_id)
                             ->where('response','!=','')   
                             ->orderBy('created_at', 'desc')
-                       
+
                             ->first();
         
         //CHECK FECHA ULTIMO MENSAJE       
         $last_date = false;
         if($prev_menu){
-           $last_date = $this->check_last_date($prev_menu->created_at);
+            $last_date = $this->check_last_date($prev_menu->created_at);
         }
         
         $setting =  Setting::where('module', 'BOOKING')->where('key', 'cant_days_booking')->first();
@@ -91,17 +100,16 @@ class WhatsappController extends Controller
         switch($step){
         
             case '0':
-                $text = "Hola 👋 te comunicaste con *_DEL SUR ANALISIS CLINICOS_*, soy tu asistente virtual 🤖​."; 
+                $text = "Hola 👋, se comunicó con *_DEL SUR ANÁLISIS CLÍNICOS_*, soy su Asistente Virtual 🤖."; 
                 $text .= "\nIndique la opción deseada:\n";
-                $text .= "\n ".$this->emojis[1]." Turno para atención *sólo para obra social UTA*.";
-                $text .= "\n ".$this->emojis[2]." ¿Cómo obtener mis resultados?";
-                $text .= "\n ".$this->emojis[3]." Horario de atención y ubicación.";
-                $text .= "\n ".$this->emojis[4]." Extracciones a domicilio.";
-                $text .= "\n ".$this->emojis[5]." COVID 19";
-                $text .= "\n ".$this->emojis[6]." Indicaciones de estudios";
-                /* $text .= "\n ".$this->emojis[7]." Coberturas";
-                $text .= "\n ".$this->emojis[8]." Autorización de órdenes";
-                $text .= "\n ".$this->emojis[9]." Presupuestos"; */
+                $text .= "\n ".$this->emojis[1]." 📆​ Turno para atención *sólo para obra social UTA*.";
+                $text .= "\n ".$this->emojis[2]." ✅ Autorizaciones de órdenes (IOMA, OSSEG, Galeno, FATSA)";
+                $text .= "\n ".$this->emojis[3]." 📄 ¿Cómo obtener mis resultados?";
+                $text .= "\n ".$this->emojis[4]." 📍 Horario de atención y ubicación.";
+                $text .= "\n ".$this->emojis[5]." 🚗 Extracciones a domicilio.";
+                $text .= "\n ".$this->emojis[6]." 🦠 COVID 19";
+                $text .= "\n ".$this->emojis[7]." 🔬 Indicaciones de estudios";
+                $text .= "\n ".$this->emojis[8]." 💲 Presupuestos";
                 
                 break;
 
@@ -114,6 +122,10 @@ class WhatsappController extends Controller
                 break;
 
             case '0.2':
+                $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
+                break;
+
+            case '0.3':
                 $text = "📒 Para acceder a su resultado debe realizar los siguientes pasos:";
                 $text .= "\n\n*Paso 1* - Dirigite a este link: www…..com.ar.";
                 $text .= "\n*Paso 2* - Ingresá al punto de menú _'resultados'_";
@@ -121,7 +133,7 @@ class WhatsappController extends Controller
                 $text .= "\n*Paso 4* - Si no contás con el número de orden, cargá tal dato…";
                 break;
 
-            case '0.3':
+            case '0.4':
                 $text = "*​⌚​ Atención general:* De lunes a viernes de 7:30 a 18:00 hs y sábados de 7:30 a 13:00 hs.";
                 $text .= "\n\n*​​➡️​ Horarios de extracciones:* Lunes a sábados de 7:30 a 10:30 hs. ";
                 $text .= "\n\n*​➡️​ Cortisol y Curva de glucemia:* La extracción debe realizarse a las 8:00 AM.";
@@ -131,11 +143,11 @@ class WhatsappController extends Controller
                 break;
 
             
-            case '0.4':
+            case '0.5':
                 $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
                 break;
             
-            case '0.5':
+            case '0.6':
 
                 $data = $this->manager_covid($wa_id, $message, $prev_step);
                 $current_step = $data['id'];
@@ -143,13 +155,16 @@ class WhatsappController extends Controller
                 
                 break;
 
-            case '0.6':
+            case '0.7':
 
                 $data = $this->manager_analisis($wa_id, $message, $prev_step);
                 $current_step = $data['id'];
                 $text = $data['text'];
                 break;
 
+            case '0.8':
+                $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
+                break;
             /* case '0.7':
                 $text = "";
                 break;
@@ -603,24 +618,47 @@ class WhatsappController extends Controller
         $current_step = implode('.', $steps);
         
         //Determina el siguiente menu.
+        log::info("PREV: ". $prev_step. " -----MSG: ". $message);
         if($message === '#' || $prev_step == 0){
+            log::info("1");
             $current_step = '';
         }else if($message === '*' || $prev_step == 0){
+            log::info("2");
             $current_step .= 'U';
             }else if($message === '?' || $prev_step == 0){
+                log::info("3");
                 $current_step .= 'M';
-                }else if($prev_step != 0 && intval($message) > 0 && intval($message) <= intval($setting->value)){
-                        $current_step .= 'T';    
-                    }else if($current_step === 'T'){
-                        $current_step .= '.N';
-                        }else if($current_step === 'T.N'){
-                            $current_step .= '.D';
-                            }else{ 
-                                $current_step .= '.'. $message;
-                            }
-        
+                }else if($prev_step == "0.1"){
+                    log::info("4");
+                    $current_step .= $message;
+                    }else if($prev_step == '0.1.1' && intval($message) > 0 && intval($message) <= intval($setting->value)){
+                        log::info("5");
+                            $current_step .= '.L';    
+                        }else if($current_step === '1.L'){
+                            log::info("6");
+                            $current_step .= '.T';
+                            }else if($current_step === '1.L.T'){
+                                log::info("7");
+                                $current_step .= '.N';
+                                }else if($current_step === '1.L.T.N'){
+                                    log::info("8");
+                                    $current_step .= '.D';
+                                    }else{ log::info("9");
+                                        $current_step .= '.'. $message;
+                                    }
+        log::info("SALIDA: ". $current_step);
         switch ($current_step) {
             case '':
+                
+                $text .= "\nIndique la opción deseada:\n";
+                $text .= "\n ".$this->emojis[1]." UTA";
+                $text .= "\n ".$this->emojis[2]." PAMI";
+                $text .= "\n ".$this->emojis[3]." IOMA";
+                $text .= "\n ".$this->emojis[4]." SWISS Medical, OSDE";
+                $text .= "\n ".$this->emojis[5]." Otras";
+
+                break;
+            case '1':
                 
                 $text = "🗓️ Los próximos turnos disponibles son días en el horario de ⌚️ 7:30 a 10:00 hs."; 
                 $text .= "\nIndique la opción deseada:\n";
@@ -639,27 +677,40 @@ class WhatsappController extends Controller
                     $text .= "\nNo tenemos disponbilidad de turnos intente con otra fecha.";
                 }
 
+            break;
+            case '2':
+                $text = "Para PAMI puede venir sin turno de lunes a viernes de 7:30 a 10:30 hs. con fotocopia de su DNI y carnet"; 
                 break;
-            case ('T' ):
+            case '3':
+                $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
+                break;
+            case '4':
+                $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
+                break;
+            case '5':
+                $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
+                break;
+                
+            case ('1.L' ):
                 $text = "👤 Indique el nombre del paciente, por favor:";
                 break;
             
-            case ('T.N'):
+            case ('1.L.T'):
                 $text = "📇 Indique el Nro de DNI del paciente, por favor:";
                 break;
             
-            case ('T.N.D'):
+            case ('1.L.T.N'):
                 
                 //OBTENGO LAS OPCIONES DE FECHA..
                 $fecha_options = Message::where('wa_id', $wa_id)
-                            ->where('response',$base_step)
+                            ->where('response',$base_step.'.1')
                             ->where('type', 'out')   
                             ->orderBy('updated_at', 'desc')
                             ->first();
                 
                 //OBTENGO LA POSICION DE LA FECHA SELECCIONADA.
                 $fecha = Message::where('wa_id', $wa_id)
-                            ->where('response',$base_step.'.T')
+                            ->where('response',$base_step.'.1.L')
                             ->where('type', 'in')   
                             ->orderBy('updated_at', 'desc')
                             ->first();
@@ -680,7 +731,7 @@ class WhatsappController extends Controller
                 
                 //RECUPERO EL NOMBRE DEL CLIENTE
                 $nombre = Message::where('wa_id', $wa_id)
-                            ->where('response',$base_step.'.T.N')
+                            ->where('response',$base_step.'.1.L.T')
                             ->where('type', 'in')   
                             ->orderBy('updated_at', 'desc')
                             ->first();
