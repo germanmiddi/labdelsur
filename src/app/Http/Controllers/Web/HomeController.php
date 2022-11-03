@@ -25,7 +25,13 @@ class HomeController extends Controller
     {
         return  Inertia::render('Web/Faq', [            
         ]);
-    }    
+    }   
+    
+    public function estudios()
+    {
+        return  Inertia::render('Web/Estudios', [            
+        ]);
+    } 
 
     public function osociales()
     {

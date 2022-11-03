@@ -5,7 +5,7 @@
         <div class="flex justify-between items-center max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
           <div class="flex justify-start lg:w-0 lg:flex-1">
             <a :href="route('home')">
-              <img class="w-32" src="/img/logo.png" />
+              <img class="w-40" src="/img/logo.png" />
             </a>
           </div>
           <div class="-mr-2 -my-2 md:hidden">
@@ -17,8 +17,9 @@
           <PopoverGroup as="nav" class="hidden md:flex space-x-10">
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS </a>
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
+            <a :href="route('estudios')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
             <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
+            <a :href="route('obras-sociales')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a>
           </PopoverGroup>
         </div>
@@ -40,8 +41,9 @@
                 <div class="flex flex-col">
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> NOSOTROS </a>
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> RESULTADOS </a>
+                  <a :href="route('estudios')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> ESTUDIOS </a>
                   <a :href="route('preguntas-frecuentes')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> PREGUNTAS FRECUENTES </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
+                  <a :href="route('obras-sociales')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> UBICACIÓN </a>
                 </div>
               </div>
@@ -70,11 +72,11 @@
             </div>
             <div class="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8">
               <h1 class="text-center text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                <span class="block text-white">Atención profesional personalizada</span>
+                <span class="block text-white">Comprometidos con la salud de nuestros pacientes</span>
                 <span class="block text-blue-200"></span>
               </h1>
               <p class="mt-6 max-w-lg mx-auto text-center text-xl text-blue-200 sm:max-w-3xl">
-                Somos el laboratorio reconocido por brindar servicios de calidad y confiables, por la calidez de nuestra atención y la rapidez en la entrega de protocolos.</p>
+                Reconocidos por ser sinónimo de calidad, responsabilidad y profesionalismo en el área. Brindamos un servicio rápido y confiable para nuestros pacientes.</p>
             </div>
           </div>
         </div>
@@ -83,9 +85,9 @@
       <div class="bg-gray-100">
           <div class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
             <div>
-                <h2 class="text-base font-semibold text-blue-600 uppercase tracking-wide">Lorem ipsum.</h2>
-                <p class="mt-2 text-3xl font-extrabold text-gray-900">Análisis Clinicos</p>
-                <p class="mt-4 text-lg text-gray-500">Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla nec.</p>
+                <h2 class="text-base font-semibold text-blue-600 uppercase tracking-wide">Realizamos.</h2>
+                <p class="mt-2 text-3xl font-extrabold text-gray-900">Análisis clínicos y microbiológicos</p>
+                <p class="mt-4 text-lg text-gray-500">De baja, mediana y alta complejidad. Estudios bacteriológicos, biología molecular, marcadores oncológicos y estudios genómicos.</p>
             </div>
             <div class="mt-12 lg:mt-0 lg:col-span-2">
                 <dl class="space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:grid-flow-col sm:gap-x-6 sm:gap-y-10 lg:gap-x-8">
@@ -94,8 +96,8 @@
                             <CheckIcon class="absolute h-6 w-6 text-green-500" aria-hidden="true" />
                             <p class="ml-9 text-lg leading-6 font-medium text-gray-900">{{ feature.name }}</p>
                         </dt>
-                        <dd class="mt-2 ml-9 text-base text-gray-500">
-                            {{ feature.description }}
+                        <dd class="mt-2 ml-9 text-base text-gray-500" v-html="feature.description.replace(/\n/g, '<br>')">
+                            
                         </dd>
                     </div>
                 </dl>
@@ -115,21 +117,20 @@
           <div class="mt-12 lg:m-0 lg:col-span-2 lg:pl-8">
             <div class="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 lg:px-0 lg:py-20 lg:max-w-none">
             <!-- <div class="max-w-lg mx-auto"> -->
-              <h2 class="text-2xl font-extrabold tracking-tight text-gray-200 sm:text-3xl">Contactanos</h2>
-              <p class="mt-3 text-lg leading-6 text-gray-50">Nullam risus blandit ac aliquam justo ipsum. Quam mauris volutpat massa dictumst amet. Sapien tortor lacus arcu.</p>
               <dl class="mt-8 text-base text-gray-100">
+                
                 <div>
-                  <dt class="sr-only">Postal address</dt>
-                  <dd>
-                    <p>Margarita Weild 1200</p>
-                    <p>Lanús Este, Prov. Buenos Aires</p>
-                  </dd>
-                </div>
-                <div class="mt-6">
                   <dt class="sr-only">Phone number</dt>
                   <dd class="flex">
                     <PhoneIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
                     <span class="ml-3"> 4225-0789 / 4249-8651</span>
+                  </dd>
+                </div>
+                <div class="mt-3">
+                  <dt class="sr-only">Email</dt>
+                  <dd class="flex">
+                    <ChatIcon class="flex-shrink-0 h-6 w-6 text-white-500" aria-hidden="true" />
+                    <span class="ml-3"> <a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank">11 2771 45 69</a></span>
                   </dd>
                 </div>
                 <div class="mt-3">
@@ -143,7 +144,14 @@
                   <dt class="sr-only">Email</dt>
                   <dd class="flex">
                     <ClockIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
-                    <span class="ml-3">Lunes a Viernes 7:30 a 18:00 / Sábados 7:30 a 13:00</span>
+                    <span class="ml-3">Lunes a Viernes 7:30 a 18:00 hs. / Sábados 7:30 a 13:00. hs. <br>Extracciones hasta 10:30 hs.</span>
+                  </dd>
+                </div>
+                <div class="mt-6">
+                  <dt class="sr-only">Postal address</dt>
+                  <dd>
+                    <p>Margarita Weild 1200</p>
+                    <p>Lanús Este, Prov. de Buenos Aires</p>
                   </dd>
                 </div>
               </dl>
@@ -158,7 +166,7 @@
         <div class="max-w-7xl mx-auto py-16 px-4 divide-y-2 divide-gray-200 sm:py-24 sm:px-6 lg:px-8">
           <div class="flex justify-between items-center">
             <h2 class="text-3xl font-extrabold text-gray-900">Preguntas Frecuentes</h2>
-            <a :href="route('obras-sociales')" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
+            <a :href="route('preguntas-frecuentes')" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
           </div>
           
           <div class="mt-6 pt-10">
@@ -167,8 +175,8 @@
                 <dt class="text-lg leading-6 font-medium text-gray-900">
                   {{ faq.question }}
                 </dt>
-                <dd class="mt-2 text-base text-gray-500">
-                  {{ faq.answer }}
+                <dd class="mt-2 text-base text-gray-500" v-html="faq.answer.replace(/\n/g, '<br>')">
+                  
                 </dd>
               </div>
             </dl>
@@ -186,31 +194,31 @@
             
             <div class="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/uta.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/uta.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/ioma.jpeg" alt="" />
+                <img class="h-20 grayscale" src="/img/obrassociales/ioma.jpeg" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/galeno.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/galeno.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/pami.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/pami.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/omint.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/omint.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/sancorsalud.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/sancorsalud.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/swiss.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/swiss.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/osmecon.jpeg" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/osmecon.jpeg" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/osde.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/osde.png" alt="" />
               </div>
             </div>
 
@@ -221,8 +229,8 @@
         <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-24 bg-gray-50" />  
         <div class="relative max-w-4xl mx-auto py-14  px-6  sm:px-6 sm:py-18 lg:max-w-7xl lg:px-8 lg:flex lg:items-center lg:justify-between bg-gray-200 rounded-2xl shadow-lg">
             <h2 class="tracking-tight  sm:text-4xl">
-            <span class="text-3xl font-extrabold block text-gray-500">Si sos paciente de UTA</span>
-            <span class="text-4xl font-extrabold block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">No olvides sacar tu turno de atención</span>
+            <span class="text-3xl font-extrabold block text-gray-500">Si Ud. es paciente de UTA</span>
+            <span class="text-4xl font-extrabold block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Ingrese al siguiente enlace</span>
             </h2>
             <div class=" space-y-4 sm:space-y-0 sm:flex sm:space-x-5">
             <a href="https://wa.me/5491126887264?text=Hola" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">TURNOS UTA</a>
@@ -238,7 +246,7 @@
           <div class="mx-auto text-base max-w-prose lg:grid lg:grid-cols-2 lg:gap-8 lg:max-w-none">
             <div>
               <h2 class="text-base text-blue-600 font-semibold tracking-wide uppercase">Nosotros</h2>
-              <h3 class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Calidad y profesionalismo desde hace 25 años</h3>
+              <h3 class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Calidad, responsabilidad y profesionalismo desde hace más de 25 años</h3>
             </div>
           </div>
           <div class="mt-8 lg:grid lg:grid-cols-2 lg:gap-8">
@@ -261,9 +269,9 @@
             </div>
             <div class="mt-8 lg:mt-0">
               <div class="mt-5 prose prose-blue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1">
-                <p>Desde 1996 somos el laboratorio de análisis clínicos referente en la zona. </p>
-                <p>Cuidamos a nuestros pacientes guiados bajo los principios de solidaridad y ética profesional.</p>
-                <p>Formamos un grupo humano calificado que trabaja en equipo, cumpliendo con las tareas y objetivos planteados y bajo la premisa de la capacitación y desarrollo profesional constante.</p>
+                <p>Desde 1996 somos el laboratorio de análisis clínicos y microbiología referente en la zona.</p>
+                <p>Cuidamos a nuestros pacientes con calidez en la atención y ética profesional.</p>
+                <p>Formamos un grupo humano calificado que trabaja en equipo, cumpliendo con las tareas y objetivos planteados. Bajo la premisa de la capacitación y desarrollo profesional constante.</p>
                 <p>Nuestro compromiso reside en brindar un servicio de salud de excelencia, mediante la entrega de informes con resultados confiables y de calidad para nuestros pacientes y los profesionales de la salud.</p>
                 <p>Brindamos atención personalizada, en tiempo oportuno, procurando satisfacer las necesidades de nuestros pacientes con la incorporación de innovación y la mejora en la tecnología aplicada a nuestros procesos.</p>            
               </div>
@@ -273,7 +281,7 @@
         <div class="relative max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-evenly ">
             <div>
-              <img class="h-40 " src="/img/iso.png" alt="" />
+              <img class="h-40 " src="/img/lab_acreditado.png" alt="" />
             </div>
             <div>
               <img class="h-52 " src="/img/peec.png" alt="" />
@@ -343,12 +351,15 @@
           <ul class="flex justify-between text-gray-700 flex-col items-center md:flex-row">
             <li>NOSOTROS</li>
             <li>RESULTADOS</li>
+            <li>ESTUDIOS</li>
             <li>PREGUNTAS FRECUENTES</li>
             <li>OBRAS SOCIALES</li>
             <li>UBICACIÓN</li>
           </ul>
         </div>
         <div class="mt-12 border-t border-gray-200 pt-8 lg:mt-12 w-full">
+          <p class="mt-8 text-sm text-gray-800 md:mt-0 md:order-1 text-left">TÉRMINOS Y CONDICIONES DE USO</p>
+          <p class="mt-8 text-xs text-gray-400 md:mt-0 md:order-1 text-left">El/la titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo al efecto conforme lo establecido en el artículo 14, inciso 3 de la Ley N° 25.326. La AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA, Órgano de control de la Ley N° 25.326, tiene la atribución de atender las denuncias y reclamos que se interpongan con relación al incumplimiento de las normas sobre protección de datos personales</p>
           <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1 text-center">&copy; 2022 - Diseño y Desarrollo por onMedia.</p>
         </div>
       </div>
@@ -359,7 +370,7 @@
 
 <script>
 
-import { GlobeAltIcon, LightningBoltIcon, ScaleIcon, MailIcon, PhoneIcon, ClockIcon } from '@heroicons/vue/outline'
+import { GlobeAltIcon, LightningBoltIcon, ScaleIcon, MailIcon, PhoneIcon, ClockIcon, ChatIcon } from '@heroicons/vue/outline'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { defineComponent, h } from 'vue'
@@ -387,22 +398,22 @@ const faqs = [
   {
     question: 'Horarios de hisopado COVID19',
     answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
+      'Los hisopados son sin turno de 11:00 a 15:00 hs. de lunes a viernes y sábados de 9:00 a 12:00 hs. \nTest de antígeno de 7:30 a 9.30 (Hisopado PCR).',
   },
   {
     question: '¿Cómo obtener mis resultados?',
     answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
+      'Puede retirar sus resultados de lunes a viernes de 14 a 18 hs.,  sábados de 10 a 13 hs. o bien descargarlos a través del portal en cualquier momento.',
   },
   {
     question: '¿Cuales son los horario de atención y la ubicación?',
     answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
+      '----',
   },
   {
     question: '¿Como solicito un servicio a domicilio?',
     answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
+      'Lo puede solicitar de manera online consultando <b><a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aqui</a></b>.',
   },
 
 ]
@@ -430,25 +441,26 @@ const solutions = [
 ]
 const features = [
   {
-    name: 'Hisopados COVID',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: 'Hisopados',
+    description: 'Realizamos testeos para detectar COVID-19, Influenza A y B y Estreptococo Beta Hemolítico.',
     icon: InboxIcon,
   },
   {
     name: 'Extracciones a domicilio',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    description: 'Ofrecemos extracciones a domicilio para que no tenga que salir de su casa. Solicite su turno online <b><a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aqui</a></b>',
     icon: UsersIcon,
   },
   {
     name: 'Resultados online',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    description: 'Reciba sus resultados de forma rápida y segura a través del siguiente <b><a href="https://www.suresultado.com/labexpress/Labexpress-form.html" target="_blank"> sitio</a></b>.',
     icon: TrashIcon,
   },
   {
-    name: 'Team Reporting',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
-    icon: DocumentReportIcon,
-  }
+    name: 'Empresas e instituciones',
+    description: 'Atención y asesoramiento a empresas e instituciones, exámenes pre ocupacionales, anuales y otros servicios. Consultanos <a href="mailto:labdelsur@yahoo.com.ar">labdelsur@yahoo.com.ar</a>.',
+    icon: PencilAltIcon,
+  },
+
 ]
 const metrics = [
   { id: 1, stat: '8K+', emphasis: 'Companies', rest: 'use laoreet amet lacus nibh integer quis.' },
@@ -586,6 +598,7 @@ export default {
     MailIcon,
     PhoneIcon,
     ClockIcon,
+    ChatIcon,
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
