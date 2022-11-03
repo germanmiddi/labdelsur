@@ -142,6 +142,7 @@
 							</td>
 							<td class="py-4 px-6">
 								<a type="button" @click="
+								form.id = booking.id,
 								form.fullname = booking.contact.fullname,
 								form.name = booking.contact.name,
 								form.wa_id = booking.contact.wa_id,
@@ -211,45 +212,45 @@
 										</div>
 									</div>
 									<div class="flex-1 flex flex-col justify-between">
-										<div class="px-4 divide-y divide-gray-200 sm:px-6 font-medium">
+										<div class="px-4 sm:px-6 font-medium">
 
-											<div>
+											<div class="mt-4">
 												<label for="fullname"
 													class="block text-sm font-medium text-gray-900">Nombre y
 													Apellido</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.fullname" name="fullname"
+													<input type="text" v-model="form.fullname" name="fullname" disabled
 														id="fullname"
-														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-gray-100 rounded-md" />
 												</div>
 											</div>
-											<div>
+											<div class="mt-2">
 												<label for="nro_affiliate"
 													class="block text-sm font-medium text-gray-900">Nro.
 													Afiliado</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.nro_affiliate" name="nro_affiliate"
+													<input type="text" v-model="form.nro_affiliate" name="nro_affiliate" disabled
 														id="nro_affiliate"
-														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-gray-100 rounded-md" />
 												</div>
 											</div>
-											<div>
+											<div class="mt-2">
 												<label for="fullname"
 													class="block text-sm font-medium text-gray-900">WhatsApp</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.name" name="name" id="name"
-														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+													<input type="text" v-model="form.name" name="name" id="name" disabled
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-gray-100 rounded-md" />
 												</div>
 											</div>
-											<div>
+											<div class="mt-2">
 												<label for="telefono"
 													class="block text-sm font-medium text-gray-900">Telefono</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.wa_id" name="wa_id" id="wa_id"
-														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+													<input type="text" v-model="form.wa_id" name="wa_id" id="wa_id" disabled
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 bg-gray-100 rounded-md" />
 												</div>
 											</div>
-											<div>
+											<div class="mt-2">
 												<label for="telefono"
 													class="block text-sm font-medium text-gray-900">Estado</label>
 												<div class="mt-1">
@@ -273,8 +274,8 @@
 									<button type="button"
 										class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 										@click="open = false">Cancelar</button>
-									<!-- <button @click.prevent="submit"
-										class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Guardar</button> -->
+									<button @click.prevent="changeStatusBooking"
+										class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Actualizar</button>
 								</div>
 							</form>
 						</div>
@@ -386,7 +387,22 @@ export default {
 		sortBookings() {
 			this.sort_order = this.sort_order === 'ASC' ? 'DESC' : 'ASC'
 			this.getBookings()
-		}
+		},
+		async changeStatusBooking() {
+			let rt = route('booking.updatestatus');
+			
+			axios.post(rt, {
+				form: this.form,
+			}).then(response => {
+				this.open = false
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+				this.getBookings()
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = error.response.data.message
+			})
+		},
 	}
 }
 </script>

@@ -218,19 +218,69 @@ class BookingController extends Controller
     }
 }
 
-public function check_booking_available($date){
-    
-    $date = Carbon::parse($date);
-    $cant_orders = DetailDay::select('cant_orders')->where('num_day', '=', date('w', strtotime($date)))->first();
+    public function check_booking_available($date){
+        
+        $date = Carbon::parse($date);
+        $cant_orders = DetailDay::select('cant_orders')->where('num_day', '=', date('w', strtotime($date)))->first();
 
-    Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count();
-    
-    if(Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count() < $cant_orders['cant_orders']){
-        return true;
+        Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count();
+        
+        if(Booking::where('date',$date->format('Y-m-d'))->where('status_id', 1)->count() < $cant_orders['cant_orders']){
+            return true;
+        }
+
+        return false;
+        
     }
 
-    return false;
+    public function get_bookings($wa_id){
+        $contact = Contact::where('wa_id', $wa_id)->first();
+        $booking = Booking::where('contact_id',$contact->id)->where('status_id', 1)->first();
+        if($booking){
+            return Carbon::parse($booking->date)->format("d-m-Y");
+        }
+        return '';
+    }  
     
-}
+    public function cancel_booking($wa_id){
+        try {
+            $contact = Contact::where('wa_id', $wa_id)->first();
+    
+            $status = BookingStatus::where('status', 'CANCELADO')->first();
+            Booking::where('contact_id',$contact->id)->where('status_id', 1)->first()->update([
+                    'status_id' => $status->id
+                ]);
+
+            return $data = [
+                'code' => 200,
+                'message' => 'Se ha actualizado correctamente'
+            ];
+        } catch (\Throwable $th) {
+            log::info($th);
+            return $data = [
+                'code' => 500,
+                'message' => 'Se ha producido un error'
+            ];
+        }
+    }
+
+    public function update_status(Request $request){
+        try {
+            Booking::where('id',$request->form['id'])->update([
+                    'status_id' => $request->form['status_id']
+                ]);
+
+            return $data = [
+                'code' => 200,
+                'message' => 'Se ha actualizado correctamente'
+            ];
+        } catch (\Throwable $th) {
+            log::info($th);
+            return $data = [
+                'code' => 500,
+                'message' => 'Se ha producido un error'
+            ];
+        }
+    }
 
 }

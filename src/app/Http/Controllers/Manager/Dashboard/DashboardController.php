@@ -16,7 +16,7 @@ class DashboardController extends Controller
     public function index(){
         return Inertia::render('Manager/Dashboard/Index', 
         [
-            'contacts' => Contact::all()
+            'contacts' => Contact::all(),
         ]);
     }
 

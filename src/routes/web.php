@@ -42,6 +42,10 @@ Route::get('/whatsapp/sendtest', [WhatsappController::class,'sendTest' ])
         ->name('whatsapp.sendtest')
         ->middleware('auth');
 
+Route::get('/whatsapp/{id}/getUrl', [WhatsappController::class,'getUrl' ])
+        ->name('whatsapp.geturl')
+        ->middleware('auth');
+
 Route::post('/whatsapp/sendMessage', [WhatsappController::class,'sendMessage' ])
         ->name('whatsapp.sendmessage')
         ->middleware('auth');
@@ -77,11 +81,19 @@ Route::post('/settings/updateday', [SettingController::class, 'update_day'])
 
 Route::post('/settings/updateholiday', [SettingController::class, 'store_holiday'])
         ->name('settings.storeholiday')
-        ->middleware('auth'); 
+        ->middleware('auth');
+        
+Route::post('/settings/storemessage', [SettingController::class, 'store_message'])
+        ->name('settings.storemessage')
+        ->middleware('auth');
 
 Route::get('/settings/listholiday', [SettingController::class, 'list_holiday'])
         ->name('settings.listholiday')
-        ->middleware('auth'); 
+        ->middleware('auth');
+        
+Route::get('/settings/listmessage', [SettingController::class, 'list_message'])
+        ->name('settings.listmessage')
+        ->middleware('auth');
 
 Route::get('/settings/listday', [SettingController::class, 'list_day'])
         ->name('settings.listday')
@@ -91,31 +103,40 @@ Route::get('/settings/deleteholiday/{id}', [SettingController::class, 'delete_ho
         ->name('settings.deleteholiday')
         ->middleware('auth');
 
-Route::post('/settings/update', [SettingController::class, 'update_setting'])
-        ->name('settings.update')
-        ->middleware('auth'); 
-
-Route::get('/booking', [BookingController::class, 'index'])
-        ->name('booking')
+Route::get('/settings/deletemessage/{id}', [SettingController::class, 'delete_message'])
+        ->name('settings.deletemessage')
         ->middleware('auth');
 
-Route::get('booking/list', [BookingController::class, 'list'])
+        
+        Route::post('/settings/update', [SettingController::class, 'update_setting'])
+        ->name('settings.update')
+        ->middleware('auth'); 
+        
+        Route::get('/booking', [BookingController::class, 'index'])
+        ->name('booking')
+        ->middleware('auth');
+        
+        Route::get('booking/list', [BookingController::class, 'list'])
         ->name('booking.list')
         ->middleware('auth');
         
-Route::get('/booking/daysavailable/{date?}', [BookingController::class, 'get_days_available'])
+        Route::get('/booking/daysavailable/{date?}', [BookingController::class, 'get_days_available'])
         ->name('booking.dayavailable')
         ->middleware('auth'); 
-
-Route::post('/booking', [BookingController::class, ' create_booking'])
+        
+        Route::post('/booking', [BookingController::class, ' create_booking'])
         ->name('booking.createbooking')
         ->middleware('auth');
+        
+        Route::post('/booking/updatestatus', [BookingController::class, 'update_status'])
+                ->name('booking.updatestatus')
+                ->middleware('auth'); 
 
-Route::get('/user', [UserController::class, 'index'])
+        Route::get('/user', [UserController::class, 'index'])
         ->name('user')
         ->middleware('auth');
-
-Route::get('user/list', [UserController::class, 'list'])
+        
+        Route::get('user/list', [UserController::class, 'list'])
         ->name('user.list')
         ->middleware('auth');
 

@@ -18,7 +18,7 @@ class MessagesController extends Controller
         
         Message::where('wa_id', $wa_id)->update(['status' => 'read']);
 
-        return Message::where('wa_id', $wa_id)->get();
+        return Message::where('wa_id', $wa_id)->limit(10)->get();
 
 
     }

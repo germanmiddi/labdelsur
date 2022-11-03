@@ -44,6 +44,11 @@ return [
             'throw' => false,
         ],
 
+        'wp' => [
+            'driver' => 'local',
+            'root' => storage_path('app/wp')
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
