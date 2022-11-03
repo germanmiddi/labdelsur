@@ -15,10 +15,11 @@
             </PopoverButton>
           </div>
           <PopoverGroup as="nav" class="hidden md:flex space-x-10">
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
-            <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS</a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS</a>
+            <a :href="route('estudios')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
+            <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES</a>
+            <a :href="route('obras-sociales')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
             <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a>
           </PopoverGroup>
         </div>

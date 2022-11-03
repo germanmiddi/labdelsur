@@ -41,8 +41,9 @@
                 <div class="flex flex-col">
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> NOSOTROS </a>
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> RESULTADOS </a>
+                  <a :href="route('estudios')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> ESTUDIOS </a>
                   <a :href="route('preguntas-frecuentes')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> PREGUNTAS FRECUENTES </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
+                  <a :href="route('obras-sociales')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
                   <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> UBICACIÓN </a>
                 </div>
               </div>
@@ -95,8 +96,8 @@
                             <CheckIcon class="absolute h-6 w-6 text-green-500" aria-hidden="true" />
                             <p class="ml-9 text-lg leading-6 font-medium text-gray-900">{{ feature.name }}</p>
                         </dt>
-                        <dd class="mt-2 ml-9 text-base text-gray-500">
-                            {{ feature.description }}
+                        <dd class="mt-2 ml-9 text-base text-gray-500" v-html="feature.description.replace(/\n/g, '<br>')">
+                            
                         </dd>
                     </div>
                 </dl>
@@ -129,7 +130,7 @@
                   <dt class="sr-only">Email</dt>
                   <dd class="flex">
                     <ChatIcon class="flex-shrink-0 h-6 w-6 text-white-500" aria-hidden="true" />
-                    <span class="ml-3"> <a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola">11 2771 45 69</a></span>
+                    <span class="ml-3"> <a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank">11 2771 45 69</a></span>
                   </dd>
                 </div>
                 <div class="mt-3">
@@ -143,14 +144,14 @@
                   <dt class="sr-only">Email</dt>
                   <dd class="flex">
                     <ClockIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
-                    <span class="ml-3">Lunes a Viernes 7:30 a 18:00 hs. / Sábados 7:30 a 13:00. hs. Extracciones hasta 10:30 hs.</span>
+                    <span class="ml-3">Lunes a Viernes 7:30 a 18:00 hs. / Sábados 7:30 a 13:00. hs. <br>Extracciones hasta 10:30 hs.</span>
                   </dd>
                 </div>
                 <div class="mt-6">
                   <dt class="sr-only">Postal address</dt>
                   <dd>
                     <p>Margarita Weild 1200</p>
-                    <p>Lanús Este, Prov. Buenos Aires</p>
+                    <p>Lanús Este, Prov. de Buenos Aires</p>
                   </dd>
                 </div>
               </dl>
@@ -165,7 +166,7 @@
         <div class="max-w-7xl mx-auto py-16 px-4 divide-y-2 divide-gray-200 sm:py-24 sm:px-6 lg:px-8">
           <div class="flex justify-between items-center">
             <h2 class="text-3xl font-extrabold text-gray-900">Preguntas Frecuentes</h2>
-            <a :href="route('obras-sociales')" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
+            <a :href="route('preguntas-frecuentes')" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
           </div>
           
           <div class="mt-6 pt-10">
@@ -174,8 +175,8 @@
                 <dt class="text-lg leading-6 font-medium text-gray-900">
                   {{ faq.question }}
                 </dt>
-                <dd class="mt-2 text-base text-gray-500">
-                  {{ faq.answer }}
+                <dd class="mt-2 text-base text-gray-500" v-html="faq.answer.replace(/\n/g, '<br>')">
+                  
                 </dd>
               </div>
             </dl>
@@ -193,31 +194,31 @@
             
             <div class="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/uta.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/uta.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/ioma.jpeg" alt="" />
+                <img class="h-20 grayscale" src="/img/obrassociales/ioma.jpeg" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/galeno.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/galeno.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/pami.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/pami.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/omint.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/omint.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/sancorsalud.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/sancorsalud.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/swiss.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/swiss.png" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/osmecon.jpeg" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/osmecon.jpeg" alt="" />
               </div>
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 " src="/img/obrassociales/osde.png" alt="" />
+                <img class="h-20  grayscale" src="/img/obrassociales/osde.png" alt="" />
               </div>
             </div>
 
@@ -245,7 +246,7 @@
           <div class="mx-auto text-base max-w-prose lg:grid lg:grid-cols-2 lg:gap-8 lg:max-w-none">
             <div>
               <h2 class="text-base text-blue-600 font-semibold tracking-wide uppercase">Nosotros</h2>
-              <h3 class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">CCalidad, responsabilidad y profesionalismo desde hace más de 25 años</h3>
+              <h3 class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Calidad, responsabilidad y profesionalismo desde hace más de 25 años</h3>
             </div>
           </div>
           <div class="mt-8 lg:grid lg:grid-cols-2 lg:gap-8">
@@ -280,7 +281,7 @@
         <div class="relative max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-evenly ">
             <div>
-              <img class="h-40 " src="/img/iso.png" alt="" />
+              <img class="h-40 " src="/img/lab_acreditado.png" alt="" />
             </div>
             <div>
               <img class="h-52 " src="/img/peec.png" alt="" />
@@ -357,6 +358,8 @@
           </ul>
         </div>
         <div class="mt-12 border-t border-gray-200 pt-8 lg:mt-12 w-full">
+          <p class="mt-8 text-sm text-gray-800 md:mt-0 md:order-1 text-left">TÉRMINOS Y CONDICIONES DE USO</p>
+          <p class="mt-8 text-xs text-gray-400 md:mt-0 md:order-1 text-left">El/la titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo al efecto conforme lo establecido en el artículo 14, inciso 3 de la Ley N° 25.326. La AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA, Órgano de control de la Ley N° 25.326, tiene la atribución de atender las denuncias y reclamos que se interpongan con relación al incumplimiento de las normas sobre protección de datos personales</p>
           <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1 text-center">&copy; 2022 - Diseño y Desarrollo por onMedia.</p>
         </div>
       </div>
@@ -395,22 +398,22 @@ const faqs = [
   {
     question: 'Horarios de hisopado COVID19',
     answer:
-      '¿Cómo obtener mis resultados?. Puede retirar sus resultados de lunes a viernes de 14 a 18 hs.,  sábados de 10 a 13 hs. o bien descargarlos a través del portal en cualquier momento.',
+      'Los hisopados son sin turno de 11:00 a 15:00 hs. de lunes a viernes y sábados de 9:00 a 12:00 hs. \nTest de antígeno de 7:30 a 9.30 (Hisopado PCR).',
   },
   {
     question: '¿Cómo obtener mis resultados?',
     answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
+      'Puede retirar sus resultados de lunes a viernes de 14 a 18 hs.,  sábados de 10 a 13 hs. o bien descargarlos a través del portal en cualquier momento.',
   },
   {
     question: '¿Cuales son los horario de atención y la ubicación?',
     answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
+      '----',
   },
   {
     question: '¿Como solicito un servicio a domicilio?',
     answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
+      'Lo puede solicitar de manera online consultando <b><a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aqui</a></b>.',
   },
 
 ]
@@ -444,17 +447,17 @@ const features = [
   },
   {
     name: 'Extracciones a domicilio',
-    description: 'Ofrecemos extracciones a domicilio para que no tenga que salir de su casa. Solicite su turno online aquí (link a whatsapp en turno online)',
+    description: 'Ofrecemos extracciones a domicilio para que no tenga que salir de su casa. Solicite su turno online <b><a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aqui</a></b>',
     icon: UsersIcon,
   },
   {
     name: 'Resultados online',
-    description: 'Reciba sus resultados de forma rápida y segura (https://www.suresultado.com/labexpress/Labexpress-form.html).',
+    description: 'Reciba sus resultados de forma rápida y segura a través del siguiente <b><a href="https://www.suresultado.com/labexpress/Labexpress-form.html" target="_blank"> sitio</a></b>.',
     icon: TrashIcon,
   },
   {
     name: 'Empresas e instituciones',
-    description: 'Atención y asesoramiento a empresas e instituciones, exámenes pre ocupacionales, anuales y otros servicios. Consultanos (link al mail).',
+    description: 'Atención y asesoramiento a empresas e instituciones, exámenes pre ocupacionales, anuales y otros servicios. Consultanos <a href="mailto:labdelsur@yahoo.com.ar">labdelsur@yahoo.com.ar</a>.',
     icon: PencilAltIcon,
   },
 

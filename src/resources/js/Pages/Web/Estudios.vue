@@ -17,19 +17,12 @@
             </PopoverButton>
           </div>
           <PopoverGroup as="nav" class="hidden md:flex space-x-10">
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS
-            </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS
-            </a>
-            <a :href="route('estudios')"
-              class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
-            <a :href="route('preguntas-frecuentes')"
-              class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES
-            </a>
-            <a :href="route('obras-sociales')"
-              class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN
-            </a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS</a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS</a>
+            <a :href="route('estudios')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
+            <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES</a>
+            <a :href="route('obras-sociales')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
+            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a>
           </PopoverGroup>
         </div>
 
@@ -85,7 +78,9 @@
             <div class="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8">
               <h1 class="text-center text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
                 <span class="block text-white">Estudios</span>
+                
               </h1>
+              <p class="text-center text-lg block text-white">Estudios por patología</p>
 
               <div class="mt-10 max-w-sm mx-auto flex justify-center">
                 <input class="w-64 rounded-md mr-2" type="text" v-model="filtro" />
@@ -110,19 +105,21 @@
             <p class="text-xl font-medium text-blue-900 md:col-span-5">Búsqueda rápida por palabras claves:</p>
             <div class="divide-y divide-gray-200 mt-2">
               <div v-for="estudio in estudios" :key="estudio.id" class="bg-white pb-4 contents text-white">
-                <span
-                  class="p-2 mt-2 mr-2 text-xl font-extrabold block bg-gray-300 float-left rounded-full">{{ estudio.name }}
+                <span class="p-2 mt-2 mr-2 text-xl font-extrabold block bg-gray-300 float-left rounded-full">{{
+                    estudio.title
+                }}
                 </span>
               </div>
             </div>
           </div>
-
-          <div v-if="!this.estudiosFiltered" class="mt-8">
+        </div>
+        <div class="max-w-7xl mx-auto py-12 px-4 divide-y divide-gray-200 sm:px-6 lg:py-16 lg:px-8">
+          <!-- <div v-if="!this.estudiosFiltered" class="mt-8">
             <dl class="divide-y divide-gray-200">
               <div v-for="estudio in estudios" :key="estudio.id">
                 <div class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
                   <dt class="text-base font-medium text-blue-900 md:col-span-5">
-                    {{ estudio.name }}
+                    {{ estudio.title }}
                   </dt>
                 </div>
               </div>
@@ -134,13 +131,12 @@
               <div v-for="estudio in estudiosFiltered" :key="estudio.id">
                 <div v-if="estudio.show" class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
                   <dt class="text-base font-medium text-gray-900 md:col-span-5">
-                    {{ estudio.name }}
+                    {{ estudio.title }}
                   </dt>
                 </div>
               </div>
             </dl>
-          </div>
-
+          </div> -->
 
         </div>
       </div>
@@ -217,49 +213,64 @@ import { CheckIcon } from '@heroicons/vue/outline'
 
 const estudios = [
   {
-    name: 'Estudios de COVID-19'
+    title: 'Estudios de COVID-19',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Embarazo y Coronavirus'
+    title: 'Embarazo y Coronavirus',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Diabetes'
+    title: 'Diabetes',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Hipotiroidismo'
+    title: 'Hipotiroidismo',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Dislipemias'
+    title: 'Dislipemias',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Estudios de Fertilidad Femenina'
+    title: 'Estudios de Fertilidad Femenina',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Estudios de Fertilidad Masculina'
+    title: 'Estudios de Fertilidad Masculina',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Trombofilia'
+    title: 'Trombofilia',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Test ADN Prenetal'
+    title: 'Test ADN Prenetal',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Espermograma Computarizado'
+    title: 'Espermograma Computarizado',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Celiaquía'
+    title: 'Celiaquía',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Estudios de HPV'
+    title: 'Estudios de HPV',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Estudios de TDBH'
+    title: 'Estudios de TDBH',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Estudios de Rast'
+    title: 'Estudios de Rast',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
   {
-    name: 'Dengue, Zika y Chikungunya'
+    title: 'Dengue, Zika y Chikungunya',
+    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium."
   },
 ]
 
@@ -407,7 +418,7 @@ export default {
     filtroInput() {
       let f = this.filtro
       this.estudiosFiltered = this.estudios.filter(function (obj) {
-        if (obj.name.includes(f)) {
+        if (obj.title.includes(f) || obj.description.includes(f)) {
           return obj
         }
       })
