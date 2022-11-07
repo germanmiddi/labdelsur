@@ -26,6 +26,10 @@ class BookingStatusTableSeeder extends Seeder
         \App\Models\BookingStatus::create([
             'status' => 'CANCELADO',
         ]);
+
+        \App\Models\BookingStatus::create([
+            'status' => 'FINALIZADO',
+        ]);
         
     }
 }
