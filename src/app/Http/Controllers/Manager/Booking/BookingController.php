@@ -171,6 +171,7 @@ class BookingController extends Controller
     }
 
     public function create_booking(Request $request){
+        //dd($request->form);
         $data = $this->store_booking($request->form);
 
         if($data['code'] == 200){
@@ -181,6 +182,7 @@ class BookingController extends Controller
     }
 
     public function store_booking($data){
+
         DB::beginTransaction();
         try {
             // ACTUALIZO LOS DATOS DEL CONTACTO
@@ -191,6 +193,12 @@ class BookingController extends Controller
             ]);
             
             $contact = Contact::where('wa_id', $data['wa_id'])->first();
+
+            if(!$contact){
+                $contact = Contact::firstOrCreate(['wa_id' => $data['wa_id'], 
+                                                    'name' => $data['fullname']]);
+                $contact = Contact::where('wa_id',$data['wa_id'])->first();
+            }
             // CREO EL NUEVO TURNO..            
             $input_date = $data['date'];
             $input_date  = date('Y-m-d', strtotime($input_date));
@@ -209,11 +217,12 @@ class BookingController extends Controller
                 'message' => 'Se ha almacenado correctamente el turno'
             ];
         } catch (\Throwable $th) {
+            dd($th);
             log::info($th);
             DB::rollBack();
             return $data = [
                 'code' => 500,
-                'message' => 'Se ha producido un erro'
+                'message' => 'Se ha producido un error'
             ];
     }
 }

@@ -12,14 +12,15 @@
 						<h1>Usuarios</h1>
 					</div>
 					<div class="flex text-sm">
-                    <button class="ml-2 inline-flex items-center p-1 border border-transparent rounded-lg shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-								@click=" 
-								form={},
-								editingUser = false,
-								open = true">
-                        <span>Nuevo Usuario </span>
-                    </button>
-                </div>
+						<button
+							class="ml-2 inline-flex items-center p-1 border border-transparent rounded-lg shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+							@click="
+							form = {},
+							editingUser = false,
+							open = true">
+							<span>Nuevo Usuario </span>
+						</button>
+					</div>
 				</div>
 
 				<div class="lg:flex lg:items-center lg:justify-between">
@@ -46,32 +47,32 @@
 				<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
 					<table class="w-full whitespace-nowrap">
 						<tr class="text-left font-bold bg-indigo-600 text-white">
-							<th scope="col" class="py-3 px-6" @click="sort_by='id', sortUsers()">
+							<th scope="col" class="py-3 px-6" @click="sort_by = 'id', sortUsers()">
 								<div class="flex items-center justify-center">
 									ID
-									<Icons v-if="sort_by=='id' && sort_order=='ASC'" name="bars-up"
+									<Icons v-if="sort_by == 'id' && sort_order == 'ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
-									<Icons v-else-if="sort_by=='id' && sort_order=='DESC'" name="bars-down"
+									<Icons v-else-if="sort_by == 'id' && sort_order == 'DESC'" name="bars-down"
 										class="h-4 w-4 ml-2" />
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
 							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by='name', sortUsers()">
+							<th scope="col" class="py-3 px-6" @click="sort_by = 'name', sortUsers()">
 								<div class="flex items-center justify-center">
 									Nombre
-									<Icons v-if="sort_by=='name' && sort_order=='ASC'" name="bars-up"
+									<Icons v-if="sort_by == 'name' && sort_order == 'ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
-									<Icons v-else-if="sort_by=='name' && sort_order=='DESC'" name="bars-down"
+									<Icons v-else-if="sort_by == 'name' && sort_order == 'DESC'" name="bars-down"
 										class="h-4 w-4 ml-2" />
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
 							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by='email', sortUsers()">
+							<th scope="col" class="py-3 px-6" @click="sort_by = 'email', sortUsers()">
 								<div class="flex items-center justify-center">
 									Email
-									<Icons v-if="sort_by=='email' && sort_order=='ASC'" name="bars-up"
+									<Icons v-if="sort_by == 'email' && sort_order == 'ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
-									<Icons v-else-if="sort_by=='email' && sort_order=='DESC'" name="bars-down"
+									<Icons v-else-if="sort_by == 'email' && sort_order == 'DESC'" name="bars-down"
 										class="h-4 w-4 ml-2" />
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
@@ -84,24 +85,23 @@
 						</tr>
 						<tr v-for="user in users.data"
 							class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
-							<th scope="row"
-								class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
-								{{user.id}}
+							<th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
+								{{ user.id }}
 							</th>
 							<td class="py-4 px-6">
-								{{user.name}}
+								{{ user.name }}
 							</td>
 							<td class="py-4 px-6">
-								{{user.email}}
+								{{ user.email }}
 							</td>
 
 							<td class="py-4 px-6">
 								<a type="button" @click="
-								form.id = user.id,
-								form.name = user.name,
-								form.email = user.email,
-								open = true,
-								editingUser = true
+									form.id = user.id,
+									form.name = user.name,
+									form.email = user.email,
+									open = true,
+									editingUser = true
 								" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
 									<Icons name="edit" class="h-5 w-5"></Icons>
 								</a>
@@ -110,8 +110,8 @@
 					</table>
 					<div class="flex justify-between mx-5 px-2 items-center p-2">
 						<div>
-							Mostrando: {{this.users.from}} a {{this.users.to}} - Entradas encontradas:
-							{{this.users.total}}
+							Mostrando: {{ this.users.from }} a {{ this.users.to }} - Entradas encontradas:
+							{{ this.users.total }}
 						</div>
 
 						<div class="flex flex-wrap -mb-1">
@@ -121,7 +121,7 @@
 									v-html="link.label"> </div>
 								<div v-else
 									class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 rounded-md hover:bg-indigo-500 hover:text-white cursor-pointer"
-									:class="{ 'bg-indigo-500': link.active },{ 'text-white': link.active }"
+									:class="{ 'bg-indigo-500': link.active }, { 'text-white': link.active }"
 									@click="getUsersPaginate(link.url)" v-html="link.label"> </div>
 							</template>
 						</div>
@@ -183,7 +183,7 @@
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
 												</div>
 											</div>
-											<div  v-if="!editingUser">
+											<div v-if="!editingUser">
 												<label for="password"
 													class="block text-sm font-medium text-gray-900">Contraseña</label>
 												<div class="mt-1">
@@ -197,8 +197,8 @@
 													class="block text-sm font-medium text-gray-900">Confirmar
 													Contraseña</label>
 												<div class="mt-1">
-													<input type="password" v-model="form.password_confirmation" name="password_confirmation"
-														id="password_confirmation"
+													<input type="password" v-model="form.password_confirmation"
+														name="password_confirmation" id="password_confirmation"
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
 												</div>
 											</div>
@@ -263,7 +263,7 @@ export default {
 			editingUser: false,
 			form: {},
 			toastMessage: "",
-            labelType: "info",
+			labelType: "info",
 		}
 	},
 	watch: {

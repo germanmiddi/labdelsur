@@ -109,7 +109,8 @@ class WhatsappController extends Controller
                 $text .= "\n ".$this->emojis[5]." 🚗 Extracciones a domicilio.";
                 $text .= "\n ".$this->emojis[6]." 🦠 COVID 19";
                 $text .= "\n ".$this->emojis[7]." 🔬 Indicaciones de estudios";
-                $text .= "\n ".$this->emojis[8]." 💲 Presupuestos";
+                $text .= "\n ".$this->emojis[8]." 🏥 Coberturas";
+                $text .= "\n ".$this->emojis[9]." 💲 Presupuestos";
                 
                 break;
 
@@ -122,7 +123,10 @@ class WhatsappController extends Controller
                 break;
 
             case '0.2':
-                $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
+                $text = "Para AUTORIZACIONES envíe foto de la orden, del carnet y en su caso del bono.";
+                $text .= "Su orden será revisada por un agente y pasada a autorizar a la brevedad otorgándole un número de PRECARGA.";
+                $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien, si su orden pertenece a IOMA,  puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
+                $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. \nUna vez autorizada tiene 3 meses para realizar los análisis.";
                 break;
 
             case '0.3':
@@ -163,19 +167,15 @@ class WhatsappController extends Controller
                 break;
 
             case '0.8':
-                $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
+                $data = $this->manager_coberturas($wa_id, $message, $prev_step);
+                $current_step = $data['id'];
+                $text = $data['text'];
                 break;
-            /* case '0.7':
-                $text = "";
-                break;
-            
-            case '0.8':
-                $text = "";
-                break;
-            
+
             case '0.9':
-                $text = "";
-                break; */
+                $text = "💬 Por favor envíenos una foto de la orden médica / archivo de la misma para pasarle un presupuesto. Asimismo indique si posee cobertura / si lo hará particular.";
+                break;
+                
             default:
                 $text = "No entendi eso 🤔​.";
                 break;
@@ -749,11 +749,15 @@ class WhatsappController extends Controller
                 ];
                 $bookingController = new BookingController();
                 $bookings = $bookingController->store_booking($form);
+
                 if($bookings['code'] == 200){
                     $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:00 hs.";
                     
                     $text .= "\n🤔​ Recuerde consultar las indicaciones para su estudio.";
                     $text .= "\n\nPresione ".$this->emojis[0]." para volver ver el menu de 🔬 Indicaciones de estudios";
+
+                    $text .= "\n\n📝 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
+                    $text .= "\n▶ Si pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
                 }else{
                     $text = "⛔ No se ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
                 } 
@@ -969,6 +973,83 @@ class WhatsappController extends Controller
                 $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
                 break;
         
+            default:
+                $text = "No entendi eso.";
+                break;
+                
+        }
+        if($current_step != ''){
+            $text .= "\n\n#️⃣ Menú anterior.";
+        }
+
+        return ['id' => $current_step == '' ? $base_step : $base_step.'.'.$current_step,
+                'text' => $text];
+    }
+
+    public function manager_coberturas($wa_id, $message, $prev_step, $text = ''){
+        
+        $steps = explode('.', $prev_step);
+        if(count($steps) <= 1){
+            $base_step = $prev_step.'.'.$message;
+        }else{
+            $base_step = $steps[0].'.'.$steps[1];
+            unset($steps[0], $steps[1]);
+            $current_step = implode('.', $steps);
+        }
+        
+        //Obtengo el id del menu a buscar..
+        unset($steps[0], $steps[1]);
+        $current_step = implode('.', $steps);
+        
+        
+        if($message === '#' || $prev_step == 0){
+            $current_step = '';
+        }else {
+            $current_step .= '.'. $message;
+        }
+        
+        switch($current_step) {
+
+            case '':
+
+                $text .= "\nIndique la opción deseada:\n";
+                $text .= "\n".$this->emojis[1]." UTA";
+                $text .= "\n".$this->emojis[2]." PAMI";
+                $text .= "\n".$this->emojis[3]." IOMA";
+                $text .= "\n".$this->emojis[4]." SWISS Medical, OSDE";
+                $text .= "\n".$this->emojis[5]." Otras";
+
+                break;
+
+            case '.1':
+                $text = "🏷 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
+                $text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
+                $text .= "\n\nA domicilio el valor es $5.500 pesos el test rápido y $8.000 la PCR.";
+                break;
+            
+            case '.2':
+                $text = "🔔 Para realizar estudios por PAMI deberá traer:";
+                $text .= "\n\n✅ Fotocopia de Documento.";
+                $text .= "\n✅ Fotocopia de Carnet de Afiliado.";
+                $text .= "\n✅ Orden médica del médico de cabecera o del hospital donde capita.";
+                $text .= "\n💉 Las extracciones son de lunes a viernes de 7:30 a 10:00 hs.";
+                break;
+
+            case '.3':
+                $text = "Pacientes de IOMA deben enviar previamente la orden médica para autorizar.";
+                $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
+                $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
+                $text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
+                break;
+
+            case '.4':
+                $text = "Pacientes de OSDE /SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno.";
+                break;
+        
+            case '.5':
+                $text = "Indique su obra social o prepaga. Y lo derivaremos a un agente.";
+                break;
+
             default:
                 $text = "No entendi eso.";
                 break;
