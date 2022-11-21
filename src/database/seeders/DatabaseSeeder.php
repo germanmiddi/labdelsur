@@ -21,10 +21,9 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        // $this->call([
-        //     StatesTableSeeder::class,
-        //     CitiesTableSeeder::class,
-        // ]);
+        $this->call([
+            BookingStatusTableSeeder::class
+        ]);
 
         // \App\Models\User::create([
         //     'name' => 'German Middi',
