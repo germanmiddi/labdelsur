@@ -22,7 +22,9 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([
-            BookingStatusTableSeeder::class
+            BookingStatusTableSeeder::class,
+            SettingTableSeeder::class,
+            DetaildayTableSeeder::class
         ]);
 
         // \App\Models\User::create([
@@ -31,86 +33,9 @@ class DatabaseSeeder extends Seeder
         //     'password' => bcrypt('Inicio123')
         // ]);
 
-        \App\Models\DetailDay::create([
-            'num_day' => '1',
-            'description' => 'Lunes',
-            'cant_orders' => '10'
-        ]);
+        
 
-        \App\Models\DetailDay::create([
-            'num_day' => '2',
-            'description' => 'Martes',
-            'cant_orders' => '10'
-        ]);
 
-        \App\Models\DetailDay::create([
-            'num_day' => '3',
-            'description' => 'Miercoles',
-            'cant_orders' => '10'
-        ]);
-
-        \App\Models\DetailDay::create([
-            'num_day' => '4',
-            'description' => 'Jueves',
-            'cant_orders' => '10'
-        ]);
-
-        \App\Models\DetailDay::create([
-            'num_day' => '5',
-            'description' => 'Viernes',
-            'cant_orders' => '10'
-        ]);
-
-        \App\Models\DetailDay::create([
-            'num_day' => '6',
-            'description' => 'Sabado',
-            'cant_orders' => '0'
-        ]);
-
-        \App\Models\DetailDay::create([
-            'num_day' => '0',
-            'description' => 'Domingo',
-            'cant_orders' => '0'
-        ]);
-
-        \App\Models\Setting::create([
-            'module' => 'BOOKING',
-            'key' => 'cant_days_booking',
-            'value' => '5',
-            'description' => 'Cantidad de dias que se ofrecerán como opciones para el usuario'
-        ]);
-
-        \App\Models\Setting::create([
-            'module' => 'BOOKING',
-            'key' => 'hora_limit_booking',
-            'value' => '18:00',
-            'description' => 'Horario a partir del cual no se otorgan turnos para la fecha actual'
-        ]);
-
-        \App\Models\Setting::create([
-            'module' => 'BOOKING',
-            'key' => 'day_limit_booking',
-            'value' => '2022-10-13',
-            'description' => 'Fecha limite hasta cuando se otorgarán turno | si esta vacio no posee limite'
-        ]);
-
-        \App\Models\Setting::create([
-            'module' => 'WP',
-            'key' => 'wp_token',
-            'value' => '-',
-            'description' => 'Token de validacion API WhatsApp'
-        ]);
-
-        \App\Models\Setting::create([
-            'module' => 'WP',
-            'key' => 'wp_url',
-            'value' => '-',
-            'description' => 'URL del API suministrado por WhatsApp'
-        ]);
-
-        \App\Models\BookingStatus::create([
-            'status' => 'AGENDADO',
-        ]);
         
     }
 }

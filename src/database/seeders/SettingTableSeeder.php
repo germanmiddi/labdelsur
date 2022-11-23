@@ -24,5 +24,40 @@ class SettingTableSeeder extends Seeder
             'description' => 'URL del API suministrado por WhatsApp para la subida de archivos multimedia'
         ]);
         
+        \App\Models\Setting::create([
+            'module' => 'BOOKING',
+            'key' => 'cant_days_booking',
+            'value' => '5',
+            'description' => 'Cantidad de dias que se ofrecerán como opciones para el usuario'
+        ]);
+
+        \App\Models\Setting::create([
+            'module' => 'BOOKING',
+            'key' => 'hora_limit_booking',
+            'value' => '18:00',
+            'description' => 'Horario a partir del cual no se otorgan turnos para la fecha actual'
+        ]);
+
+        \App\Models\Setting::create([
+            'module' => 'BOOKING',
+            'key' => 'day_limit_booking',
+            'value' => '2022-10-13',
+            'description' => 'Fecha limite hasta cuando se otorgarán turno | si esta vacio no posee limite'
+        ]);
+
+        \App\Models\Setting::create([
+            'module' => 'WP',
+            'key' => 'wp_token',
+            'value' => '-',
+            'description' => 'Token de validacion API WhatsApp'
+        ]);
+
+        \App\Models\Setting::create([
+            'module' => 'WP',
+            'key' => 'wp_url',
+            'value' => '-',
+            'description' => 'URL del API suministrado por WhatsApp'
+        ]);
+
     }
 }
