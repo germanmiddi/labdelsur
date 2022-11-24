@@ -1,65 +1,9 @@
 <template>
   <div class="bg-white">
-    <header>
-      <Popover class="relative bg-white">
-        <div class="flex justify-between items-center max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
-          <div class="flex justify-start lg:w-0 lg:flex-1">
-            <a :href="route('home')">
-              <img class="w-32" src="/img/logo.png" />
-            </a>
-          </div>
-          <div class="-mr-2 -my-2 md:hidden">
-            <PopoverButton class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-              <span class="sr-only">Open menu</span>
-              <MenuIcon class="h-6 w-6" aria-hidden="true" />
-            </PopoverButton>
-          </div>
-          <PopoverGroup as="nav" class="hidden md:flex space-x-10">
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
-            <a :href="route('estudios')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
-            <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES </a>
-            <a :href="route('obras-sociales')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a>
-          </PopoverGroup>
-        </div>
-
-        <transition enter-active-class="duration-200 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="duration-100 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-          <PopoverPanel focus class="absolute z-30 top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden">
-            <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white divide-y-2 divide-gray-50">
-              <div class="pt-5 pb-6 px-5">
-                <div class="flex items-center justify-between">
-                  <div class="-mr-2">
-                    <PopoverButton class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-                      <span class="sr-only">Close menu</span>
-                      <XIcon class="h-6 w-6" aria-hidden="true" />
-                    </PopoverButton>
-                  </div>
-                </div>
-              </div>
-              <div class="py-6 px-5">
-                <div class="flex flex-col">
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> NOSOTROS </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> RESULTADOS </a>
-                  <a :href="route('preguntas-frecuentes')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> PREGUNTAS FRECUENTES </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> UBICACIÓN </a>
-                </div>
-              </div>
-            </div>
-          </PopoverPanel>
-        </transition>
-      </Popover>
-    </header>
-
+    <headers />
+    
     <main>
-      <div class="fixed z-50 bottom-10 right-20">
-        <div class="bg-green-100 flex justify-center items-center rounded-full py-3 px-5 shadow-xl border-4 border-white cursor-pointer 
-                      hover:bg-green-200">
-          <img class="h-10 mr-2" src="/img/whatsapp.png" alt="">
-          <div class="text-xl text-green-800">Escribinos!</div>
-        </div>
-      </div>
+      <whatsappbtn />
 
       <div class="relative">
         <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white" />
@@ -134,45 +78,8 @@
         </div>
       </div>
 
-
-      <!-- CTA Section -->
-      <!-- <div class="bg-gray-100 relative">
-        <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-32 bg-gray-100" />  
-        <div class="relative max-w-4xl mx-auto py-14  px-6  sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 lg:flex lg:items-center lg:justify-between bg-white rounded-2xl shadow-lg">
-            <h2 class="text-4xl font-extrabold tracking-tight text-gray-700 sm:text-4xl">
-            <span class="block">Resultados online</span>
-            <span class="block bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">Accede desde aquí al portal de resultados</span>
-            </h2>
-            <div class="mt-6 space-y-4 sm:space-y-0 sm:flex sm:space-x-5">
-            <a href="#" class="flex items-center justify-center bg-gradient-to-r from-blue-700 to-blue-500 bg-origin-border px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white hover:from-purple-700 hover:to-blue-700">INGRESAR</a>
-            <a href="#" class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-800 bg-blue-50 hover:bg-blue-100">Consultas</a>
-            </div>
-        </div>
-      </div> -->
-
     </main>
- 
-
-<footer class="bg-gray-50" aria-labelledby="footer-heading">
-      <div class="max-w-7xl mx-auto pt-12 pb-8 px-4 sm:px-6 lg:pt-20 lg:px-8 flex flex-col items-center">
-        <div class="mb-8">
-          <img class="w-52" src="/img/logo.png" />
-        </div>
-        <div class="w-1/2 md:w-5/6">
-          <ul class="flex justify-between text-gray-700 flex-col items-center md:flex-row">
-            <li>NOSOTROS</li>
-            <li>RESULTADOS</li>
-            <li>ESTUDIOS</li>
-            <li>PREGUNTAS FRECUENTES</li>
-            <li>OBRAS SOCIALES</li>
-            <li>UBICACIÓN</li>
-          </ul>
-        </div>
-        <div class="mt-12 border-t border-gray-200 pt-8 lg:mt-12 w-full">
-          <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1 text-center">&copy; 2022 - Diseño y Desarrollo por onMedia.</p>
-        </div>
-      </div>
-    </footer>
+    <footers />  
 
   </div>
 </template>
@@ -202,6 +109,9 @@ import {
 } from '@heroicons/vue/outline'
 
 import { CheckIcon } from '@heroicons/vue/outline'
+import Footers from './Footer.vue'
+import Whatsappbtn from './Whatsappbtn.vue'
+import Headers from './Headers.vue'
 
 const faqs = [
   { 
@@ -459,6 +369,9 @@ export default {
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
+    Footers,
+    Whatsappbtn,
+    Headers
   
   },
   setup() {

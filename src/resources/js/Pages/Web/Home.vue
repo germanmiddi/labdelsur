@@ -1,81 +1,26 @@
 <template>
   <div class="bg-white">
-    <header>
-      <Popover class="relative bg-white">
-        <div class="flex justify-between items-center max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
-          <div class="flex justify-start lg:w-0 lg:flex-1">
-            <a :href="route('home')">
-              <img class="w-40" src="/img/logo.png" />
-            </a>
-          </div>
-          <div class="-mr-2 -my-2 md:hidden">
-            <PopoverButton class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-              <span class="sr-only">Open menu</span>
-              <MenuIcon class="h-6 w-6" aria-hidden="true" />
-            </PopoverButton>
-          </div>
-          <PopoverGroup as="nav" class="hidden md:flex space-x-10">
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
-            <a :href="route('estudios')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
-            <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES </a>
-            <a :href="route('obras-sociales')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a>
-          </PopoverGroup>
-        </div>
+   
 
-        <transition enter-active-class="duration-200 ease-out" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="duration-100 ease-in" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-          <PopoverPanel focus class="absolute z-30 top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden">
-            <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white divide-y-2 divide-gray-50">
-              <div class="pt-5 pb-6 px-5">
-                <div class="flex items-center justify-between">
-                  <div class="-mr-2">
-                    <PopoverButton class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-                      <span class="sr-only">Close menu</span>
-                      <XIcon class="h-6 w-6" aria-hidden="true" />
-                    </PopoverButton>
-                  </div>
-                </div>
-              </div>
-              <div class="py-6 px-5">
-                <div class="flex flex-col">
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> NOSOTROS </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> RESULTADOS </a>
-                  <a :href="route('estudios')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> ESTUDIOS </a>
-                  <a :href="route('preguntas-frecuentes')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> PREGUNTAS FRECUENTES </a>
-                  <a :href="route('obras-sociales')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> UBICACIÓN </a>
-                </div>
-              </div>
-            </div>
-          </PopoverPanel>
-        </transition>
-      </Popover>
-    </header>
-
+    <headers />
     <main>
-      <div class="fixed z-50 bottom-10 right-20">
-        <div class="bg-green-100 flex justify-center items-center rounded-full py-3 px-5 shadow-xl border-4 border-white cursor-pointer 
-                      hover:bg-green-200">
-          <img class="h-10 mr-2" src="/img/whatsapp.png" alt="">
-          <div class="text-xl text-green-800">Escribinos!</div>
-        </div>
-      </div>
+      <whatsappbtn />
+
       <!-- Hero section -->
       <div class="relative">
         <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gray-100" />
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="relative shadow-xl sm:rounded-2xl sm:overflow-hidden">
             <div class="absolute inset-0">
-              <img class="h-full w-full object-cover" src="/img/banner.jpg" alt="People working on laptops" />
-              <div class="absolute inset-0 bg-gradient-to-r from-blue-800 to-gray-500 mix-blend-multiply" />
+              <img class="h-full w-full object-cover object-bottom" src="/img/banner2.jpg" alt="" />
+              <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-gray-300 mix-blend-multiply" />
             </div>
             <div class="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8">
               <h1 class="text-center text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
                 <span class="block text-white">Comprometidos con la salud de nuestros pacientes</span>
                 <span class="block text-blue-200"></span>
               </h1>
-              <p class="mt-6 max-w-lg mx-auto text-center text-xl text-blue-200 sm:max-w-3xl">
+              <p class="mt-6 max-w-lg mx-auto text-center text-xl text-blue-100 sm:max-w-3xl">
                 Reconocidos por ser sinónimo de calidad, responsabilidad y profesionalismo en el área. Brindamos un servicio rápido y confiable para nuestros pacientes.</p>
             </div>
           </div>
@@ -86,7 +31,7 @@
           <div class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
             <div>
                 <h2 class="text-base font-semibold text-blue-600 uppercase tracking-wide">Realizamos.</h2>
-                <p class="mt-2 text-3xl font-extrabold text-gray-900">Análisis clínicos y microbiológicos</p>
+                <p class="mt-2 text-2xl md:text-3xl font-extrabold text-gray-900">Análisis clínicos y microbiológicos</p>
                 <p class="mt-4 text-lg text-gray-500">De baja, mediana y alta complejidad. Estudios bacteriológicos, biología molecular, marcadores oncológicos y estudios genómicos.</p>
             </div>
             <div class="mt-12 lg:mt-0 lg:col-span-2">
@@ -96,7 +41,7 @@
                             <CheckIcon class="absolute h-6 w-6 text-green-500" aria-hidden="true" />
                             <p class="ml-9 text-lg leading-6 font-medium text-gray-900">{{ feature.name }}</p>
                         </dt>
-                        <dd class="mt-2 ml-9 text-base text-gray-500" v-html="feature.description.replace(/\n/g, '<br>')">
+                        <dd class="mt-2 ml-9 text-base text-gray-500 text-justify" v-html="feature.description.replace(/\n/g, '<br>')">
                             
                         </dd>
                     </div>
@@ -129,15 +74,15 @@
                 <div class="mt-3">
                   <dt class="sr-only">Email</dt>
                   <dd class="flex">
-                    <ChatIcon class="flex-shrink-0 h-6 w-6 text-white-500" aria-hidden="true" />
-                    <span class="ml-3"> <a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank">11 2771 45 69</a></span>
+                    <ChatIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
+                    <a class="ml-3 hover:underline" href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank">11 2771 45 69</a>
                   </dd>
                 </div>
                 <div class="mt-3">
                   <dt class="sr-only">Email</dt>
                   <dd class="flex">
                     <MailIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
-                    <span class="ml-3">labdelsur@yahoo.com.ar</span>
+                    <a href="mailto:info@laboratoriodelsur.com.ar" target="_blank" class="ml-3 hover:underline">info@laboratoriodelsur.com.ar</a>
                   </dd>
                 </div>
                 <div class="mt-3">
@@ -148,7 +93,6 @@
                   </dd>
                 </div>
                 <div class="mt-6">
-                  <dt class="sr-only">Postal address</dt>
                   <dd>
                     <p>Margarita Weild 1200</p>
                     <p>Lanús Este, Prov. de Buenos Aires</p>
@@ -165,8 +109,9 @@
       <div class="bg-gray-50">
         <div class="max-w-7xl mx-auto py-16 px-4 divide-y-2 divide-gray-200 sm:py-24 sm:px-6 lg:px-8">
           <div class="flex justify-between items-center">
-            <h2 class="text-3xl font-extrabold text-gray-900">Preguntas Frecuentes</h2>
-            <a :href="route('preguntas-frecuentes')" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">Preguntas Frecuentes</h2>
+            <a :href="route('preguntas-frecuentes')" class="hidden md:flex h-12 items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
+            <a :href="route('preguntas-frecuentes')" class="flex md:hidden h-12 items-center justify-center text-base font-bold text-blue-500 tracking-wide">Ver todas</a>
           </div>
           
           <div class="mt-6 pt-10">
@@ -175,7 +120,7 @@
                 <dt class="text-lg leading-6 font-medium text-gray-900">
                   {{ faq.question }}
                 </dt>
-                <dd class="mt-2 text-base text-gray-500" v-html="faq.answer.replace(/\n/g, '<br>')">
+                <dd class="mt-2 text-base text-gray-500 text-justify" v-html="faq.answer.replace(/\n/g, '<br>')">
                   
                 </dd>
               </div>
@@ -187,11 +132,15 @@
       <!-- Obras Sociales -->
       <div class="bg-white">
         <div class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center">
+            <div class="hidden md:flex justify-between items-center">
               <h3 class="mb-8 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Atendemos más de 50 obras sociales</h3>
               <a :href="route('obras-sociales')" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">Ver todas</a>
             </div>
-            
+            <div class="flex md:hidden justify-between items-center mb-3">
+              <h2 class="text-3xl font-extrabold text-gray-900">Obras Sociales</h2>
+              <a :href="route('obras-sociales')" class="flex md:hidden h-12 items-center justify-center text-base font-bold text-blue-500 tracking-wide">Ver todas</a>
+            </div>            
+
             <div class="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
                 <img class="h-20  grayscale" src="/img/obrassociales/uta.png" alt="" />
@@ -220,6 +169,9 @@
               <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
                 <img class="h-20  grayscale" src="/img/obrassociales/osde.png" alt="" />
               </div>
+              <div class="col-span-1 flex justify-center items-center md:col-span-2 lg:col-span-1">
+                <img class="h-10  grayscale" src="/img/obrassociales/osdepym.png" alt="" />
+              </div>
             </div>
 
         </div>
@@ -227,13 +179,16 @@
 
       <div class="bg-white relative pb-4">
         <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-24 bg-gray-50" />  
-        <div class="relative max-w-4xl mx-auto py-14  px-6  sm:px-6 sm:py-18 lg:max-w-7xl lg:px-8 lg:flex lg:items-center lg:justify-between bg-gray-200 rounded-2xl shadow-lg">
+        <div class="relative max-w-4xl mx-auto py-10 px-6 bg-gray-200 rounded-2xl shadow-lg
+                    lg:max-w-7xl lg:px-8 lg:flex lg:items-center lg:justify-between
+                    md:py-14
+                    ">
             <h2 class="tracking-tight  sm:text-4xl">
-            <span class="text-3xl font-extrabold block text-gray-500">Si Ud. es paciente de UTA</span>
-            <span class="text-4xl font-extrabold block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Ingrese al siguiente enlace</span>
+              <span class="text-2xl md:text-3xl font-extrabold block text-gray-500">Si Ud. es paciente de UTA</span>
+              <span class="text-2xl md:text-4xl font-extrabold block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Ingrese al siguiente enlace</span>
             </h2>
-            <div class=" space-y-4 sm:space-y-0 sm:flex sm:space-x-5">
-            <a href="https://wa.me/5491126887264?text=Hola" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">TURNOS UTA</a>
+            <div class="space-y-4 sm:space-y-0 sm:flex sm:space-x-5 mt-4 sm:mt-0">
+              <a href="https://wa.me/5491126887264?text=Hola" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">TURNOS UTA</a>
             </div>
         </div>
       </div>
@@ -262,26 +217,28 @@
               <div class="relative text-base mx-auto max-w-prose lg:max-w-none">
                 <figure>
                   <div class="aspect-w-12 aspect-h-7 lg:aspect-none">
-                    <img class="rounded-lg shadow-lg object-cover object-center" src="https://lifebritelabs.com/wp-content/uploads/2019/07/lab-worker-looking-at-vial-of-blood.jpg" alt="" width="1184" height="1376" />
+                    <img class="rounded-lg shadow-lg object-cover object-center" src="img/fachada.png" alt="" width="1184" height="1376" />
+                    <div class="rounded-lg absolute inset-0 bg-gradient-to-r from-blue-200 to-gray-50 mix-blend-multiply" />
+                    <!-- <img class="rounded-lg shadow-lg object-cover object-center" src="https://lifebritelabs.com/wp-content/uploads/2019/07/lab-worker-looking-at-vial-of-blood.jpg" alt="" width="1184" height="1376" /> -->
                   </div>
                 </figure>
               </div>
             </div>
             <div class="mt-8 lg:mt-0">
               <div class="mt-5 prose prose-blue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1">
-                <p>Desde 1996 somos el laboratorio de análisis clínicos y microbiología referente en la zona.</p>
-                <p>Cuidamos a nuestros pacientes con calidez en la atención y ética profesional.</p>
-                <p>Formamos un grupo humano calificado que trabaja en equipo, cumpliendo con las tareas y objetivos planteados. Bajo la premisa de la capacitación y desarrollo profesional constante.</p>
-                <p>Nuestro compromiso reside en brindar un servicio de salud de excelencia, mediante la entrega de informes con resultados confiables y de calidad para nuestros pacientes y los profesionales de la salud.</p>
-                <p>Brindamos atención personalizada, en tiempo oportuno, procurando satisfacer las necesidades de nuestros pacientes con la incorporación de innovación y la mejora en la tecnología aplicada a nuestros procesos.</p>            
+                <p class="text-justify">Desde 1996 somos el laboratorio de análisis clínicos y microbiología referente en la zona.</p>
+                <p class="text-justify">Cuidamos a nuestros pacientes con calidez en la atención y ética profesional.</p>
+                <p class="text-justify">Formamos un grupo humano calificado que trabaja en equipo, cumpliendo con las tareas y objetivos planteados. Bajo la premisa de la capacitación y desarrollo profesional constante.</p>
+                <p class="text-justify">Nuestro compromiso reside en brindar un servicio de salud de excelencia, mediante la entrega de informes con resultados confiables y de calidad para nuestros pacientes y los profesionales de la salud.</p>
+                <p class="text-justify">Brindamos atención personalizada, en tiempo oportuno, procurando satisfacer las necesidades de nuestros pacientes con la incorporación de innovación y la mejora en la tecnología aplicada a nuestros procesos.</p>            
               </div>
             </div>
           </div>
         </div>
         <div class="relative max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-evenly ">
+          <div class="flex flex-col md:flex-row items-center justify-evenly ">
             <div>
-              <img class="h-40 " src="/img/lab_acreditado.png" alt="" />
+              <img class="h-32 md:40 " src="/img/lab_acreditado.png" alt="" />
             </div>
             <div>
               <img class="h-52 " src="/img/peec.png" alt="" />
@@ -291,44 +248,11 @@
         </div>
       </div>
 
-      <!-- <div class="bg-white pt-12 sm:pt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Trusted by developers from over 80 planets</h2>
-            <p class="mt-3 text-xl text-gray-500 sm:mt-4">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium.</p>
-          </div>
-        </div>
-        <div class="mt-10 pb-12 bg-white sm:pb-16">
-          <div class="relative">
-            <div class="absolute inset-0 h-1/2 bg-gray-50" />
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div class="max-w-4xl mx-auto">
-                <dl class="rounded-lg bg-white shadow-lg sm:grid sm:grid-cols-3">
-                  <div class="flex flex-col border-b border-gray-100 p-6 text-center sm:border-0 sm:border-r">
-                    <dt class="order-2 mt-2 text-lg leading-6 font-medium text-gray-500">Pepperoni</dt>
-                    <dd class="order-1 text-5xl font-extrabold text-indigo-600">100%</dd>
-                  </div>
-                  <div class="flex flex-col border-t border-b border-gray-100 p-6 text-center sm:border-0 sm:border-l sm:border-r">
-                    <dt class="order-2 mt-2 text-lg leading-6 font-medium text-gray-500">Delivery</dt>
-                    <dd class="order-1 text-5xl font-extrabold text-indigo-600">24/7</dd>
-                  </div>
-                  <div class="flex flex-col border-t border-gray-100 p-6 text-center sm:border-0 sm:border-l">
-                    <dt class="order-2 mt-2 text-lg leading-6 font-medium text-gray-500">Calories</dt>
-                    <dd class="order-1 text-5xl font-extrabold text-indigo-600">100k</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
-
-        <!-- CTA Section -->
+      <!-- CTA Section -->
       <div class="bg-white relative">
         <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-32 bg-gray-50" />  
         <div class="relative max-w-4xl mx-auto py-14  px-6  sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 lg:flex lg:items-center lg:justify-between bg-white rounded-2xl shadow-lg">
-            <h2 class="text-4xl font-extrabold tracking-tight text-gray-700 sm:text-4xl">
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-700">
             <span class="block">Resultados online</span>
             <span class="block bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">Accede desde aquí al portal de resultados</span>
             </h2>
@@ -340,30 +264,8 @@
       </div>
 
     </main>
- 
 
-    <footer class="bg-gray-50" aria-labelledby="footer-heading">
-      <div class="max-w-7xl mx-auto pt-12 pb-8 px-4 sm:px-6 lg:pt-20 lg:px-8 flex flex-col items-center">
-        <div class="mb-8">
-          <img class="w-52" src="/img/logo.png" />
-        </div>
-        <div class="w-1/2 md:w-5/6">
-          <ul class="flex justify-between text-gray-700 flex-col items-center md:flex-row">
-            <li>NOSOTROS</li>
-            <li>RESULTADOS</li>
-            <li>ESTUDIOS</li>
-            <li>PREGUNTAS FRECUENTES</li>
-            <li>OBRAS SOCIALES</li>
-            <li>UBICACIÓN</li>
-          </ul>
-        </div>
-        <div class="mt-12 border-t border-gray-200 pt-8 lg:mt-12 w-full">
-          <p class="mt-8 text-sm text-gray-800 md:mt-0 md:order-1 text-left">TÉRMINOS Y CONDICIONES DE USO</p>
-          <p class="mt-8 text-xs text-gray-400 md:mt-0 md:order-1 text-left">El/la titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo al efecto conforme lo establecido en el artículo 14, inciso 3 de la Ley N° 25.326. La AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA, Órgano de control de la Ley N° 25.326, tiene la atribución de atender las denuncias y reclamos que se interpongan con relación al incumplimiento de las normas sobre protección de datos personales</p>
-          <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1 text-center">&copy; 2022 - Diseño y Desarrollo por onMedia.</p>
-        </div>
-      </div>
-    </footer>
+    <footers />
 
   </div>
 </template>
@@ -393,7 +295,9 @@ import {
 } from '@heroicons/vue/outline'
 
 import { CheckIcon } from '@heroicons/vue/outline'
-
+import Headers from './Headers.vue'
+import Whatsappbtn from './Whatsappbtn.vue'
+import Footers from './Footer.vue'
 const faqs = [
   {
     question: 'Horarios de hisopado COVID19',
@@ -407,13 +311,13 @@ const faqs = [
   },
   {
     question: '¿Cuales son los horario de atención y la ubicación?',
-    answer:
-      '----',
+    answer: 'Atendemos de lunes a viernes de 7:30 a 18:00 hs, los sábados de 7:30 a 13:00. hs. Las extracciones son hasta 10:30 hs. Nuestra dirección es Margarita Weild 1200, Lanús Este, Prov. de Buenos Aires'
+      ,
   },
   {
     question: '¿Como solicito un servicio a domicilio?',
     answer:
-      'Lo puede solicitar de manera online consultando <b><a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aqui</a></b>.',
+      'Lo puede solicitar a nuestro asistente virtual haciendo click <b><a class="hover:underline" href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aqui</a></b>.',
   },
 
 ]
@@ -457,7 +361,7 @@ const features = [
   },
   {
     name: 'Empresas e instituciones',
-    description: 'Atención y asesoramiento a empresas e instituciones, exámenes pre ocupacionales, anuales y otros servicios. Consultanos <a href="mailto:labdelsur@yahoo.com.ar">labdelsur@yahoo.com.ar</a>.',
+    description: 'Atención y asesoramiento a empresas e instituciones, exámenes pre ocupacionales, anuales y otros servicios. Consultanos <a href="mailto:info@laboratoriodelsur.com.ar">info@laboratoriodelsur.com.ar</a>.',
     icon: PencilAltIcon,
   },
 
@@ -566,22 +470,6 @@ const footerNavigation = {
   ],
 }
 
-// const features = [
-//   {
-//     name: 'Invite team members',
-//     description: 'You can manage phone, email and chat conversations all from a single mailbox.',
-//   },
-//   { name: 'List view', description: 'You can manage phone, email and chat conversations all from a single mailbox.' },
-//   {
-//     name: 'Keyboard shortcuts',
-//     description: 'You can manage phone, email and chat conversations all from a single mailbox.',
-//   },
-//   { name: 'Calendars', description: 'You can manage phone, email and chat conversations all from a single mailbox.' },
-//   { name: 'Notifications', description: 'Find what you need with advanced filters, bulk actions, and quick views.' },
-//   { name: 'Boards', description: 'Find what you need with advanced filters, bulk actions, and quick views.' },
-//   { name: 'Reporting', description: 'Find what you need with advanced filters, bulk actions, and quick views.' },
-//   { name: 'Mobile app', description: 'Find what you need with advanced filters, bulk actions, and quick views.' },
-// ]
 
 export default {
   components: {
@@ -602,8 +490,9 @@ export default {
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
-  
-  },
+    Headers,
+    Footers,
+    Whatsappbtn },
   setup() {
     return {
       solutions,
