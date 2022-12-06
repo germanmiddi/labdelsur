@@ -104,12 +104,15 @@ const user = {
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 const navigation = [
-  { name: 'Mensajes', href: 'dashboard', current: window.location.pathname === '/dashboard' ? true : false },
-  { name: 'Contactos', href: 'contacts', current: window.location.pathname === '/contacts' ? true : false },
-  { name: 'Turnos', href: 'booking', current: window.location.pathname === '/booking' ? true : false },
+  { name: 'Mensajes', href: route('dashboard'), current: window.location.pathname === '/dashboard' ? true : false },
+  { name: 'Contactos', href: route('contacts'), current: window.location.pathname === '/contacts' ? true : false },
+  { name: 'Turnos', href: route('booking'), current: window.location.pathname === '/booking' ? true : false },
   /* { name: 'Reportes', href: '' , current: false }, */
-  { name: 'Usuarios', href: 'user' , current: window.location.pathname === '/user' ? true : false },
-  { name: 'Configuración', href: "settings", current: window.location.pathname === '/settings' ? true : false },
+  { name: 'Usuarios', href: route('user') , current: window.location.pathname === '/user' ? true : false },
+  { name: 'FAQs', href: route('faqs.index') , current: window.location.pathname === '/faq' ? true : false },
+  { name: 'O. Sociales', href: route('obras-sociales.index') , current: window.location.pathname === '/obras-sociales/index' ? true : false },
+  { name: 'Estudios', href: route('estudios.index') , current: window.location.pathname === '/estudios/index' ? true : false },
+  { name: 'Configuración', href: route('settings'), current: window.location.pathname === '/settings' ? true : false },
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
