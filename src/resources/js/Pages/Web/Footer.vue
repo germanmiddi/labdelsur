@@ -6,13 +6,11 @@
         </div>
         <div class=" md:w-5/6">
           <ul class="flex justify-between text-gray-700 flex-col items-center md:flex-row">
-            <!-- <li>NOSOTROS</li> -->
-            <li>RESULTADOS</li>
-            <li>ESTUDIOS</li>
-            <li>PREGUNTAS FRECUENTES</li>
-            <li>OBRAS SOCIALES</li>
-            <!-- <li>UBICACIÓN</li> -->
-          </ul>
+            <li><a href="#" >RESULTADOS</a></li>
+            <li><a :href="route('estudios')" >ESTUDIOS</a></li>
+            <li><a :href="route('preguntas-frecuentes')" >PREGUNTAS FRECUENTES</a></li>
+            <li><a :href="route('obras-sociales')" >OBRAS SOCIALES</a></li>
+           </ul>
           <div class="flex justify-around mt-5 md:justify-center mx-auto space-x-3 md:space-x-5">
             <a href="https://www.facebook.com/delsurlaboratorio" target="_blank"><img class="h-8 md:h-10" src="img/facebook.png" alt=""></a>
             <a href="https://www.linkedin.com/company/laboratorio-del-sur/" target="_blank"><img class="h-8 md:h-10" src="img/linkedin.png" alt=""></a>

@@ -10,6 +10,9 @@ use App\Http\Controllers\Manager\Messages\MessagesController;
 use App\Http\Controllers\Manager\Contacts\ContactsController;
 use App\Http\Controllers\Manager\Settings\SettingController;
 use App\Http\Controllers\Manager\Booking\BookingController;
+use App\Http\Controllers\Manager\ObrasSociales\ObrasSocialesController;
+use App\Http\Controllers\Manager\Estudios\EstudiosController;
+use App\Http\Controllers\Manager\Faqs\FaqsController;
 use App\Http\Controllers\Manager\User\UserController;
 use App\Http\Controllers\Web\HomeController;
 
@@ -149,3 +152,69 @@ Route::post('user/store', [UserController::class, 'store'])
 Route::post('user/update', [UserController::class, 'update'])
         ->name('user.update')
         ->middleware('auth');
+
+// Obras Sociales.
+
+Route::get('/obras-sociales/index', [ObrasSocialesController::class, 'index'])
+        ->name('obras-sociales.index')
+        ->middleware('auth');
+        
+Route::get('/obras-sociales/list', [ObrasSocialesController::class, 'list'])
+        ->name('obras-sociales.list')
+        ->middleware('auth');
+
+Route::post('/obras-sociales/store', [ObrasSocialesController::class, 'store'])
+        ->name('obras-sociales.store')
+        ->middleware('auth');
+
+Route::post('/obras-sociales/update', [ObrasSocialesController::class, 'update'])
+        ->name('obras-sociales.update')
+        ->middleware('auth');
+
+Route::post('/obras-sociales/update_visibilidad', [ObrasSocialesController::class, 'update_visibilidad'])
+        ->name('obras-sociales.update_visibilidad')
+        ->middleware('auth');
+
+// Estudios
+
+Route::get('/estudios/index', [EstudiosController::class, 'index'])
+->name('estudios.index')
+->middleware('auth');
+
+Route::get('/estudios/list', [EstudiosController::class, 'list'])
+->name('estudios.list')
+->middleware('auth');
+
+Route::post('/estudios/store', [EstudiosController::class, 'store'])
+->name('estudios.store')
+->middleware('auth');
+
+Route::post('/estudios/update', [EstudiosController::class, 'update'])
+->name('estudios.update')
+->middleware('auth');
+
+Route::post('/estudios/update_visibilidad', [EstudiosController::class, 'update_visibilidad'])
+->name('estudios.update_visibilidad')
+->middleware('auth');
+
+// FAQS
+
+Route::get('/faqs/index', [FaqsController::class, 'index'])
+->name('faqs.index')
+->middleware('auth');
+
+Route::get('/faqs/list', [FaqsController::class, 'list'])
+->name('faqs.list')
+->middleware('auth');
+
+Route::post('/faqs/store', [FaqsController::class, 'store'])
+->name('faqs.store')
+->middleware('auth');
+
+Route::post('/faqs/update', [FaqsController::class, 'update'])
+->name('faqs.update')
+->middleware('auth');
+
+Route::post('/faqs/update_visibilidad', [FaqsController::class, 'update_visibilidad'])
+->name('faqs.update_visibilidad')
+->middleware('auth');
