@@ -115,17 +115,17 @@ import Headers from './Headers.vue'
 
 const faqs = [
   { 
-    question: '¿CUÁL ES EL HORARIO DE ATENCIÓN?',
-    answer:   'LUNES A VIERNES DE 7:30 A 18:00 HS. SÁBADOS DE 7:30 A 13:00 HS.',
+    question: '¿Cuál es el horario de atención?',
+    answer:   'Lunes a viernes de 7:30 a 18:00 hs. y sábados de 7:30 a 13:00 hs.',
     show: true
   },
   { 
-    question: '¿CUAL ES EL HORARIO DE EXTRACCIÓN?',
-    answer: 'LUNES A SÁBADOS DE 7:30 A 10:00 HS.',
+    question: '¿Cual es el horario de extracción?',
+    answer: 'Lunes a sábados de 7:30 a 10:00 hs.',
     show: true
   },
   { 
-    question: '¿Necesito orden médica para realizar un hisopado de detección de Covid?',
+    question: '¿Necesito orden médica para realizar un hisopado de detección de Covid-19?',
     answer: 'No es necesario contar con orden médica. Puede consultar presupuesto y horarios por WhatsApp al cel: 1127714569.',
     show: true
   },

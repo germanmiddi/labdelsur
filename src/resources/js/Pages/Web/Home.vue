@@ -89,13 +89,14 @@
                   <dt class="sr-only">Email</dt>
                   <dd class="flex">
                     <ClockIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
-                    <span class="ml-3">Lunes a Viernes 7:30 a 18:00 hs. / Sábados 7:30 a 13:00. hs. <br>Extracciones hasta 10:30 hs.</span>
+                    <span class="ml-3">Lunes a Viernes 7:30 a 18:00 hs. / Sábados 7:30 a 13:00 hs. <br>Extracciones hasta 10:30 hs.</span>
                   </dd>
                 </div>
                 <div class="mt-6">
-                  <dd>
-                    <p>Margarita Weild 1200</p>
-                    <p>Lanús Este, Prov. de Buenos Aires</p>
+                  <dd class="flex">
+                    <LocationMarkerIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
+                    <span class="ml-3">Margarita Weild 1200 (esq. Anatole France)<br>
+                    Lanús Este, Prov. de Buenos Aires</span>
                   </dd>
                 </div>
               </dl>
@@ -188,7 +189,7 @@
               <span class="text-2xl md:text-4xl font-extrabold block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Ingrese al siguiente enlace</span>
             </h2>
             <div class="space-y-4 sm:space-y-0 sm:flex sm:space-x-5 mt-4 sm:mt-0">
-              <a href="https://wa.me/5491126887264?text=Hola" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">TURNOS UTA</a>
+              <a href="https://wa.me/5491126887264?text=Hola" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">UTA</a>
             </div>
         </div>
       </div>
@@ -292,6 +293,7 @@ import {
   TrashIcon,
   UsersIcon,
   XIcon,
+  LocationMarkerIcon
 } from '@heroicons/vue/outline'
 
 import { CheckIcon } from '@heroicons/vue/outline'
@@ -302,22 +304,22 @@ const faqs = [
   {
     question: 'Horarios de hisopado COVID19',
     answer:
-      'Los hisopados son sin turno de 11:00 a 15:00 hs. de lunes a viernes y sábados de 9:00 a 12:00 hs. \nTest de antígeno de 7:30 a 9.30 (Hisopado PCR).',
+    'Los hisopados son sin turno. Hisopados PCR de lunes a viernes y sábados de 7:30 a 11:00 hs. Test de antígeno de lunes a viernes de 7:30 a 15:00 hs. y sábados de 7:30 a 11:00 hs.',
   },
   {
     question: '¿Cómo obtener mis resultados?',
     answer:
-      'Puede retirar sus resultados de lunes a viernes de 14 a 18 hs.,  sábados de 10 a 13 hs. o bien descargarlos a través del portal en cualquier momento.',
+      'Puede retirar sus resultados de lunes a viernes de 14:00 a 18:00 hs.,  sábados de 10:00 a 13:00 hs. o bien descargarlos a través del portal en cualquier momento.',
   },
   {
-    question: '¿Cuales son los horario de atención y la ubicación?',
-    answer: 'Atendemos de lunes a viernes de 7:30 a 18:00 hs, los sábados de 7:30 a 13:00. hs. Las extracciones son hasta 10:30 hs. Nuestra dirección es Margarita Weild 1200, Lanús Este, Prov. de Buenos Aires'
+    question: '¿Cuáles son los horarios de atención y la ubicación?',
+    answer: 'Atendemos de lunes a viernes de 7:30 a 18:00 hs y sábados de 7:30 a 13:00 hs. Las extracciones son hasta las 10:30 hs. Nuestra dirección es Margarita Weild 1200, Lanús Este, Prov. de Buenos Aires'
       ,
   },
   {
-    question: '¿Como solicito un servicio a domicilio?',
+    question: '¿Cómo solicito un servicio a domicilio?',
     answer:
-      'Lo puede solicitar a nuestro asistente virtual haciendo click <b><a class="hover:underline" href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aqui</a></b>.',
+      'Lo puede solicitar a nuestro asistente virtual haciendo click <b><a class="hover:underline" href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aquí</a></b>.',
   },
 
 ]
@@ -351,7 +353,7 @@ const features = [
   },
   {
     name: 'Extracciones a domicilio',
-    description: 'Ofrecemos extracciones a domicilio para que no tenga que salir de su casa. Solicite su turno online <b><a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aqui</a></b>',
+    description: 'Ofrecemos extracciones a domicilio para que no tenga que salir de su casa. Solicite su turno online <b><a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aquí</a></b>',
     icon: UsersIcon,
   },
   {
@@ -487,6 +489,7 @@ export default {
     PhoneIcon,
     ClockIcon,
     ChatIcon,
+    LocationMarkerIcon,
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
