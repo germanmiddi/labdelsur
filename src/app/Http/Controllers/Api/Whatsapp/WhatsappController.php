@@ -102,7 +102,7 @@ class WhatsappController extends Controller
             case '0':
                 $text = "Hola 👋, se comunicó con *_DEL SUR ANÁLISIS CLÍNICOS_*, soy su Asistente Virtual 🤖."; 
                 $text .= "\nIndique la opción deseada:\n";
-                $text .= "\n ".$this->emojis[1]." 📆​ Turno para atención *sólo para obra social UTA*.";
+                $text .= "\n ".$this->emojis[1]." 📆​ Turno para atención";
                 $text .= "\n ".$this->emojis[2]." ✅ Autorizaciones de órdenes (IOMA, OSSEG, Galeno, FATSA)";
                 $text .= "\n ".$this->emojis[3]." 📄 ¿Cómo obtener mis resultados?";
                 $text .= "\n ".$this->emojis[4]." 📍 Horario de atención y ubicación.";
@@ -123,10 +123,13 @@ class WhatsappController extends Controller
                 break;
 
             case '0.2':
-                $text = "Para AUTORIZACIONES envíe foto de la orden, del carnet y en su caso del bono.";
-                $text .= "Su orden será revisada por un agente y pasada a autorizar a la brevedad otorgándole un número de PRECARGA.";
-                $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien, si su orden pertenece a IOMA,  puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
-                $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. \nUna vez autorizada tiene 3 meses para realizar los análisis.";
+                // $text = "Para AUTORIZACIONES envíe foto de la orden, del carnet y en su caso del bono.";
+                // $text .= "Su orden será revisada por un agente y pasada a autorizar a la brevedad otorgándole un número de PRECARGA.";
+                // $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien, si su orden pertenece a IOMA,  puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
+                // $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. \nUna vez autorizada tiene 3 meses para realizar los análisis.";
+                $text  = "Para autorizaciones envie foto de la orden, del carnet y del bono si tiene uno.";
+                $text .= "Su orden sera revisada por un agente y pasada a atuorizar en la brevedad.";
+                $text .= "Cuando la misma se haya realizado le indicaremos un numero de precarga que debe tener presente al momento de asistir al laboratorio";
                 break;
 
             case '0.3':
@@ -656,6 +659,7 @@ class WhatsappController extends Controller
                 $text .= "\n".$this->emojis[3]." IOMA";
                 $text .= "\n".$this->emojis[4]." SWISS Medical, OSDE";
                 $text .= "\n".$this->emojis[5]." Otras";
+                $text .= "\n".$this->emojis[6]." Particular";
 
                 break;
             case '1':
@@ -682,15 +686,31 @@ class WhatsappController extends Controller
                 $text = "Para PAMI puede venir sin turno de lunes a viernes de 7:30 a 10:30 hs. con fotocopia de su DNI y carnet"; 
                 break;
             case '3':
-                $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
+                $text = "Pacientes de IOMA deben enviar previamente la orden médica para autorizar.";
+                $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
+                $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
+                $text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
                 break;
+
             case '4':
-                $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
-                break;
+                $text = "Pacientes de OSDE / SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
+                break;                
             case '5':
-                $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
-                break;
+                // $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
+                $text = "El horario de extracciones y entrega de muestras es sin turno de lunes a sábados de ⌚️ 7:30 a 10:30 hs.";
+                $text .= "\nSi desea consultar su cobertura puede hacerlo desde la siguiente opción.";
+                $text .= "\n ".$this->emojis[1]." 🏥 Coberturas";
+
+            break;
                 
+            case '6':
+                // $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
+                $text = "El horario de extracciones y entrega de muestras es sin turno de lunes a sábados de ⌚️ 7:30 a 10:30 hs.";
+                $text .= "\nSi desea consultar su presupuesto puede hacerlo desde la siguiente opción";
+                $text .= "\n ".$this->emojis[1]." 💲 Presupuestos";
+
+            break;
+
             case ('1.L' ):
                 $text = "👤 Indique el nombre del paciente, por favor:";
                 break;
@@ -830,9 +850,9 @@ class WhatsappController extends Controller
 
             case '':
 
-                $text = "🦠​​ *COVID 19* - Los hisopados son sin turno de ⌚ 11:00 a 15:00 hs. de lunes a viernes y sábados de ⌚ 9:00 a 12:00 hs. (test de antígeno) y de 7:30 a 9.30 (Hisopado PCR).";
-                $text .= "\n📌​ Si es PCR y desea los resultados en el día puede venir de ⌚ 11:00 a 12:00 hs. o los sábados de ⌚ 7:00 a 11:00 hs.";
-                $text .= "\n📌​ Si es antígeno demora 30 minutos el resultado.";
+                $text = "🦠​​ *COVID 19* - Los hisopados son sin turno de ⌚ 11:00 a 15:00 hs. de lunes a viernes y sábados de ⌚ 9:00 a 12:00 hs.";
+                $text .= "\n📌​ Si es PCR y desea los resultados en el día puede venir de lunes a viernes de ⌚ 11:00 a 12:00 hs. Si viene el día sábado obtiene el resultado el lunes antes de las 20 hs.";
+                $text .= "\n📌​ Si es antígeno el resultado demora 30 minutos.";
                 $text .= "\n\n *_Mas Información:_*";
                 $text .= "\n\n".$this->emojis[1]." Importe del estudio particular.";
                 $text .= "\n".$this->emojis[2]." Si desea realizarlo por obra social / prepaga.";
@@ -960,7 +980,19 @@ class WhatsappController extends Controller
                 break;
 
             case '.8':
-                $text = "🗓️ 3 días antes de concurrir al Laboratorio se deben hacer baños de agua tibia y sal, 3 veces por día durante 15 minutos en la uña o uñas afectadas. \nEl día del estudio no debe tener esmaltes ni cremas.";
+                $text  = "*MICOLÓGICO UÑAS*";
+                $text .= "\n*A_* Suspender medicación antimicótica, por lo menos 10 días antes de la recolección.";
+                $text .= "\n*B_* No utilizar esmalte, talco, crema, aerosol, desinfectante, loción, etc. sobre la lesión por lo menos 3 días antes de la toma de muestra.";
+                $text .= "\n*C_* Durante los 3 días previos a la toma, cepillar sus uñas con agua y jabón blanco por encima y por debajo de la lámina ungueal, al menos 3 veces al día. Evitar cortarlas desde la semana previa.";
+                $text .= "\n*D_* Un día antes, hacer 3 baños con agua y sal. Preparados con una cuchara sopera de sal fina en un litro de agua previamente hervida y entibiada.";
+                $text .= "\n*E_* ¡ATENCIÓN!  Si la lesión es en los pies, concurrir con calzado cerrado y medias.";
+                $text .= "\n*MICOLÓGICO LESIONES EN  PIEL O CUERO CABELLUDO*";
+                $text .= "\n*A_*Suspender medicación antimicótica, por lo menos 10 días antes de la recolección.";
+                $text .= "\n*B_*No utilizar talco, crema, aerosol, desinfectante, loción, etc. sobre la lesión por lo menos 3 días antes de la toma de muestra.";
+                $text .= "\n*C_*Lavar la zona lesionada con jabón blanco o neutro, por lo menos 3 veces al día durante los 3 días previos a la toma de  muestra.";
+                $text .= "\n*D_*¡ATENCIÓN!  Si la lesión es en los pies, concurrir con calzado cerrado y medias.";
+                
+                // $text = "🗓️ 3 días antes de concurrir al Laboratorio se deben hacer baños de agua tibia y sal, 3 veces por día durante 15 minutos en la uña o uñas afectadas. \nEl día del estudio no debe tener esmaltes ni cremas.";
                 break;
 
             case '.9':
@@ -1022,10 +1054,13 @@ class WhatsappController extends Controller
                 break;
 
             case '.1':
-                $text = "🏷 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
+                // $text = "🏷 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
+                // $text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
+                $text = "Puede venir el día asignado en su turno de 7:30 a 10:30 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
                 $text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
-                $text .= "\n\nA domicilio el valor es $5.500 pesos el test rápido y $8.000 la PCR.";
-                break;
+                $text .= "\n\nSi usted no tiene un turno, puede solicitarlo desde la siguiente opción:";
+                $text .= "\n ".$this->emojis[1]." 📆​ Solicitar Turno *sólo para obra social UTA*.";    
+            break;
             
             case '.2':
                 $text = "🔔 Para realizar estudios por PAMI deberá traer:";
@@ -1043,7 +1078,8 @@ class WhatsappController extends Controller
                 break;
 
             case '.4':
-                $text = "Pacientes de OSDE /SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno.";
+                // $text = "Pacientes de OSDE /SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno.";
+                $text = "Pacientes de OSDE / SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
                 break;
         
             case '.5':
