@@ -65,133 +65,6 @@ class WhatsappController extends Controller
 
     }
 
-    public function set_message($wa_id, $message){
-        
-        $prev_menu = Message::where('wa_id', $wa_id)
-                            ->where('response','!=','')   
-                            ->orderBy('created_at', 'desc')
-
-                            ->first();
-        
-        //CHECK FECHA ULTIMO MENSAJE       
-        $last_date = false;
-        if($prev_menu){
-            $last_date = $this->check_last_date($prev_menu->created_at);
-        }
-        
-        $setting =  Setting::where('module', 'BOOKING')->where('key', 'cant_days_booking')->first();
-        
-        if($prev_menu && $message != 0 && $last_date && $prev_menu != 'asesor'){
-            $prev_step = $prev_menu->response;
-            $current_step = $prev_step . '.' . $message;
-
-            //GENERO UNA VARIABLE PARA EL SWITCH
-            $steps = explode('.', $current_step);
-            $step = $steps[0].'.'.$steps[1];
-            if($steps[0] == 'asesor'){
-                $current_step = 0;
-                $step = 0;
-            }
-        }else{
-            $current_step = 0;
-            $step = 0;
-        }   
-        
-        switch($step){
-        
-            case '0':
-                $text = "Hola 👋, se comunicó con *_DEL SUR ANÁLISIS CLÍNICOS_*, soy su Asistente Virtual 🤖."; 
-                $text .= "\nIndique la opción deseada:\n";
-                $text .= "\n ".$this->emojis[1]." 📆​ Turno para atención";
-                $text .= "\n ".$this->emojis[2]." ✅ Autorizaciones de órdenes (IOMA, OSSEG, Galeno, FATSA)";
-                $text .= "\n ".$this->emojis[3]." 📄 ¿Cómo obtener mis resultados?";
-                $text .= "\n ".$this->emojis[4]." 📍 Horario de atención y ubicación.";
-                $text .= "\n ".$this->emojis[5]." 🚗 Extracciones a domicilio.";
-                $text .= "\n ".$this->emojis[6]." 🦠 COVID 19";
-                $text .= "\n ".$this->emojis[7]." 🔬 Indicaciones de estudios";
-                $text .= "\n ".$this->emojis[8]." 🏥 Coberturas";
-                $text .= "\n ".$this->emojis[9]." 💲 Presupuestos";
-                
-                break;
-
-
-            case '0.1':
-                $data = $this->manager_turnos($wa_id, $message, $prev_step);
-                $current_step = $data['id'];
-                $text = $data['text'];
-
-                break;
-
-            case '0.2':
-                // $text = "Para AUTORIZACIONES envíe foto de la orden, del carnet y en su caso del bono.";
-                // $text .= "Su orden será revisada por un agente y pasada a autorizar a la brevedad otorgándole un número de PRECARGA.";
-                // $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien, si su orden pertenece a IOMA,  puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
-                // $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. \nUna vez autorizada tiene 3 meses para realizar los análisis.";
-                $text  = "Para autorizaciones envie foto de la orden, del carnet y del bono si tiene uno.";
-                $text .= "Su orden sera revisada por un agente y pasada a atuorizar en la brevedad.";
-                $text .= "Cuando la misma se haya realizado le indicaremos un numero de precarga que debe tener presente al momento de asistir al laboratorio";
-                break;
-
-            case '0.3':
-                $text = "📒 Para acceder a su resultado debe realizar los siguientes pasos:";
-                $text .= "\n\n*Paso 1* - Dirigite a este link: www…..com.ar.";
-                $text .= "\n*Paso 2* - Ingresá al punto de menú _'resultados'_";
-                $text .= "\n*Paso 3* - Cargá el número de orden que te dimos cuando te realizaste el estudio.";
-                $text .= "\n*Paso 4* - Si no contás con el número de orden, cargá tal dato…";
-                break;
-
-            case '0.4':
-                $text = "*​⌚​ Atención general:* De lunes a viernes de 7:30 a 18:00 hs y sábados de 7:30 a 13:00 hs.";
-                $text .= "\n\n*​​➡️​ Horarios de extracciones:* Lunes a sábados de 7:30 a 10:30 hs. ";
-                $text .= "\n\n*​➡️​ Cortisol y Curva de glucemia:* La extracción debe realizarse a las 8:00 AM.";
-                $text .= "\n\n*​➡️​ Prolactina* Tiene que tener dos horas de haberse levantado y no haber hecho ningún tipo de esfuerzo o actividad física, excepto que tu médica/o te indique otra preparación.";
-                $text .= "\n\n*📍​ Ubicación:* Margarita Weild 1200 Lanús Este, Prov. Buenos Aires \n📞​ 4225-0789 / 4249-8651\n✉️​ labdelsur@yahoo.com.ar";
-                
-                break;
-
-            
-            case '0.5':
-                $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
-                break;
-            
-            case '0.6':
-
-                $data = $this->manager_covid($wa_id, $message, $prev_step);
-                $current_step = $data['id'];
-                $text = $data['text'];
-                
-                break;
-
-            case '0.7':
-
-                $data = $this->manager_analisis($wa_id, $message, $prev_step);
-                $current_step = $data['id'];
-                $text = $data['text'];
-                break;
-
-            case '0.8':
-                $data = $this->manager_coberturas($wa_id, $message, $prev_step);
-                $current_step = $data['id'];
-                $text = $data['text'];
-                break;
-
-            case '0.9':
-                $text = "💬 Por favor envíenos una foto de la orden médica / archivo de la misma para pasarle un presupuesto. Asimismo indique si posee cobertura / si lo hará particular.";
-                break;
-                
-            default:
-                $text = "No entendi eso 🤔​.";
-                break;
-        }
-
-        if($current_step != '0'){
-            $text .= "\n\n0️⃣ Menú principal.";
-        }
-        return ['id' => $current_step,
-                'text' => $text];
-
-    }
-
     public function check_timestamp($wa_id, $timestamp){
 
         //Busco en la base un mensaje mas nuevo que el mensaje entrante
@@ -475,14 +348,6 @@ class WhatsappController extends Controller
             }
         }elseif( isset($request['entry'][0]['changes'][0]['value']['statuses'][0]['status']) ){
             
-            // $b = json_encode($request['entry'][0]['changes']);
-            // Log::info('soy un status'. $b ); //$request['entry'][0]['changes'][0]['value']['statuses'][0]['status']);
-
-            // $message = Message::where('wamid', $request['entry'][0]['changes'][0]['value']['statuses'][0]['id'])->first();
-            // $message->status = $request['entry'][0]['changes'][0]['value']['statuses'][0]['status'];
-            // $message->save();
-            
-
         }
 
         
@@ -599,57 +464,175 @@ class WhatsappController extends Controller
 
     }
 
-    public function manager_turnos($wa_id, $message, $prev_step, $text = ''){
+    public function set_message($wa_id, $message){
+        
+        $prev_menu = Message::where('wa_id', $wa_id)
+                            ->where('response','!=','')   
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+        
+        log::info("MSG: ".$prev_menu->response."  -  ".$message);
+        //CHECK FECHA ULTIMO MENSAJE       
+        $last_date = false;
+        if($prev_menu){
+            $last_date = $this->check_last_date($prev_menu->created_at);
+        }
+        
+        if($prev_menu && $message != 0 && $last_date && $prev_menu != 'asesor'){
+            $prev_step = $prev_menu->response;
+            $current_step = $prev_step . '.' . $message;
+        }else{
+            $current_step = 0;
+        }   
+
+        switch($current_step){
+            case '0':
+                $text = "Hola 👋, se comunicó con *_DEL SUR ANÁLISIS CLÍNICOS_*, soy su Asistente Virtual 🤖."; 
+                $text .= "\nIndique la opción deseada:\n";
+                $text .= "\n ".$this->emojis[1]." 📆​ Turno para atención";
+                $text .= "\n ".$this->emojis[2]." ✅ Autorizaciones de órdenes (IOMA, OSSEG, Galeno, FATSA)";
+                $text .= "\n ".$this->emojis[3]." 📄 ¿Cómo obtener mis resultados?";
+                $text .= "\n ".$this->emojis[4]." 📍 Horario de atención y ubicación.";
+                $text .= "\n ".$this->emojis[5]." 🚗 Extracciones a domicilio.";
+                $text .= "\n ".$this->emojis[6]." 🦠 COVID 19";
+                $text .= "\n ".$this->emojis[7]." 🔬 Indicaciones de estudios";
+                $text .= "\n ".$this->emojis[8]." 🏥 Coberturas";
+                $text .= "\n ".$this->emojis[9]." 💲 Presupuestos";
+                break;
+
+            case strpos($current_step, "0.1") === 0: // Manejo de Turnos...
+
+                $step = $this->cut_step('0.1', $current_step);
+                $data = $this->manager_turnos($wa_id, $message, $step);
+                $current_step = $this->join_step('0.1', $data['id']);
+                $text = $data['text'];
+
+                break;
+
+            case strpos($current_step, "0.2") === 0: // Manejo de Autorizaciones...
+
+                $step = $this->cut_step('0.2', $current_step);
+                $data = $this->manager_autorizaciones($wa_id, $message, $step);
+                $current_step = $this->join_step('0.2', $data['id']);
+                $text = $data['text'];
+
+                break;
+
+            case strpos($current_step, "0.3") === 0: // Manejo de resultados. 
+
+                $step = $this->cut_step('0.3', $current_step);
+                $data = $this->manager_resultados($wa_id, $message, $step);
+                $current_step = $this->join_step('0.3', $data['id']);
+                $text = $data['text'];
+
+                break;
+
+            case strpos($current_step, "0.4") === 0: // Manejo de Horarios
+
+                $step = $this->cut_step('0.4', $current_step);
+                $data = $this->manager_horarios($wa_id, $message, $step);
+                $current_step = $this->join_step('0.4', $data['id']);
+                $text = $data['text'];
+
+                break;
+
+            case strpos($current_step, "0.5") === 0: // Manejo de Extracciones.
+                
+                $step = $this->cut_step('0.5', $current_step);
+                $data = $this->manager_extracciones($wa_id, $message, $step);
+                $current_step = $this->join_step('0.5', $data['id']);
+                $text = $data['text'];
+
+                break;
+
+            case strpos($current_step, "0.6") === 0: // Manejo de Covid
+
+                $step = $this->cut_step('0.6', $current_step);
+                $data = $this->manager_covid($wa_id, $message, $step);
+                $current_step = $this->join_step('0.6', $data['id']);
+                $text = $data['text'];
+
+                break;
+
+            case strpos($current_step, "0.7") === 0: //Manejo de Analisis
+                
+                $step = $this->cut_step('0.7', $current_step);
+                $data = $this->manager_analisis($wa_id, $message, $step);
+                $current_step = $this->join_step('0.7', $data['id']);
+                $text = $data['text'];
+
+                break;
+
+            case strpos($current_step, "0.8") === 0: // Manejo de Coberturas
+
+                $step = $this->cut_step('0.8', $current_step);
+                $data = $this->manager_coberturas($wa_id, $message, $step);
+                $current_step = $this->join_step('0.8', $data['id']);
+                $text = $data['text'];
+
+                break;
+
+            case strpos($current_step, "0.9") === 0: // Manejo de Presupuestos.
+
+                $step = $this->cut_step('0.9', $current_step);
+                $data = $this->manager_presupuestos($wa_id, $message, $step);
+                $current_step = $this->join_step('0.9', $data['id']);
+                $text = $data['text'];
+
+                break;
+            default:
+                $text = $this->message_default(3);
+                break;
+        }
+
+        if($current_step != '0'){
+            $text .= "\n\n0️⃣ Menú principal.";
+        }
+        log::info("SALIDA: ".$current_step);
+        return ['id' => $current_step,
+                'text' => $text];
+    }
+
+    public function manager_turnos($wa_id, $message, $current_step, $retorno = true, $text = ''){
         
         //Obtengo datos de Configuracion.
         $setting =  Setting::where('module', 'BOOKING')->where('key', 'cant_days_booking')->first();
-        
-        //Genero array para determinar si es el primer menu o submenu.
-        $steps = explode('.', $prev_step);
+log::info("TURNOS: ".$current_step. " MSG: ". $message);
+        if($current_step != ''){
 
-        //Almaceno el response raiz "Menu"
-        if(count($steps) <= 1){
-            $base_step = $prev_step.'.'.$message;
-        }else{
-            $base_step = $steps[0].'.'.$steps[1];
-            unset($steps[0], $steps[1]);
-            $current_step = implode('.', $steps);
+            if($message === '#'){ // Vuelvo a mostrar el Menu de turnos..
+                $current_step = '';
+            }else if($message === '*' ){
+                $current_step = str_replace('*','U',$current_step);
+                }else if($message === '9'){
+                    $current_step = str_replace('9','M',$current_step);
+                    }else{
+                        $array = explode('.',$current_step);
+                        unset($array[count($array)-1]);
+                        $array = implode(".",$array);
+                        switch ($array) {
+                            case '1':
+                                $current_step = $array.".L";
+                                break;
+                            case '1.L':
+                                $current_step = $array.".T";
+                                break;
+                            case '1.L.T':
+                                $current_step = $array.".N";
+                                break;
+                            case '1.L.T.N':
+                                $current_step = $array.".D";
+                                break;
+                            case '1.L.T.N.D':
+                                $current_step = $array.'.'.$message;
+                                break;
+                            default:
+                                # code...
+                                break;
+                        }
+                    }
         }
-        
-        //Obtengo el id del Menu a buscar..
-        unset($steps[0], $steps[1]);
-        $current_step = implode('.', $steps);
-        
-        //Determina el siguiente menu.
-        log::info("PREV: ". $prev_step. " -----MSG: ". $message);
-        if($message === '#' || $prev_step == 0){
-            log::info("1");
-            $current_step = '';
-        }else if($message === '*' || $prev_step == 0){
-            log::info("2");
-            $current_step .= 'U';
-            }else if($message === '9' || $prev_step == 0){
-                log::info("3");
-                $current_step .= '.M';
-                }else if($prev_step == "0.1"){
-                    log::info("4");
-                    $current_step .= $message;
-                    }else if($prev_step == '0.1.1' && intval($message) > 0 && intval($message) <= intval($setting->value)){
-                        log::info("5");
-                            $current_step .= '.L';     
-                            }else if($current_step === '1.L'){
-                                log::info("6");
-                                $current_step .= '.T';
-                                }else if($current_step === '1.L.T'){
-                                    log::info("7");
-                                    $current_step .= '.N';
-                                    }else if($current_step === '1.L.T.N'){
-                                        log::info("8");
-                                        $current_step .= '.D';
-                                        }else{ log::info("9");
-                                            $current_step .= '.'. $message;
-                                        }
-        log::info("SALIDA: ". $current_step);
+
         switch ($current_step) {
             case '':
                 
@@ -690,18 +673,42 @@ class WhatsappController extends Controller
                 $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
                 $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
                 $text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
+                $text .= "\n\nSi usted ya envió su orden y la misma sigue pendiente puede consultarnos el estado de la misma digitando la opción:";
+                $text .= "\n\n".$this->emojis[1]." ✅ Autorizaciones de órdenes"; 
+                $text .= "\n\nPuede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
+                $text .= "\nSi posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizada tiene 3 meses para realizar los análisis.";
+                $text .= "\nSi su orden ya está autorizada puede venir sin turno de 7 30 a 10 30 de lunes a sábados";
+                break;
+
+            case strpos($current_step, "3.1") === 0: // Manejo de Presupuestos.
+
+                $step = $this->cut_step('3.1', $current_step);
+                $data = $this->manager_autorizaciones($wa_id, $message, $step, false);
+                $current_step = $this->join_step('3.1', $data['id']);
+                $text = $data['text'];
+
                 break;
 
             case '4':
                 $text = "Pacientes de OSDE / SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
                 break;                
+            
             case '5':
                 // $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
                 $text = "El horario de extracciones y entrega de muestras es sin turno de lunes a sábados de ⌚️ 7:30 a 10:30 hs.";
                 $text .= "\nSi desea consultar su cobertura puede hacerlo desde la siguiente opción.";
                 $text .= "\n ".$this->emojis[1]." 🏥 Coberturas";
+                
+                break;  
 
-            break;
+            case strpos($current_step, "5.1") === 0: // Manejo de Presupuestos.
+
+                $step = $this->cut_step('5.1', $current_step);
+                $data = $this->manager_coberturas($wa_id, $message, $step, false);
+                $current_step = $this->join_step('5.1', $data['id']);
+                $text = $data['text'];
+
+                break;
                 
             case '6':
                 // $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
@@ -710,6 +717,15 @@ class WhatsappController extends Controller
                 $text .= "\n ".$this->emojis[1]." 💲 Presupuestos";
 
             break;
+
+            case strpos($current_step, "6.1") === 0:
+
+                $step = $this->cut_step('6.1', $current_step);
+                $data = $this->manager_presupuestos($wa_id, $message, $step, false);
+                $current_step = $this->join_step('6.1', $data['id']);
+                $text = $data['text'];
+
+                break;
 
             case ('1.L' ):
                 $text = "👤 Indique el nombre del paciente, por favor:";
@@ -720,20 +736,16 @@ class WhatsappController extends Controller
                 break;
             
             case ('1.L.T.N'):
-                $data = $this->manager_analisis($wa_id, $message, $prev_step);
-                $current_step = $data['id'];
-                $text = $data['text'];
-                
                 //OBTENGO LAS OPCIONES DE FECHA..
                 $fecha_options = Message::where('wa_id', $wa_id)
-                            ->where('response',$base_step.'.1')
+                            ->where('response','like', '%.1')
                             ->where('type', 'out')   
                             ->orderBy('updated_at', 'desc')
                             ->first();
                 
                 //OBTENGO LA POSICION DE LA FECHA SELECCIONADA.
                 $fecha = Message::where('wa_id', $wa_id)
-                            ->where('response',$base_step.'.1.L')
+                            ->where('response','like', '%.1.L')
                             ->where('type', 'in')   
                             ->orderBy('updated_at', 'desc')
                             ->first();
@@ -754,7 +766,7 @@ class WhatsappController extends Controller
                 
                 //RECUPERO EL NOMBRE DEL CLIENTE
                 $nombre = Message::where('wa_id', $wa_id)
-                            ->where('response',$base_step.'.1.L.T')
+                            ->where('response','like', '%.1.L.T')
                             ->where('type', 'in')   
                             ->orderBy('updated_at', 'desc')
                             ->first();
@@ -783,7 +795,7 @@ class WhatsappController extends Controller
                 } 
                 break;
 
-            case ('1.M'):
+            case $current_step === '1.M':
                 $bookingController = new BookingController();
                 $booking = $bookingController->get_bookings($wa_id);
                 if($booking){
@@ -796,7 +808,7 @@ class WhatsappController extends Controller
                     $text = "🗓️ Usted No posee turnos agengados:";
                 }
                 break;
-            case ('1.M.1'):
+            case $current_step === '1.M.1':
                     $bookingController = new BookingController();
                     $booking = $bookingController->cancel_booking($wa_id);
                     if($booking['code'] == 200){
@@ -807,43 +819,153 @@ class WhatsappController extends Controller
                 
                 break;
 
-            case ('U'):
-                $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
+            case $current_step === '1.U':
+                $text = $this->message_default(2, $wa_id);
                 break;
             
             default:
-                $text = "No entendi eso.";
+                $text = $this->message_default(3);
                 break;
                 
         }
-        if($current_step != ''){
-            $text .= "\n\n#️⃣ Menú anterior.";
+        if($current_step != '' && $retorno){
+            $text .= $this->message_default(4);
         }
 
-        return ['id' => $current_step == '' ? $base_step : $base_step.'.'.$current_step,
+        return ['id' => $current_step,
+        'text' => $text];
+    }
+
+    public function manager_autorizaciones($wa_id, $message, $current_step, $retorno = true, $text = ''){
+        
+        if($current_step != ''){
+            if($message === '#'){ // Vuelvo a mostrar el Menu del modulo
+                $current_step = '';
+            }
+        }
+
+        switch($current_step) {
+
+            case '':
+                $text  = "Para autorizaciones envie foto de la orden, del carnet y del bono si tiene uno.";
+                $text .= "Su orden sera revisada por un agente y pasada a atuorizar en la brevedad.";
+                $text .= "Cuando la misma se haya realizado le indicaremos un numero de precarga que debe tener presente al momento de asistir al laboratorio";
+                $text .= "\n\nSi Ud. ha dejado su orden para autorizar y desea conocer su estado elija la siguiente opción:";
+                $text .= "\n\n".$this->emojis[1]." ". $this->message_default(1);
+                break;
+
+            case '1':
+                $text = $this->message_default(2, $wa_id);
+                break;
+
+            default:
+                $text = $this->message_default(3);
+                break;
+                
+        }
+        if($current_step != '' && $retorno){
+            $text .= $this->message_default(4);
+        }
+
+        return ['id' => $current_step,
                 'text' => $text];
     }
 
-    public function manager_covid($wa_id, $message, $prev_step, $text = ''){
+    public function manager_resultados($wa_id, $message, $current_step, $retorno = true, $text = ''){
         
-        $steps = explode('.', $prev_step);
-        if(count($steps) <= 1){
-            $base_step = $prev_step.'.'.$message;
-        }else{
-            $base_step = $steps[0].'.'.$steps[1];
-            unset($steps[0], $steps[1]);
-            $current_step = implode('.', $steps);
+        if($current_step != ''){
+            if($message === '#'){ // Vuelvo a mostrar el Menu del modulo
+                $current_step = '';
+            }
         }
+
+        switch($current_step) {
+
+            case '':
+                $text = "📒 Para acceder a su resultado debe realizar los siguientes pasos:";
+                $text .= "\n\n*Paso 1* - Dirigite a este link: www…..com.ar.";
+                $text .= "\n*Paso 2* - Ingresá al punto de menú _'resultados'_";
+                $text .= "\n*Paso 3* - Cargá el número de orden que te dimos cuando te realizaste el estudio.";
+                $text .= "\n*Paso 4* - Si no contás con el número de orden, cargá tal dato…";
+                break;
+
+            default:
+                $text = $this->message_default(3);
+                break;
+                
+        }
+        if($current_step != '' && $retorno){
+            $text .= $this->message_default(4);
+        }
+
+        return ['id' => $current_step,
+                'text' => $text];
+    }
+
+    public function manager_horarios($wa_id, $message, $current_step, $retorno = true, $text = ''){
         
-        //Obtengo el id del menu a buscar..
-        unset($steps[0], $steps[1]);
-        $current_step = implode('.', $steps);
+        if($current_step != ''){
+            if($message === '#'){ // Vuelvo a mostrar el Menu del modulo
+                $current_step = '';
+            }
+        }
+
+        switch($current_step) {
+
+            case '':
+                $text = "*​⌚​ Atención general:* De lunes a viernes de 7:30 a 18:00 hs y sábados de 7:30 a 13:00 hs.";
+                $text .= "\n\n*​​➡️​ Horarios de extracciones:* Lunes a sábados de 7:30 a 10:30 hs. ";
+                $text .= "\n\n*​➡️​ Cortisol y Curva de glucemia:* La extracción debe realizarse a las 8:00 AM.";
+                $text .= "\n\n*​➡️​ Prolactina* Tiene que tener dos horas de haberse levantado y no haber hecho ningún tipo de esfuerzo o actividad física, excepto que tu médica/o te indique otra preparación.";
+                $text .= "\n\n*📍​ Ubicación:* Margarita Weild 1200 Lanús Este, Prov. Buenos Aires \n📞​ 4225-0789 / 4249-8651\n✉️​ labdelsur@yahoo.com.ar";
+                break;
+
+            default:
+                $text = $this->message_default(3);
+                break;
+                
+        }
+        if($current_step != '' && $retorno){
+            $text .= $this->message_default(4);
+        }
+
+        return ['id' => $current_step,
+                'text' => $text];
+    }
+
+    public function manager_extracciones($wa_id, $message, $current_step, $retorno = true, $text = ''){
         
+        if($current_step != ''){
+            if($message === '#'){ // Vuelvo a mostrar el Menu del modulo
+                $current_step = '';
+            }
+        }
+
+        switch($current_step) {
+
+            case '':
+                $text = $this->message_default(2, $wa_id);
+                break;
+
+            default:
+                $text = $this->message_default(3);
+                break;
+                
+        }
+        if($current_step != '' && $retorno){
+            $text .= $this->message_default(4);
+        }
+
+        return ['id' => $current_step,
+                'text' => $text];
+    }
+
+    public function manager_covid($wa_id, $message, $current_step, $retorno = true, $text = ''){
         
-        if($message === '#' || $prev_step == 0){
-            $current_step = '';
-        }else {
-            $current_step .= '.'. $message;
+        if($current_step != ''){
+            if($message === '#'){ // Vuelvo a mostrar el Menu del modulo
+                $current_step = '';
+            }
         }
         
         switch($current_step) {
@@ -860,55 +982,45 @@ class WhatsappController extends Controller
 
                 break;
 
-            case '.1':
+            case $current_step ===  '.1':
                 $text = "El hisopado PCR  para SARS-CoV-2 🦠​ tiene un valor de $7.900 pesos con tarjeta de débito y $7.000 si abona en efectivo. Puede venir de lunes a viernes de 11:00 a 15:00 hs y sábados de 8:00 a 9:00 hs. Si desea los resultados en el día debería acercarse a las 11:00 o a las 8:00 hs. respectivamente.";
                 $text .= "\n\nEl test rápido para SARS-CoV-2 tiene un valor de $4.600 pesos con tarjeta de débito y $4.000 en efectivo. En caso de que quiera realizarlo puede venir de lunes a viernes de 11:00 a 15:00 hs. y sábado de 8:00 a 12:00 hs. Obtiene el resultado en el momento.";
                 $text .= "\n\nA domicilio el valor es $5.500 pesos el test rápido y $8.000 la PCR.";
                 break;
             
-            case '.2':
+            case $current_step ===  '.2':
                 $text = "Por favor envíe una 📷 foto de la orden (al operador).";
                 break;
 
-            case '.3':
+            case $current_step ===  '.3':
                 $text = "Por favor indique 📌 domicilio y entre calles.";
                 break;
         
             default:
-                $text = "No entendi eso.";
+                if(strlen($message) > 2){
+                    $text = $this->message_default(2, $wa_id);
+                }else{
+                    $text = $this->message_default(3);
+                }
                 break;
                 
         }
-        if($current_step != ''){
-            $text .= "\n\n#️⃣ Menú anterior.";
+        if($current_step != ''&& $retorno){
+            $text .= $this->message_default(4);
         }
 
-        return ['id' => $current_step == '' ? $base_step : $base_step.'.'.$current_step,
+        return ['id' => $current_step,
                 'text' => $text];
     }
 
-    public function manager_analisis($wa_id, $message, $prev_step, $text = ''){
-        
-        $steps = explode('.', $prev_step);
-        if(count($steps) <= 1){
-            $base_step = $prev_step.'.'.$message;
-        }else{
-            $base_step = $steps[0].'.'.$steps[1];
-            unset($steps[0], $steps[1]);
-            $current_step = implode('.', $steps);
+    public function manager_analisis($wa_id, $message, $current_step, $retorno = true, $text = ''){
+
+        if($current_step != ''){
+            if($message === '#'){ // Vuelvo a mostrar el Menu del modulo
+                $current_step = '';
+            }
         }
-        
-        //Obtengo el id del menu a buscar..
-        unset($steps[0], $steps[1]);
-        $current_step = implode('.', $steps);
-        
-        
-        if($message === '#' || $prev_step == 0){
-            $current_step = '';
-        }else {
-            $current_step .= '.'. $message;
-        }
-        
+
         switch($current_step) {
 
             case '':
@@ -932,44 +1044,45 @@ class WhatsappController extends Controller
 
                 break;  
 
-            case '.1':
+            case $current_step === ".1":
+                log::info("ADENTRO");
                 $text = "💧 Recolectar la primera orina de la mañana o en su defecto la orina con una retención no menor a tres horas.";
-                $text .= "*A_* Se practicará un cuidadoso lavado de la zona genital con abundante agua y jabón.";
-                $text .= "*B_* Secar con una toalla limpia y planchada, o con toallitas descartables.";
-                $text .= "*C_* Taponar el orificio vaginal con algodón o con un tampón vaginal.";
-                $text .= "*D_* Separar los labios y orinar desechando el primer chorro de la micción.";
-                $text .= "*E_* Recolectar la porción media de la micción en un frasco estéril.";
-                $text .= "*F_* Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.";
+                $text .= "\n*A_* Se practicará un cuidadoso lavado de la zona genital con abundante agua y jabón.";
+                $text .= "\n*B_* Secar con una toalla limpia y planchada, o con toallitas descartables.";
+                $text .= "\n*C_* Taponar el orificio vaginal con algodón o con un tampón vaginal.";
+                $text .= "\n*D_* Separar los labios y orinar desechando el primer chorro de la micción.";
+                $text .= "\n*E_* Recolectar la porción media de la micción en un frasco estéril.";
+                $text .= "\n*F_* Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.";
                 break;
 
-            case '.2':
+            case $current_step ===  '.2':
                 $text = "💧 Recolectar la primera orina de la mañana o en su defecto la orina con una retención no menor a tres horas.";
-                $text .= "*A_* Se practicará un cuidadoso lavado de la zona genital con abundante agua y jabón.";
-                $text .= "*B_* Secar con una toalla limpia y planchada, o con toallitas descartables.";
-                $text .= "*C_* Rebatir el prepucio y orinar, desechando el primer chorro de la micción.";
-                $text .= "*D_* Recolectar la porción media de la micción en un frasco estéril.";
-                $text .= "*E_* Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.";
+                $text .= "\n*A_* Se practicará un cuidadoso lavado de la zona genital con abundante agua y jabón.";
+                $text .= "\n*B_* Secar con una toalla limpia y planchada, o con toallitas descartables.";
+                $text .= "\n*C_* Rebatir el prepucio y orinar, desechando el primer chorro de la micción.";
+                $text .= "\n*D_* Recolectar la porción media de la micción en un frasco estéril.";
+                $text .= "\n*E_* Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.";
                 break;
 
-            case '.3':
+            case $current_step ===  '.3':
                 $text = "🍼 Bebés y niños/as.";
                 $text .= "*-* Higienizar muy bien los genitales externos con agua y jabón.";
                 $text .= "*-* Recoger orina AL ACECHO en frasco estéril (una sola micción, no importa que la cantidad sea escasa). Tapar inmediatamente el frasco y conservar en heladera.";
                 break;
 
-            case '.4':
+            case $current_step ===  '.4':
                 $text = "💧 Juntar orina de 24 hs. En una o varias botella/s de plástico de agua mineral (2 litros o más) desechar la primera orina de la mañana y comenzar la recolección hasta el otro día a la misma hora con la primera orina de la mañana inclusive. Todo el contenido se debe traer al Laboratorio para realizar el estudio correspondiente. \n*_Importante:_* Se debe recolectar el total de la orina.";
                 break;
 
-            case '.5':
+            case $current_step ===  '.5':
                 $text = "💧 *Sangre oculta en materia fecal:* Condiciones previas a la recolección de la muestra:   \n\nDurante tres días consecutivos el/la paciente evitará comer carne roja y alimentos que contengan sangre. \nDeberá evitarse la ingestión de: rábanos, nabos y cacao. \nLos analgésicos y antirreumáticos no son aconsejables durante estos tres días.\n Al cuarto día recolectar en un frasco de boca ancha bien limpio y seco una porción de una deposición espontánea  (no recolectar orina).\n Aclarar si el paciente sufre de hemorroides. \nRotular con nombre y apellido.";
                 break;
 
-            case '.6':
+            case $current_step ===  '.6':
                 $text = "💧 Puede acercarse de lunes a viernes de 11:00 a 18:00 hs. o sábados de 11:00 a 13:00 hs. para pedir el material y las indicaciones necesarias.";
                 break;
 
-            case '.7':
+            case $current_step ===  '.7':
                 $text = "💧 Durante 72 hs. anteriores al estudio:";
                 $text .= "\n\n⛔ No tomar antibióticos.";
                 $text .= "\n⛔ No colocarse ningún tipo de crema, talco, óvulos, etc.";
@@ -979,7 +1092,7 @@ class WhatsappController extends Controller
                 $text .= "\n*El día del estudio:* ⛔ No utilizar bidet.";
                 break;
 
-            case '.8':
+            case $current_step ===  '.8':
                 $text  = "*MICOLÓGICO UÑAS*";
                 $text .= "\n*A_* Suspender medicación antimicótica, por lo menos 10 días antes de la recolección.";
                 $text .= "\n*B_* No utilizar esmalte, talco, crema, aerosol, desinfectante, loción, etc. sobre la lesión por lo menos 3 días antes de la toma de muestra.";
@@ -992,54 +1105,39 @@ class WhatsappController extends Controller
                 $text .= "\n*C_*Lavar la zona lesionada con jabón blanco o neutro, por lo menos 3 veces al día durante los 3 días previos a la toma de  muestra.";
                 $text .= "\n*D_*¡ATENCIÓN!  Si la lesión es en los pies, concurrir con calzado cerrado y medias.";
                 
-                // $text = "🗓️ 3 días antes de concurrir al Laboratorio se deben hacer baños de agua tibia y sal, 3 veces por día durante 15 minutos en la uña o uñas afectadas. \nEl día del estudio no debe tener esmaltes ni cremas.";
                 break;
 
-            case '.9':
+            case $current_step ===  '.9':
                 $text = "Abstinencia sexual al menos 48 hs. previas a la extracción.";
                 $text .= "\n⛔ No haberse realizado en la semana previa tacto rectal o ecografía transrectal o biopsia.";
                 $text .= "\n⛔ No haber realizado ejercicios sentado (como andar en bicicleta o a caballo) al menos 48 hs. previas a la extracción.";
                 break;
 
-            case '.10':
-                $text = "💬 Usted esta siendo derivado a un agente, por favor aguarde…";
+            case $current_step ===  '.10':
+                $text = $this->message_default(2, $wa_id);
                 break;
         
             default:
-                $text = "No entendi eso.";
+                $text = $this->message_default(3);
                 break;
                 
         }
-        if($current_step != ''){
-            $text .= "\n\n#️⃣ Menú anterior.";
+        if($current_step != '' && $retorno){
+            $text .= $this->message_default(4);
         }
 
-        return ['id' => $current_step == '' ? $base_step : $base_step.'.'.$current_step,
+        return ['id' => $current_step,
                 'text' => $text];
     }
 
-    public function manager_coberturas($wa_id, $message, $prev_step, $text = ''){
+    public function manager_coberturas($wa_id, $message, $current_step, $retorno = true, $text = ''){
         
-        $steps = explode('.', $prev_step);
-        if(count($steps) <= 1){
-            $base_step = $prev_step.'.'.$message;
-        }else{
-            $base_step = $steps[0].'.'.$steps[1];
-            unset($steps[0], $steps[1]);
-            $current_step = implode('.', $steps);
+        if($current_step != ''){
+            if($message === '#'){ // Vuelvo a mostrar el Menu del modulo
+                $current_step = '';
+            }
         }
-        
-        //Obtengo el id del menu a buscar..
-        unset($steps[0], $steps[1]);
-        $current_step = implode('.', $steps);
-        
-        
-        if($message === '#' || $prev_step == 0){
-            $current_step = '';
-        }else {
-            $current_step .= '.'. $message;
-        }
-        
+
         switch($current_step) {
 
             case '':
@@ -1053,16 +1151,25 @@ class WhatsappController extends Controller
 
                 break;
 
-            case '.1':
+            case $current_step === "1":
                 // $text = "🏷 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
                 // $text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
                 $text = "Puede venir el día asignado en su turno de 7:30 a 10:30 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
                 $text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
                 $text .= "\n\nSi usted no tiene un turno, puede solicitarlo desde la siguiente opción:";
-                $text .= "\n ".$this->emojis[1]." 📆​ Solicitar Turno *sólo para obra social UTA*.";    
+                $text .= "\n\n".$this->emojis[1]." 📆​ Solicitar Turno *sólo para obra social UTA*.";    
             break;
+
+            case strpos($current_step, "1.1") === 0: 
+
+                $step = $this->cut_step('1.1', $current_step, false);
+                $data = $this->manager_turnos($wa_id, $message, $step, false);
+                $current_step = $this->join_step('1.1', $data['id']);
+                $text = $data['text'];
+
+                break;
             
-            case '.2':
+            case $current_step === "2":
                 $text = "🔔 Para realizar estudios por PAMI deberá traer:";
                 $text .= "\n\n✅ Fotocopia de Documento.";
                 $text .= "\n✅ Fotocopia de Carnet de Afiliado.";
@@ -1070,33 +1177,122 @@ class WhatsappController extends Controller
                 $text .= "\n💉 Las extracciones son de lunes a viernes de 7:30 a 10:00 hs.";
                 break;
 
-            case '.3':
+            case $current_step === "3":
                 $text = "Pacientes de IOMA deben enviar previamente la orden médica para autorizar.";
                 $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
                 $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
                 $text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
+                $text .= "\n\nSi usted ya envió su orden y la misma sigue pendiente puede consultarnos el estado de la misma digitando la opción:";
+                $text .= "\n\n".$this->emojis[1]." ✅ Autorizaciones de órdenes"; 
+                $text .= "\n\nPuede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
+                $text .= "\nSi posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizada tiene 3 meses para realizar los análisis.";
+                $text .= "\nSi su orden ya está autorizada puede venir sin turno de 7 30 a 10 30 de lunes a sábados";
+
+                break;
+            
+            case strpos($current_step, "3.1") === 0:
+
+                $step = $this->cut_step('3.1', $current_step);
+                $data = $this->manager_autorizaciones($wa_id, $message, $step, false);
+                $current_step = $this->join_step('3.1', $data['id']);
+                $text = $data['text'];
+
                 break;
 
-            case '.4':
-                // $text = "Pacientes de OSDE /SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno.";
+            case $current_step === "4":
                 $text = "Pacientes de OSDE / SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
                 break;
         
-            case '.5':
+            case $current_step === "5":
                 $text = "Indique su obra social o prepaga. Y lo derivaremos a un agente.";
                 break;
 
             default:
-                $text = "No entendi eso.";
+                if(strlen($message) > 3){
+                    $text = $this->message_default(2, $wa_id);
+                }else{
+                    $text = $this->message_default(3);
+                }
                 break;
                 
         }
-        if($current_step != ''){
-            $text .= "\n\n#️⃣ Menú anterior.";
+        if($current_step != '' && $retorno){
+            $text .= $this->message_default(4);
         }
 
-        return ['id' => $current_step == '' ? $base_step : $base_step.'.'.$current_step,
+        return ['id' => $current_step,
                 'text' => $text];
     }
 
+    public function manager_presupuestos($wa_id, $message, $current_step, $retorno = true, $text = ''){ 
+        
+        if($current_step != ''){
+            if($message === '#'){ // Vuelvo a mostrar el Menu del modulo
+                $current_step = '';
+            }
+        }
+
+        switch($current_step) {
+
+            case '':
+                $text = "💬 Por favor envíenos una foto de la orden médica / archivo de la misma para pasarle un presupuesto. Asimismo indique si posee cobertura / si lo hará particular.";
+                break;
+
+            default:
+                $text = $this->message_default(3);
+                break;
+                
+        }
+        if($current_step != '' && $retorno){
+            $text .= $this->message_default(4);
+        }
+
+        return ['id' => $current_step,
+                'text' => $text];
+    }
+
+    // Funcion de mensajes predeterminados.
+    function message_default($id, $wa_id = ''){
+        switch ($id) {
+            case 1: // 
+                return "Contactarse con un asesor. 💁‍♂️";
+                break;
+            case 2: // 
+                if($wa_id){
+                    $this->disable_bot($wa_id);
+                }
+                return "💬 Usted esta siendo derivado a un agente, por favor aguarde y será contactado.";
+                break;
+            case 3: // 
+                return "No entendi su consulta. 🤔​";
+                break;
+            case 4: // 
+                return "\n\n#️⃣ Menú anterior.";
+                break;
+            default:
+                
+                break;
+                
+        }
+    }
+
+    // Funcion cortar step
+    function cut_step($step_base, $current_step){
+        $step = str_replace($step_base,'',$current_step);
+        $step= ltrim ($step,'.'); // Elimina el primer caracter si es un '.'
+
+        return $step;
+    }
+
+    // Funcion unir step
+    function join_step($step_base, $parse_step){
+        return $parse_step == '' ? $step_base : $step_base.'.'.$parse_step;
+    }
+
+    // Disable Bot
+    function disable_bot($wa_id){
+        Contact::where('wa_id',$wa_id)->update([
+            'bot_status' => false
+        ]);
+    }
 }
