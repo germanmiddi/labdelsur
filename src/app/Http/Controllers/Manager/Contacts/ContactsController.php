@@ -52,14 +52,14 @@ class ContactsController extends Controller
     public function list_dashboard(){
 
         $result = Contact::query();
-        $result->leftJoin(DB::raw('(select contact_id, status, created_at as date 
+        $result->Join(DB::raw('(select contact_id, status, created_at as date 
                                         from messages 
                                         where id in (
                                                     select max(id) from  messages 
                                                     group by contact_id)
                                         ) as msg'), function ($join) {
-                                    $join->on ( 'msg.contact_id', '=', 'id' );
-                    });
+                                                        $join->on ( 'msg.contact_id', '=', 'id' );
+                                        });
         
         return  $result ->orderBy('msg.status', 'ASC')                
                         ->orderBy('msg.date', 'DESC')
