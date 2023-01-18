@@ -13,6 +13,8 @@ class ObraSocial extends Model
     protected $fillable = [
         'title',
         'description',
-        'visible'
+        'visible',
+        'foverite',
+        'url'
     ];
 }

@@ -42,6 +42,7 @@ class EstudiosController extends Controller
                             'title'                 => $estudio->title,
                             'description'           => $estudio->description,
                             'visible'               => $estudio->visible,
+                            'favorite'               => $estudio->favorite,
                         ]);
 
     }
@@ -136,6 +137,20 @@ class EstudiosController extends Controller
             $estudio = Estudio::where('id', $request->id)->first();
             Estudio::where('id', $request->id)->update([
                 'visible' => !$estudio->visible
+            ]);
+            return response()->json(['message'=>'Estudio Actualizado correctamente'], 200);
+        } catch (\Throwable $th) {
+            dd($th);
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+    public function update_favorite(Request $request)
+    {
+        try {
+            $estudio = Estudio::where('id', $request->id)->first();
+            Estudio::where('id', $request->id)->update([
+                'favorite' => !$estudio->favorite
             ]);
             return response()->json(['message'=>'Estudio Actualizado correctamente'], 200);
         } catch (\Throwable $th) {

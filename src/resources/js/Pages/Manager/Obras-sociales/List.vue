@@ -98,11 +98,11 @@
 							<th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
 								{{ obras.id }}
 							</th>
-							<td class="py-4 px-6">
-								{{ obras.title }}
+							<td class="py-4 px-6" v-html="obras.title.substr(0, 25)">
+								
 							</td>
-							<td class="py-4 px-6">
-								{{ obras.description }}
+							<td class="py-4 px-6" v-html="obras.description.substr(0, 40) + '...'">
+
 							</td>
 							<td v-if="obras.visible" class="py-4 px-6">
 								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Activo</span>
@@ -117,6 +117,8 @@
 									form.title = obras.title,
 									form.description = obras.description,
 									form.visible = obras.visible,
+									form.favorite = obras.favorite,
+									form.url = obras.url,
 									open = true,
 									editingObrasSociales = true
 								" class=" mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -127,6 +129,16 @@
 								</a>
 								<a v-else type="button" @click="update_visibilidad(obras.id)" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 									<Icons name="arrow-up" class="h-5 w-5"></Icons>
+								</a>
+
+								<a v-if="obras.favorite" type="button" @click="update_favorite(obras.id)" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-yellow-300 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+									<Icons name="star" class="h-5 w-5"></Icons>
+								</a>
+								<a v-else-if="obras.url" obras="button" @click="update_favorite(obras.id)" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+									<Icons name="star" class="h-5 w-5"></Icons>
+								</a>
+								<a v-else obras="button" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+									<Icons name="star" class="h-5 w-5"></Icons>
 								</a>
 
 							</td>
@@ -166,7 +178,7 @@
 						leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0"
 						leave-to="translate-x-full">
 						<div class="w-screen max-w-md">
-							<form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl">
+							<form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl" >
 								<div class="flex-1 h-0 overflow-y-auto">
 									<div class="py-7 px-4 bg-gray-500 sm:px-6">
 										<div class="flex items-center justify-between">
@@ -205,6 +217,17 @@
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
 												</div>
 											</div>
+											<div>
+												<label for="file"
+													class="block text-sm font-medium text-gray-900">Logo</label>
+												<div class="mt-1">
+													<input type="file" name="file" id="file" @input="form.file = $event.target.files[0]"
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+												</div>
+											</div>
+											<div>
+												<img class="h-40 mt-2" :src="'/storage/'+this.form.url" alt="" />
+											</div>
 										</div>
 									</div>
 								</div>
@@ -235,6 +258,8 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import Toast from '@/Layouts/Components/Toast.vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 
+import { useForm } from '@inertiajs/inertia-vue3'
+
 export default {
 	props: {
 	},
@@ -251,6 +276,7 @@ export default {
 		DialogTitle,
 		TransitionChild,
 		TransitionRoot,
+		useForm
 	},
 	setup() {
 	},
@@ -281,6 +307,12 @@ export default {
 		clearMessage() {
 			this.toastMessage = ""
 		},
+		onFileChange(e){
+               // console.log(e.target.files[0]);
+                this.form.file = e.target.files[0];
+				//const file = e.target.files[0];
+            	//this.form.file = URL.createObjectURL(file);
+            },
 		async getObrasSociales() {
 
 			this.loading = true
@@ -312,6 +344,7 @@ export default {
 			this.getObrasSociales()
 		},
 		async submit() {
+			console.log(this.form.file)
 			let rt = '';
 			if (this.editingObrasSociales) {
 				rt = route('obras-sociales.update');
@@ -319,9 +352,18 @@ export default {
 				rt = route('obras-sociales.store');
 			}
 
-			axios.post(rt, {
-				form: this.form,
-			}).then(response => {
+			const config = {
+				headers: { 'Content-Type': 'multipart/form-data' }
+			}
+
+			let formData = new FormData();
+				formData.append('id', this.form.id);
+                formData.append('file', this.form.file);
+				formData.append('title', this.form.title);
+				formData.append('description', this.form.description);
+				formData.append('url', this.form.url);
+
+			axios.post(rt,formData, config).then(response => {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
@@ -338,6 +380,25 @@ export default {
 		},
 		async update_visibilidad(id) {
 			let rt = route('obras-sociales.update_visibilidad');
+			
+			axios.post(rt, {
+				id: id,
+			}).then(response => {
+				if (response.status == 200) {
+					this.labelType = "success"
+					this.toastMessage = response.data.message
+					this.getObrasSociales()
+				} else {
+					this.labelType = "info"
+					this.toastMessage = response.data.message
+				}
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = 'Se ha producido un error'
+			})
+		},
+		async update_favorite(id) {
+			let rt = route('obras-sociales.update_favorite');
 			
 			axios.post(rt, {
 				id: id,

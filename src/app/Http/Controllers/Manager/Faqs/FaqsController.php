@@ -41,6 +41,7 @@ class FaqsController extends Controller
                             'question'          => $faq->question,
                             'answer'            => $faq->answer,
                             'visible'           => $faq->visible,
+                            'favorite'          => $faq->favorite,
                         ]);
 
     }
@@ -135,6 +136,20 @@ class FaqsController extends Controller
             $faq = Faq::where('id', $request->id)->first();
             Faq::where('id', $request->id)->update([
                 'visible' => !$faq->visible
+            ]);
+            return response()->json(['message'=>'Pregunta Actualizada correctamente'], 200);
+        } catch (\Throwable $th) {
+            dd($th);
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+    public function update_favorite(Request $request)
+    {
+        try {
+            $faq = Faq::where('id', $request->id)->first();
+            Faq::where('id', $request->id)->update([
+                'favorite' => !$faq->favorite
             ]);
             return response()->json(['message'=>'Pregunta Actualizada correctamente'], 200);
         } catch (\Throwable $th) {

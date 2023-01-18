@@ -175,6 +175,10 @@ Route::post('/obras-sociales/update_visibilidad', [ObrasSocialesController::clas
         ->name('obras-sociales.update_visibilidad')
         ->middleware('auth');
 
+Route::post('/obras-sociales/update_favorite', [ObrasSocialesController::class, 'update_favorite'])
+->name('obras-sociales.update_favorite')
+->middleware('auth');
+
 // Estudios
 
 Route::get('/estudios/index', [EstudiosController::class, 'index'])
@@ -197,6 +201,10 @@ Route::post('/estudios/update_visibilidad', [EstudiosController::class, 'update_
 ->name('estudios.update_visibilidad')
 ->middleware('auth');
 
+Route::post('/estudios/update_favorite', [EstudiosController::class, 'update_favorite'])
+->name('estudios.update_favorite')
+->middleware('auth');
+
 // FAQS
 
 Route::get('/faqs/index', [FaqsController::class, 'index'])
@@ -217,4 +225,8 @@ Route::post('/faqs/update', [FaqsController::class, 'update'])
 
 Route::post('/faqs/update_visibilidad', [FaqsController::class, 'update_visibilidad'])
 ->name('faqs.update_visibilidad')
+->middleware('auth');
+
+Route::post('/faqs/update_favorite', [FaqsController::class, 'update_favorite'])
+->name('faqs.update_favorite')
 ->middleware('auth');
