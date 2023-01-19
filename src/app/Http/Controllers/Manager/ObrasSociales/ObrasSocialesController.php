@@ -29,6 +29,10 @@ class ObrasSocialesController extends Controller
         $length = request('length');
         $sort_by = request('sort_by') ?? 'id';
         $sort_order = request('sort_order') ?? 'DESC';
+        
+        if(request('favorite') == 'true'){
+            $result->where('favorite',true);
+        }
 
         if(request('search')){
             $search = request('search');

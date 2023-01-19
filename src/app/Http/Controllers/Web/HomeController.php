@@ -23,11 +23,9 @@ class HomeController extends Controller
     public function index()
     {
         $faqs = Faq::select('id','answer','question')->where('favorite', true)->where('visible',true)->limit(4)->get();
-        $estudios = Estudio::select('id','title','description')->where('favorite', true)->where('visible',true)->limit(4)->get();
         $obras = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->limit(10)->get();
         return  Inertia::render('Web/Home', [
             'faqs' => $faqs,
-            'estudios' => $estudios,
             'obras' => $obras,
         ]);
     }

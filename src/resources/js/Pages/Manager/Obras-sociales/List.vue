@@ -30,6 +30,10 @@
 						<button
 							class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 							@click="getObrasSociales()">Buscar</button>
+						<button
+						class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+						@click="viewFavorite()">{{text_favorite}}</button>
+						
 					</div>
 
 					<div class="mt-5 flex lg:mt-0 lg:ml-4">
@@ -59,20 +63,10 @@
 							</th>
 							<th scope="col" class="py-3 px-6" @click="sort_by = 'title', sortObrasSociales()">
 								<div class="flex items-center justify-center">
-									Titulo
+									Obra Social
 									<Icons v-if="sort_by == 'title' && sort_order == 'ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
 									<Icons v-else-if="sort_by == 'title' && sort_order == 'DESC'" name="bars-down"
-										class="h-4 w-4 ml-2" />
-									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
-								</div>
-							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by = 'description', sortObrasSociales()">
-								<div class="flex items-center justify-center">
-									Descripcion
-									<Icons v-if="sort_by == 'description' && sort_order == 'ASC'" name="bars-up"
-										class="h-4 w-4 ml-2" />
-									<Icons v-else-if="sort_by == 'description' && sort_order == 'DESC'" name="bars-down"
 										class="h-4 w-4 ml-2" />
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
@@ -98,11 +92,9 @@
 							<th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
 								{{ obras.id }}
 							</th>
-							<td class="py-4 px-6" v-html="obras.title.substr(0, 25)">
-								
-							</td>
-							<td class="py-4 px-6" v-html="obras.description.substr(0, 40) + '...'">
-
+							<td class="py-4 px-6">
+								<p><b>{{ obras.title }}</b></p>
+								<p class="text-sm">{{ obras.description.substr(0,70)}}</p>
 							</td>
 							<td v-if="obras.visible" class="py-4 px-6">
 								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Activo</span>
@@ -293,6 +285,8 @@ export default {
 			form: {},
 			toastMessage: "",
 			labelType: "info",
+			text_favorite: "Ver Destacados",
+			view_favorites: false
 		}
 	},
 	watch: {
@@ -302,10 +296,21 @@ export default {
 	created() {
 		this.getObrasSociales()
 	},
+
 	methods: {
 
 		clearMessage() {
 			this.toastMessage = ""
+		},
+		viewFavorite(){
+			if(this.view_favorites){
+				this.text_favorite = 'Ver Destacados'
+				this.view_favorites = false
+			}else{
+				this.text_favorite = 'Ver Todos'
+				this.view_favorites = true
+			}
+			this.getObrasSociales()
 		},
 		onFileChange(e){
                // console.log(e.target.files[0]);
@@ -325,6 +330,8 @@ export default {
 				filter += `&search=${this.search}`
 			}
 
+			filter += `&favorite=${this.view_favorites}`
+			
 			const get = `${route('obras-sociales.list')}?${filter}`
 
 			const response = await fetch(get, { method: 'GET' })
