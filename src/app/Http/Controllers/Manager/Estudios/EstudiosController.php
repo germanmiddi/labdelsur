@@ -27,6 +27,10 @@ class EstudiosController extends Controller
         $sort_by = request('sort_by') ?? 'id';
         $sort_order = request('sort_order') ?? 'DESC';
 
+        if(request('favorite') == 'true'){
+            $result->where('favorite',true);
+        }
+
         if(request('search')){
             $search = request('search');
             $result->Where('id','LIKE', '%'. $search . '%')

@@ -30,6 +30,9 @@
 						<button
 							class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 							@click="getFaqs()">Buscar</button>
+							<button
+						class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+						@click="viewFavorite()">{{text_favorite}}</button>
 					</div>
 
 					<div class="mt-5 flex lg:mt-0 lg:ml-4">
@@ -99,9 +102,9 @@
 								{{ faq.id }}
 							</th>
 							<td class="py-4 px-6 text-left">
-								{{ faq.question.substr(0, 40) }}...
+								{{ faq.question.substr(0, 40) }}
 							</td>
-							<td class="py-4 px-6" v-html="faq.answer.substr(0, 40) + '...'">
+							<td class="py-4 px-6" v-html="faq.answer.substr(0, 40)">
 							
 							</td>
 							<td v-if="faq.visible" class="py-4 px-6">
@@ -275,6 +278,8 @@ export default {
 			form: {},
 			toastMessage: "",
 			labelType: "info",
+			text_favorite: "Ver Destacados",
+			view_favorites: false
 		}
 	},
 	watch: {
@@ -289,6 +294,16 @@ export default {
 		clearMessage() {
 			this.toastMessage = ""
 		},
+		viewFavorite(){
+			if(this.view_favorites){
+				this.text_favorite = 'Ver Destacados'
+				this.view_favorites = false
+			}else{
+				this.text_favorite = 'Ver Todos'
+				this.view_favorites = true
+			}
+			this.getFaqs()
+		},
 		async getFaqs() {
 
 			this.loading = true
@@ -296,6 +311,8 @@ export default {
 			let filter = `&length=${this.length}`
 			filter += `&sort_by=${this.sort_by}`
 			filter += `&sort_order=${this.sort_order}`
+
+			filter += `&favorite=${this.view_favorites}`
 
 			if (this.search.length > 0) {
 				filter += `&search=${this.search}`

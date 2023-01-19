@@ -36,12 +36,12 @@
             </div>
             <div class="mt-12 lg:mt-0 lg:col-span-2">
                 <dl class="space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:grid-flow-col sm:gap-x-6 sm:gap-y-10 lg:gap-x-8">
-                    <div v-for="estudio in estudios" :key="estudio.id" class="relative">
+                    <div v-for="feature in features" :key="feature.name" class="relative">
                         <dt>
                             <CheckIcon class="absolute h-6 w-6 text-green-500" aria-hidden="true" />
-                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">{{ estudio.title }}</p>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">{{ feature.name }}</p>
                         </dt>
-                        <dd class="mt-2 ml-9 text-base text-gray-500 text-justify" v-html="estudio.description.replace(/\n/g, '<br>')">
+                        <dd class="mt-2 ml-9 text-base text-gray-500 text-justify" v-html="feature.description.replace(/\n/g, '<br>')">
                             
                         </dd>
                     </div>
@@ -295,7 +295,7 @@ const solutions = [
     icon: QuestionMarkCircleIcon,
   },
 ]
-/* const features = [
+const features = [
   {
     name: 'Hisopados',
     description: 'Realizamos testeos para detectar COVID-19, Influenza A y B y Estreptococo Beta Hemolítico.',
@@ -317,7 +317,7 @@ const solutions = [
     icon: PencilAltIcon,
   },
 
-] */
+]
 const metrics = [
   { id: 1, stat: '8K+', emphasis: 'Companies', rest: 'use laoreet amet lacus nibh integer quis.' },
   { id: 2, stat: '25K+', emphasis: 'Countries around the globe', rest: 'lacus nibh integer quis.' },
@@ -426,7 +426,6 @@ const footerNavigation = {
 export default {
   props: {
     faqs: Object,
-    estudios: Object,
     obras: Object
   },
   components: {
@@ -458,7 +457,7 @@ export default {
       metrics,
       footerNavigation,
       //faqs,
-    //   features
+      features
     }
   },
 }
