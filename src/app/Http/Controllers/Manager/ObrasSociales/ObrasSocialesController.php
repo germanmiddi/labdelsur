@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Manager\ObrasSociales;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 use App\Models\ObraSocial;
 
 class ObrasSocialesController extends Controller
@@ -42,6 +45,8 @@ class ObrasSocialesController extends Controller
                             'title'                 => $obra->title,
                             'description'           => $obra->description,
                             'visible'               => $obra->visible,
+                            'favorite'              => $obra->favorite,
+                            'url'                   => $obra->url,
                         ]);
 
     }
@@ -64,13 +69,31 @@ class ObrasSocialesController extends Controller
      */
     public function store(Request $request)
     {
+
         try {
-            $newObraSocial = new ObraSocial();
-            $data = $request->form;
-            $user = $newObraSocial->create($data);
+            if (is_file($request->file)) {
+                
+                $nombre = Str::slug($request->title, '_').'.'.$request->file->getClientOriginalExtension();
+                $path = Storage::disk('public')->put($nombre,file_get_contents($request->file->getPathName()));
+                
+                if($path){
+                    ObraSocial::create([
+                        'title' => $request->title ?? '',
+                        'description' => $request->description ?? '',
+                        'url' => $nombre,
+                    ]);
+                }else{
+                    return redirect()->route('calidad.documento')->with('error', 'No se ha podido procesar el documento!');
+                }             
+            }else{
+                ObraSocial::create([
+                    'title' => $request->title ?? '',
+                    'description' => $request->description ?? ''
+                ]);
+            }
             return response()->json(['message'=>'Obra Social creada correctamente'], 200);
         } catch (\Throwable $th) {
-            dd($th);
+            dd("ERROR --".$th);
             return response()->json(['message'=>'Se ha producido un error'], 500);
         }
     }
@@ -107,11 +130,25 @@ class ObrasSocialesController extends Controller
     public function update(Request $request)
     {
         try {
-            ObraSocial::where('id', $request->form['id'])->update([
-                'title' => $request->form['title'],
-                'description' => $request->form['description'],
-                'visible' => $request->form['visible']
-            ]);
+            if (is_file($request->file)) {
+                $file_os = ObraSocial::where('id', $request->id)->first();
+                    if($file_os->url){
+                        Storage::disk('public')->delete($file_os->url);
+                    }
+                $nombre = Str::slug($request->title, '_').'.'.$request->file->getClientOriginalExtension();
+                $path = Storage::disk('public')->put($nombre,file_get_contents($request->file->getPathName()));
+                
+                ObraSocial::where('id', $request->id)->update([
+                    'title' => $request->title,
+                    'description' => $request->description,
+                    'url' => $nombre
+                ]);
+            }else{
+                ObraSocial::where('id', $request->id)->update([
+                    'title' => $request->title,
+                    'description' => $request->description,
+                ]);
+            }
             return response()->json(['message'=>'Obra Social Actualizada correctamente'], 200);
         } catch (\Throwable $th) {
             dd($th);
@@ -136,6 +173,19 @@ class ObrasSocialesController extends Controller
             $obra = ObraSocial::where('id', $request->id)->first();
             ObraSocial::where('id', $request->id)->update([
                 'visible' => !$obra->visible
+            ]);
+            return response()->json(['message'=>'Obra Social Actualizada correctamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+    public function update_favorite(Request $request)
+    {
+        try {
+            $obra = ObraSocial::where('id', $request->id)->first();
+            ObraSocial::where('id', $request->id)->update([
+                'favorite' => !$obra->favorite
             ]);
             return response()->json(['message'=>'Obra Social Actualizada correctamente'], 200);
         } catch (\Throwable $th) {

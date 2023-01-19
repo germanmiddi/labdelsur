@@ -7,6 +7,10 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\Controller;
 
+use App\Models\Faq;
+use App\Models\Estudio;
+use App\Models\ObraSocial;
+
 // use App\Models\Competencia;
 
 class HomeController extends Controller
@@ -18,24 +22,39 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return  Inertia::render('Web/Home');
+        $faqs = Faq::select('id','answer','question')->where('favorite', true)->where('visible',true)->limit(4)->get();
+        $estudios = Estudio::select('id','title','description')->where('favorite', true)->where('visible',true)->limit(4)->get();
+        $obras = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->limit(10)->get();
+        return  Inertia::render('Web/Home', [
+            'faqs' => $faqs,
+            'estudios' => $estudios,
+            'obras' => $obras,
+        ]);
     }
 
     public function faq()
     {
-        return  Inertia::render('Web/Faq', [            
+        $faqs = Faq::select('id','answer','question')->get();
+        return  Inertia::render('Web/Faq', [    
+            'faqs' => $faqs        
         ]);
     }   
     
     public function estudios()
     {
+        $estudios = Estudio::select('id','title','description')->where('visible',true)->get();
         return  Inertia::render('Web/Estudios', [            
+            'estudios' => $estudios  
         ]);
     } 
 
     public function osociales()
     {
-        return  Inertia::render('Web/ObrasSociales', [            
+        $obras_img = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->limit(10)->get();
+        $obras = ObraSocial::select('id','title','description')->where('visible',true)->get();
+        return  Inertia::render('Web/ObrasSociales', [    
+            'obras_img' => $obras_img   ,
+            'obras' => $obras      
         ]);
     }    
 

@@ -36,12 +36,12 @@
             </div>
             <div class="mt-12 lg:mt-0 lg:col-span-2">
                 <dl class="space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:grid-flow-col sm:gap-x-6 sm:gap-y-10 lg:gap-x-8">
-                    <div v-for="feature in features" :key="feature.name" class="relative">
+                    <div v-for="estudio in estudios" :key="estudio.id" class="relative">
                         <dt>
                             <CheckIcon class="absolute h-6 w-6 text-green-500" aria-hidden="true" />
-                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">{{ feature.name }}</p>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">{{ estudio.title }}</p>
                         </dt>
-                        <dd class="mt-2 ml-9 text-base text-gray-500 text-justify" v-html="feature.description.replace(/\n/g, '<br>')">
+                        <dd class="mt-2 ml-9 text-base text-gray-500 text-justify" v-html="estudio.description.replace(/\n/g, '<br>')">
                             
                         </dd>
                     </div>
@@ -143,35 +143,8 @@
             </div>            
 
             <div class="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20  grayscale" src="/img/obrassociales/uta.png" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20 grayscale" src="/img/obrassociales/ioma.jpeg" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20  grayscale" src="/img/obrassociales/galeno.png" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20  grayscale" src="/img/obrassociales/pami.png" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20  grayscale" src="/img/obrassociales/omint.png" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20  grayscale" src="/img/obrassociales/sancorsalud.png" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20  grayscale" src="/img/obrassociales/swiss.png" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20  grayscale" src="/img/obrassociales/osmecon.jpeg" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img class="h-20  grayscale" src="/img/obrassociales/osde.png" alt="" />
-              </div>
-              <div class="col-span-1 flex justify-center items-center md:col-span-2 lg:col-span-1">
-                <img class="h-10  grayscale" src="/img/obrassociales/osdepym.png" alt="" />
+              <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1" v-for="obra in obras" :key="obra.id">
+                <img class="h-20 grayscale" :src="'/storage/'+obra.url" alt="" />
               </div>
             </div>
 
@@ -300,29 +273,6 @@ import { CheckIcon } from '@heroicons/vue/outline'
 import Headers from './Headers.vue'
 import Whatsappbtn from './Whatsappbtn.vue'
 import Footers from './Footer.vue'
-const faqs = [
-  {
-    question: 'Horarios de hisopado COVID19',
-    answer:
-    'Los hisopados son sin turno. Hisopados PCR de lunes a viernes y sábados de 7:30 a 11:00 hs. Test de antígeno de lunes a viernes de 7:30 a 15:00 hs. y sábados de 7:30 a 11:00 hs.',
-  },
-  {
-    question: '¿Cómo obtener mis resultados?',
-    answer:
-      'Puede retirar sus resultados de lunes a viernes de 14:00 a 18:00 hs.,  sábados de 10:00 a 13:00 hs. o bien descargarlos a través del portal en cualquier momento.',
-  },
-  {
-    question: '¿Cuáles son los horarios de atención y la ubicación?',
-    answer: 'Atendemos de lunes a viernes de 7:30 a 18:00 hs y sábados de 7:30 a 13:00 hs. Las extracciones son hasta las 10:30 hs. Nuestra dirección es Margarita Weild 1200, Lanús Este, Prov. de Buenos Aires'
-      ,
-  },
-  {
-    question: '¿Cómo solicito un servicio a domicilio?',
-    answer:
-      'Lo puede solicitar a nuestro asistente virtual haciendo click <b><a class="hover:underline" href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aquí</a></b>.',
-  },
-
-]
 
 const solutions = [
   {
@@ -345,7 +295,7 @@ const solutions = [
     icon: QuestionMarkCircleIcon,
   },
 ]
-const features = [
+/* const features = [
   {
     name: 'Hisopados',
     description: 'Realizamos testeos para detectar COVID-19, Influenza A y B y Estreptococo Beta Hemolítico.',
@@ -367,7 +317,7 @@ const features = [
     icon: PencilAltIcon,
   },
 
-]
+] */
 const metrics = [
   { id: 1, stat: '8K+', emphasis: 'Companies', rest: 'use laoreet amet lacus nibh integer quis.' },
   { id: 2, stat: '25K+', emphasis: 'Countries around the globe', rest: 'lacus nibh integer quis.' },
@@ -474,6 +424,11 @@ const footerNavigation = {
 
 
 export default {
+  props: {
+    faqs: Object,
+    estudios: Object,
+    obras: Object
+  },
   components: {
     Popover,
     PopoverButton,
@@ -499,10 +454,10 @@ export default {
   setup() {
     return {
       solutions,
-      features,
+     // features,
       metrics,
       footerNavigation,
-      faqs,
+      //faqs,
     //   features
     }
   },

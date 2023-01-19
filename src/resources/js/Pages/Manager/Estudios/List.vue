@@ -101,8 +101,8 @@
 							<td class="py-4 px-6">
 								{{ estudio.title }}
 							</td>
-							<td class="py-4 px-6">
-								{{ estudio.description }}
+							<td class="py-4 px-6" v-html="estudio.description.substr(0, 40) + '...'">
+								
 							</td>
 							<td v-if="estudio.visible" class="py-4 px-6">
 								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Activo</span>
@@ -127,6 +127,13 @@
 								</a>
 								<a v-else type="button" @click="update_visibilidad(estudio.id)" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 									<Icons name="arrow-up" class="h-5 w-5"></Icons>
+								</a>
+
+								<a v-if="estudio.favorite" type="button" @click="update_favorite(estudio.id)" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-yellow-300 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+									<Icons name="star" class="h-5 w-5"></Icons>
+								</a>
+								<a v-else type="button" @click="update_favorite(estudio.id)" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+									<Icons name="star" class="h-5 w-5"></Icons>
 								</a>
 
 							</td>
@@ -165,7 +172,7 @@
 						enter-from="translate-x-full" enter-to="translate-x-0"
 						leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0"
 						leave-to="translate-x-full">
-						<div class="w-screen max-w-md">
+						<div class="w-screen max-w-7xl">
 							<form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl">
 								<div class="flex-1 h-0 overflow-y-auto">
 									<div class="py-7 px-4 bg-gray-500 sm:px-6">
@@ -201,8 +208,7 @@
 												<label for="description"
 													class="block text-sm font-medium text-gray-900">Descripcion</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.description" name="description" id="description"
-														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+													<QuillEditor theme="snow" v-model:content="form.description" contentType="html"/>
 												</div>
 											</div>
 										</div>
@@ -234,6 +240,8 @@ import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Toast from '@/Layouts/Components/Toast.vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 export default {
 	props: {
@@ -251,6 +259,7 @@ export default {
 		DialogTitle,
 		TransitionChild,
 		TransitionRoot,
+		QuillEditor,
 	},
 	setup() {
 	},
@@ -338,6 +347,25 @@ export default {
 		},
 		async update_visibilidad(id) {
 			let rt = route('estudios.update_visibilidad');
+			
+			axios.post(rt, {
+				id: id,
+			}).then(response => {
+				if (response.status == 200) {
+					this.labelType = "success"
+					this.toastMessage = response.data.message
+					this.getEstudios()
+				} else {
+					this.labelType = "info"
+					this.toastMessage = response.data.message
+				}
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = 'Se ha producido un error'
+			})
+		},
+		async update_favorite(id) {
+			let rt = route('estudios.update_favorite');
 			
 			axios.post(rt, {
 				id: id,

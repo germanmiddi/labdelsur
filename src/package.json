@@ -29,6 +29,7 @@
         "@headlessui/vue": "^1.7.1",
         "@heroicons/vue": "^1.0.6",
         "@vuepic/vue-datepicker": "^3.2.2",
+        "@vueup/vue-quill": "^1.0.1",
         "moment": "^2.29.4"
     }
 }
