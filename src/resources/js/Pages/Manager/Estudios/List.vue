@@ -220,7 +220,7 @@
 													class="block text-sm font-medium text-gray-900">Descripcion</label>
 												<div class="mt-1">
 													<QuillEditor theme="snow" v-model:content="form.description"
-														contentType="html" />
+														contentType="html" @ready="onEditorReady($event)"/>
 												</div>
 											</div>
 											<!-- <div class="form-check">
@@ -312,6 +312,9 @@ export default {
 
 		clearMessage() {
 			this.toastMessage = ""
+		},
+		onEditorReady (e) {
+			e.container.querySelector('.ql-blank').innerHTML = this.form.description ?? ''
 		},
 		viewFavorite() {
 			if (this.view_favorites) {

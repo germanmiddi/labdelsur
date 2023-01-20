@@ -210,7 +210,7 @@
 												<label for="answer"
 													class="block text-sm font-medium text-gray-900">Respuesta</label>
 												<div class="mt-1">
-													 <QuillEditor theme="snow" v-model:content="form.answer" contentType="html"/>
+													 <QuillEditor theme="snow" v-model:content="form.answer" contentType="html" @ready="onEditorReady($event)"/>
 												</div>
 											</div>
 										</div>
@@ -293,6 +293,9 @@ export default {
 
 		clearMessage() {
 			this.toastMessage = ""
+		},
+		onEditorReady (e) {
+			e.container.querySelector('.ql-blank').innerHTML = this.form.answer ?? ''
 		},
 		viewFavorite(){
 			if(this.view_favorites){

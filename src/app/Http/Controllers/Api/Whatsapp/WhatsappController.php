@@ -557,7 +557,7 @@ class WhatsappController extends Controller
             case strpos($current_step, "0.7") === 0: //Manejo de Analisis
                 
                 $step = $this->cut_step('0.7', $current_step);
-                $data = $this->manager_analisis($wa_id, $message, $step);
+                $data = $this-> ($wa_id, $message, $step);
                 $current_step = $this->join_step('0.7', $data['id']);
                 $text = $data['text'];
 
@@ -597,7 +597,7 @@ class WhatsappController extends Controller
         
         //Obtengo datos de Configuracion.
         $setting =  Setting::where('module', 'BOOKING')->where('key', 'cant_days_booking')->first();
-log::info("TURNOS: ".$current_step. " MSG: ". $message);
+        log::info("TURNOS: ".$current_step. " MSG: ". $message);
         if($current_step != ''){
 
             if($message === '#'){ // Vuelvo a mostrar el Menu de turnos..
@@ -1113,7 +1113,7 @@ log::info("TURNOS: ".$current_step. " MSG: ". $message);
                 $text .= "\n⛔ No haber realizado ejercicios sentado (como andar en bicicleta o a caballo) al menos 48 hs. previas a la extracción.";
                 break;
 
-            case $current_step ===  '.10':
+            case strpos($current_step, ".10") === 0:
                 $text = $this->message_default(2, $wa_id);
                 break;
         

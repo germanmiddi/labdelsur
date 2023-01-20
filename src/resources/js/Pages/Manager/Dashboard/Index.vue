@@ -15,8 +15,11 @@
 					</div>
 
 					<div class="flex text-sm" v-if="selectedName">
-						<Icons name="user" class="h-6 w-6 text-opacity-50" /> - {{ this.selectedName }}
+						<Icons name="user" class="h-6 w-6 text-opacity-50" /> - {{ this.selectedName }} <br>
+						
+
 					</div>
+					
 				</div>
 
 				<div class="lg:flex lg:items-center lg:justify-between">
@@ -28,7 +31,14 @@
 						<!-- chat list -->
 						<div class="flex flex-col w-2/5 border-r overflow-y-auto h-[70vh]">
 							<!-- search compt -->
-							<div class="border-b-2 py-4 px-2 bg-blue-100 text-center">
+							
+							<div class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-blue-200 hover:cursor-pointer bg-blue-100">
+								<a type="button" title="Actualizacion automatica de mensajes"
+									@click="update_message = !update_message"
+									class="w-2/10 mr-4 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+									:class="update_message ? 'bg-green-300 hover:bg-green-700' : 'bg-red-300 hover:bg-red-700'">
+									<Icons name="refresh" class="h-6 w-6"></Icons>
+								</a>
 								<input class="shadow-sm text-sm border-gray-300 rounded-md" type="text" id="search"
 									placeholder="Buscar...">
 							</div>
@@ -402,7 +412,8 @@ export default {
 				image: ''
 			},
 			open: false,
-			messageDefaults: ""
+			messageDefaults: "",
+			update_message: false
 		}
 	},
 	created() {
@@ -416,6 +427,10 @@ export default {
 		},
 
 		handleScroll: function (el) {
+			console.log(el);
+			clearInterval(this.intervalId);
+				// iberar nuestro inervalId de la variable
+				this.intervalId = null;
 			if ((el.srcElement.offsetHeight + el.srcElement.scrollTop) == el.srcElement.scrollHeight) {
 				//this.getMessages(this.contact)
 			} else {
@@ -470,7 +485,9 @@ export default {
 						if (this.selectedWaId) {
 							var elemento = response.data.data.find(el => el.wa_id = this.selectedWaId);
 							if (elemento.message.status != 'read') {
-								this.getMessages(this.contact);
+								if(this.update_message){
+									this.getMessages(this.contact);
+								}
 							}
 						}
 

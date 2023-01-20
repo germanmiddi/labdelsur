@@ -82,26 +82,6 @@
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
 							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by = 'nro_affiliate', sortBookings()">
-								<div class="flex items-center justify-center">
-									Nro. Afiliado
-									<Icons v-if="sort_by == 'nro_affiliate' && sort_order == 'ASC'" name="bars-up"
-										class="h-4 w-4 ml-2" />
-									<Icons v-else-if="sort_by == 'nro_affiliate' && sort_order == 'DESC'"
-										name="bars-down" class="h-4 w-4 ml-2" />
-									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
-								</div>
-							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by = 'wa_id', sortBookings()">
-								<div class="flex items-center justify-center">
-									Telefono
-									<Icons v-if="sort_by == 'wa_id' && sort_order == 'ASC'" name="bars-up"
-										class="h-4 w-4 ml-2" />
-									<Icons v-else-if="sort_by == 'wa_id' && sort_order == 'DESC'" name="bars-down"
-										class="h-4 w-4 ml-2" />
-									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
-								</div>
-							</th>
 							<th scope="col" class="py-3 px-6" @click="sort_by = 'name', sortBookings()">
 								<div class="flex items-center justify-center">
 									WhatsApp
@@ -122,7 +102,7 @@
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
 							</th>
-							<th scope="col" class="py-3 px-6">
+							<th scope="col" class="py-3 px-6 text-center">
 								Accion
 							</th>
 						</tr>
@@ -134,31 +114,40 @@
 								{{ booking.date }}
 							</td>
 							<td class="py-4 px-6">
-								{{ booking.contact.fullname }}
+								<p>{{ booking.contact.fullname }}</p>
+								<p>{{ booking.contact.nro_affiliate }}</p>
 							</td>
 							<td class="py-4 px-6">
-								{{ booking.contact.nro_affiliate }}
+								<p>{{ booking.contact.name }}</p>
+								<p>{{ booking.contact.wa_id }}</p>
 							</td>
 							<td class="py-4 px-6">
-								{{ booking.contact.wa_id }}
-							</td>
-							<td class="py-4 px-6">
-								{{ booking.contact.name }}
-							</td>
-							<td class="py-4 px-6">
-								{{ booking.status.status }}
+								<span
+									class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none rounded-full"
+									:class="booking.status.status == 'AGENDADO' ? 'text-orange-100 bg-gray-600' : [booking.status.status == 'CANCELADO' ? 'text-red-100 bg-red-600' : 'text-green-100 bg-green-600']">
+									{{ booking.status.status }}
+								</span>
+								
 							</td>
 							<td class="py-4 px-6">
 								<a type="button" @click="
-								form.id = booking.id,
-								form.fullname = booking.contact.fullname,
-								form.name = booking.contact.name,
-								form.wa_id = booking.contact.wa_id,
-								form.nro_affiliate = booking.contact.nro_affiliate,
-								form.status_id = booking.status.id,
-								editingBooking = true,
-								open = true" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+									form.id = booking.id,
+									form.fullname = booking.contact.fullname,
+									form.name = booking.contact.name,
+									form.wa_id = booking.contact.wa_id,
+									form.nro_affiliate = booking.contact.nro_affiliate,
+									form.status_id = booking.status.id,
+									editingBooking = true,
+									open = true" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 									<Icons name="edit" class="h-5 w-5"></Icons>
+								</a>
+								<a v-if="booking.status.id == 1" type="button" @click="updateStatus(booking.id, 1)" 
+									title="Atendido" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+									<Icons name="clip-check" class="h-5 w-5"></Icons>
+								</a>
+								<a v-if="booking.status.id == 1" type="button" @click="updateStatus(booking.id, 2)" 
+									title="Cancelar turno" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+									<Icons name="archive-box" class="h-5 w-5"></Icons>
 								</a>
 							</td>
 						</tr>
@@ -281,7 +270,7 @@
 												</div>
 											</div>
 
-											<div class="mt-2" v-if="editingBooking">
+											<div class="mt-2" v-if="editingBooking && form.status_id == 1">
 												<label for="telefono"
 													class="block text-sm font-medium text-gray-900">Estado</label>
 												<div class="mt-1">
@@ -422,6 +411,46 @@ export default {
 		sortBookings() {
 			this.sort_order = this.sort_order === 'ASC' ? 'DESC' : 'ASC'
 			this.getBookings()
+		},
+
+		async updateStatus(id, status){
+
+			let rt = route('booking.updatestatus');
+			let status_id = ''
+
+			switch (status) {
+				case 1:
+					status_id = this.booking_status.filter(function(obj){
+						if (obj.status == 'FINALIZADO'){
+							return obj.id
+						}
+					})
+					break;
+				case 2:
+					status_id = this.booking_status.filter(function(obj){
+						if (obj.status == 'CANCELADO'){
+							return obj.id
+						}
+					})
+					break;
+				default:
+					break;
+			}
+			
+			this.form.status_id = status_id[0].id
+			this.form.id = id
+
+			axios.post(rt, {
+				form: this.form,
+			}).then(response => {
+				this.open = false
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+				this.getBookings()
+			}).catch(error => {
+				this.labelType = "danger"
+				this.toastMessage = error.response.data.message
+			})
 		},
 		async storeBooking() {
 			let rt = ''

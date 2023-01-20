@@ -22,8 +22,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $faqs = Faq::select('id','answer','question')->where('favorite', true)->where('visible',true)->limit(4)->get();
-        $obras = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->limit(10)->get();
+        $faqs = Faq::select('id','answer','question')->where('favorite', true)->where('visible',true)->orderby('favorite')->limit(4)->orderBy('favorite','DESC')->orderBy('question','ASC')->get();
+        $obras = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->limit(10)->orderBy('favorite','DESC')->orderBy('title','ASC')->get();
         return  Inertia::render('Web/Home', [
             'faqs' => $faqs,
             'obras' => $obras,
@@ -32,7 +32,7 @@ class HomeController extends Controller
 
     public function faq()
     {
-        $faqs = Faq::select('id','answer','question')->get();
+        $faqs = Faq::select('id','answer','question')->where('visible',true)->orderBy('favorite','DESC')->orderBy('question','ASC')->get();
         return  Inertia::render('Web/Faq', [    
             'faqs' => $faqs        
         ]);
@@ -40,7 +40,7 @@ class HomeController extends Controller
     
     public function estudios()
     {
-        $estudios = Estudio::select('id','title','description')->where('visible',true)->get();
+        $estudios = Estudio::select('id','title','description')->where('visible',true)->orderBy('favorite','DESC')->orderBy('title','ASC')->get();
         return  Inertia::render('Web/Estudios', [            
             'estudios' => $estudios  
         ]);
@@ -48,8 +48,8 @@ class HomeController extends Controller
 
     public function osociales()
     {
-        $obras_img = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->limit(10)->get();
-        $obras = ObraSocial::select('id','title','description')->where('visible',true)->get();
+        $obras_img = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->orderBy('favorite','DESC')->orderBy('title','ASC')->limit(10)->get();
+        $obras = ObraSocial::select('id','title','description')->where('visible',true)->orderBy('favorite','DESC')->orderBy('title','ASC')->get();
         return  Inertia::render('Web/ObrasSociales', [    
             'obras_img' => $obras_img   ,
             'obras' => $obras      
