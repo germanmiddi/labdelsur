@@ -70,7 +70,7 @@ class ContactsController extends Controller
                         'name'          => $contact->name,
                         'wa_id'         => $contact->wa_id,
                         'bot_status'    => $contact->bot_status,
-                        'message'       => $contact->messages()->latest()->first(),
+                        'message_status'       => $contact->messages()->latest()->first()->status,
                     ]);  
         
     }

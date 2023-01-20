@@ -1,7 +1,6 @@
 
 <template>
 	<AppLayout>
-
 		<template #content>
 			<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 			<div class="focus-within:content flex-grow flex flex-col">
@@ -16,10 +15,8 @@
 
 					<div class="flex text-sm" v-if="selectedName">
 						<Icons name="user" class="h-6 w-6 text-opacity-50" /> - {{ this.selectedName }} <br>
-						
-
 					</div>
-					
+
 				</div>
 
 				<div class="lg:flex lg:items-center lg:justify-between">
@@ -31,14 +28,9 @@
 						<!-- chat list -->
 						<div class="flex flex-col w-2/5 border-r overflow-y-auto h-[70vh]">
 							<!-- search compt -->
-							
-							<div class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-blue-200 hover:cursor-pointer bg-blue-100">
-								<a type="button" title="Actualizacion automatica de mensajes"
-									@click="update_message = !update_message"
-									class="w-2/10 mr-4 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-									:class="update_message ? 'bg-green-300 hover:bg-green-700' : 'bg-red-300 hover:bg-red-700'">
-									<Icons name="refresh" class="h-6 w-6"></Icons>
-								</a>
+
+							<div
+								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-blue-200 hover:cursor-pointer bg-blue-100">
 								<input class="shadow-sm text-sm border-gray-300 rounded-md" type="text" id="search"
 									placeholder="Buscar...">
 							</div>
@@ -46,7 +38,7 @@
 							<!-- user list -->
 							<div v-for="c in contacts" :key="c.id"
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer"
-								:class="[(c.message.status != 'read' ? 'bg-gradient-to-r from-blue-500 to-blue-300 hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-200' : '')]">
+								:class="[(c.message_status != 'read' ? 'bg-gradient-to-r from-blue-500 to-blue-300 hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-200' : '')]">
 								<div class="w-2/12 mr-4" @click="getMessages(c)">
 									<div
 										class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
@@ -54,14 +46,14 @@
 								</div>
 								<div class="w-7/12" @click="getMessages(c)">
 									<div class="text-sm font-semibold text-white"
-										:class="[(c.message.status != 'read' ? 'text-white' : 'text-black')]">{{ c.name
+										:class="[(c.message_status != 'read' ? 'text-white' : 'text-black')]">{{
+											c.name
 										}}<br>
 										<span class="text-sm font-normal"
-											:class="[(c.message.status != 'read' ? 'text-white' : 'text-gray-700')]">{{
-													c.wa_id
+											:class="[(c.message_status != 'read' ? 'text-white' : 'text-gray-700')]">{{
+												c.wa_id
 											}}</span>
 									</div>
-
 								</div>
 								<div class="w-3/12 text-sm">
 									<a v-if="c.bot_status" type="button" @click="changeStatusBot(c.id)"
@@ -80,14 +72,17 @@
 						<!-- end chat list -->
 
 						<!-- message -->
+						
+						<!-- -->
 						<div class="w-full px-5 flex flex-col justify-between overflow-y-auto max-h-[70vh]"
-							@scroll="handleScroll" ref="container" id="message-box">
+							ref="container" id="message-box">
 
 							<div class="flex flex-col mt-5">
 								<div v-if="loading" class="mx-auto">
 									<Icons name="loading" class="h-12 w-12 text-opacity-50" />
 								</div>
 
+								
 								<div v-else v-for="m in messages" :key="m.id">
 
 									<div v-if="m.type_msg == 'image'">
@@ -140,8 +135,7 @@
 									</div>
 								</div>
 							</div>
-
-
+							
 							<form v-show="this.selectedWaId" class="py-5 border-t mt-20 grid grid-cols-12 gap-4"
 								enctype="multipart/form-data">
 								<div class="col-span-9">
@@ -169,55 +163,13 @@
 									</a>
 								</div>
 								<div v-show="adjunt" class="col-span-12">
-									<!-- <div>
-											<label class="block text-sm font-medium text-gray-700">Archivo</label>
-											<div
-												class="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
-												<div class="space-y-1 text-center">
-													<svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor"
-														fill="none" viewBox="0 0 48 48" aria-hidden="true">
-														<path
-															d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-															stroke-width="2" stroke-linecap="round"
-															stroke-linejoin="round" />
-													</svg>
-													<div class="flex text-sm text-gray-600">
-														<label for="file-upload"
-															class="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500">
-															<span>Archivo</span>
-															<input id="file-upload" name="file-upload" type="file"
-																class="sr-only" />
-														</label>
-													</div>
-													<p class="text-xs text-gray-500">PNG, JPG, JPEG, PDF | 10MB</p>
-												</div>
-											</div>
-										</div>
-	-->
 									<input v-on:change="onFileChange"
 										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
 										id="file_input" type="file" name="file_input" ref="file" :ref="file" />
 								</div>
 							</form>
-
+							
 						</div>
-						<!-- end message -->
-
-						<!-- <div class="w-2/5 border-l-2 px-5">
-						<div class="flex flex-col">
-							<div class="font-semibold text-xl py-4">Mern Stack Group</div>
-							<img
-								src="https://source.unsplash.com/L2cxSuKWbpo/600x600"
-								class="object-cover rounded-xl h-64"
-								alt=""
-							/>
-							<div class="font-semibold py-4">Created 22 Sep 2021</div>
-							<div class="font-light">
-								Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt,
-								perspiciatis!
-							</div>
-						</div>
-					</div> -->
 					</div>
 				</div>
 			</div>
@@ -256,7 +208,7 @@
 											<table class="w-full whitespace-nowrap">
 												<tr v-for="message in messageDefaults"
 													class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
-													<th scope="row" @click="msg.text = message.description, open=false"
+													<th scope="row" @click="msg.text = message.description, open = false"
 														class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap text-left">
 														{{ message.description }}
 													</th>
@@ -265,11 +217,6 @@
 										</div>
 									</div>
 								</div>
-								<!-- <div class="flex-shrink-0 px-4 py-4 flex justify-end">
-									<button type="button"
-										class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-										@click="open = false">Cancelar</button>
-								</div> -->
 							</form>
 						</div>
 					</TransitionChild>
@@ -412,8 +359,7 @@ export default {
 				image: ''
 			},
 			open: false,
-			messageDefaults: "",
-			update_message: false
+			messageDefaults: ""
 		}
 	},
 	created() {
@@ -426,8 +372,7 @@ export default {
 			this.msg.image = file;
 		},
 
-		handleScroll: function (el) {
-			console.log(el);
+		/* handleScroll: function (el) {
 			clearInterval(this.intervalId);
 				// iberar nuestro inervalId de la variable
 				this.intervalId = null;
@@ -438,7 +383,7 @@ export default {
 				// iberar nuestro inervalId de la variable
 				this.intervalId = null;
 			}
-		},
+		}, */
 
 		format(date) {
 			return moment(date).format('DD-MM-YYYY h:mm');
@@ -450,48 +395,41 @@ export default {
 
 		async getMessages(c) {
 			this.contact = c
-			this.loading = true
+			//this.loading = true
 			this.selectedName = c.name
 			this.selectedWaId = c.wa_id
 
 			let wa_id = c.wa_id
 			const get = `${route('messages.list')}?wa_id=${wa_id}`
 
-			clearInterval(this.intervalId)
+			//clearInterval(this.intervalId)
 
-			this.intervalId = setInterval(function () {
-				axios.get(get)
-					.then(response => {
-						this.loading = false
-						this.messages = response.data
-						this.$nextTick(() => {
-							var element = document.getElementById('message-box');
-							element.scrollTop = element.scrollHeight
-
-						})
+			//this.intervalId = setInterval(function () {
+			axios.get(get)
+				.then(response => {
+					//this.loading = false
+					this.messages = response.data
+					this.$nextTick(() => {
+						var element = document.getElementById('message-box');
+						element.scrollTop = element.scrollHeight
 					})
+				})
 
-			}.bind(this), 3000)
+			//}.bind(this), 3000)
 
 		},
 
 		async getContacts() {
-
 			const get = `${route('contacts.listdashboard')}`
-
 			setInterval(function () {
 				axios.get(get)
 					.then(response => {
 						if (this.selectedWaId) {
-							var elemento = response.data.data.find(el => el.wa_id = this.selectedWaId);
-							if (elemento.message.status != 'read') {
-								if(this.update_message){
-									this.getMessages(this.contact);
-								}
+							var elemento = response.data.data.find(el => el.wa_id == this.selectedWaId);
+							if (elemento.message_status != 'read') {
+								this.getMessages(this.contact);
 							}
 						}
-
-						console.log(response.data.data)
 						this.contacts = response.data.data
 					})
 			}.bind(this), 3000)

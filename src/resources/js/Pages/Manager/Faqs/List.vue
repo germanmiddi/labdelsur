@@ -108,10 +108,10 @@
 							
 							</td>
 							<td v-if="faq.visible" class="py-4 px-6">
-								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Activo</span>
+								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Visible</span>
 							</td>
 							<td v-else class="py-4 px-6">
-								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">Inactivo</span>
+								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">Oculto</span>
 							</td>
 
 							<td class="py-4 px-6">
@@ -210,7 +210,7 @@
 												<label for="answer"
 													class="block text-sm font-medium text-gray-900">Respuesta</label>
 												<div class="mt-1">
-													 <QuillEditor theme="snow" v-model:content="form.answer" contentType="html" @ready="onEditorReady($event)"/>
+													 <QuillEditor theme="snow" v-model:content="form.answer" contentType="html" @ready="onEditorReady($event)" style="min-height:300px;"/>
 												</div>
 											</div>
 										</div>

@@ -109,11 +109,11 @@
 							</td>
 							<td v-if="estudio.visible" class="py-4 px-6">
 								<span
-									class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Activo</span>
+									class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Visible</span>
 							</td>
 							<td v-else class="py-4 px-6">
 								<span
-									class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">Inactivo</span>
+									class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">Oculto</span>
 							</td>
 
 							<td class="py-4 px-6">
@@ -220,18 +220,9 @@
 													class="block text-sm font-medium text-gray-900">Descripcion</label>
 												<div class="mt-1">
 													<QuillEditor theme="snow" v-model:content="form.description"
-														contentType="html" @ready="onEditorReady($event)"/>
+														contentType="html" @ready="onEditorReady($event)" style="min-height:300px;"/>
 												</div>
 											</div>
-											<!-- <div class="form-check">
-												<input
-													class="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
-													type="checkbox" v-model="form.favorite" id="favorite" :checked="form.favorite">
-												<label class="form-check-label inline-block text-gray-800"
-													for="flexCheckChecked">
-													Destacado
-												</label>
-											</div> -->
 										</div>
 									</div>
 								</div>

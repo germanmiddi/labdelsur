@@ -181,8 +181,6 @@ class WhatsappController extends Controller
                                     "timestamp"     => $timestamp,
                                 ];
                                 
-                                log::info("ADENTE");
-                                
                                 $this->store_message($data_msg);
                                 // SEND MESSAGES
 
@@ -471,7 +469,6 @@ class WhatsappController extends Controller
                             ->orderBy('created_at', 'desc')
                             ->first();
         
-        log::info("MSG: ".$prev_menu->response."  -  ".$message);
         //CHECK FECHA ULTIMO MENSAJE       
         $last_date = false;
         if($prev_menu){
@@ -557,7 +554,7 @@ class WhatsappController extends Controller
             case strpos($current_step, "0.7") === 0: //Manejo de Analisis
                 
                 $step = $this->cut_step('0.7', $current_step);
-                $data = $this-> ($wa_id, $message, $step);
+                $data = $this->manager_analisis($wa_id, $message, $step);
                 $current_step = $this->join_step('0.7', $data['id']);
                 $text = $data['text'];
 
@@ -626,13 +623,17 @@ class WhatsappController extends Controller
                             case '1.L.T.N.D':
                                 $current_step = $array.'.'.$message;
                                 break;
+                            case '1.L.T.N.D.7':
+                                $current_step = $array.'.'.$message;
+                                break;
                             default:
-                                # code...
+                                //$current_step = $array.'.'.$message;
                                 break;
                         }
                     }
         }
 
+        Log::INFO('ANTES DEL SWITCH TURNOS: '. $current_step);
         switch ($current_step) {
             case '':
                 
@@ -786,13 +787,24 @@ class WhatsappController extends Controller
                     $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:00 hs.";
                     
                     $text .= "\n🤔​ Recuerde consultar las indicaciones para su estudio.";
-                    $text .= "\n\nPresione ".$this->emojis[0]." para volver ver el menu de 🔬 Indicaciones de estudios";
+                    $text .= "\n\nPresione ".$this->emojis[7]." para ver el menu de 🔬 Indicaciones de estudios";
 
                     $text .= "\n\n📝 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
                     $text .= "\n▶ Si pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
                 }else{
                     $text = "⛔ No se ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
                 } 
+                break;
+            
+            case strpos($current_step, "1.L.T.N.D") === 0: 
+
+                Log::info("MENU TURNOS - 01");
+
+                $step = $this->cut_step('1.L.T.N.D', $current_step);
+                $data = $this->manager_analisis($wa_id, $message, $step, false);
+                $current_step = $this->join_step('1.L.T.N.D', $data['id']);
+                $text = $data['text'];
+
                 break;
 
             case $current_step === '1.M':
@@ -824,6 +836,7 @@ class WhatsappController extends Controller
                 break;
             
             default:
+            Log::info("MENU TURNOS - 02");
                 $text = $this->message_default(3);
                 break;
                 
@@ -1021,6 +1034,7 @@ class WhatsappController extends Controller
             }
         }
 
+        Log::info("ESTUDIOS: ".$current_step);
         switch($current_step) {
 
             case '':
@@ -1044,8 +1058,7 @@ class WhatsappController extends Controller
 
                 break;  
 
-            case $current_step === ".1":
-                log::info("ADENTRO");
+            case $current_step === "1":
                 $text = "💧 Recolectar la primera orina de la mañana o en su defecto la orina con una retención no menor a tres horas.";
                 $text .= "\n*A_* Se practicará un cuidadoso lavado de la zona genital con abundante agua y jabón.";
                 $text .= "\n*B_* Secar con una toalla limpia y planchada, o con toallitas descartables.";
@@ -1055,7 +1068,7 @@ class WhatsappController extends Controller
                 $text .= "\n*F_* Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.";
                 break;
 
-            case $current_step ===  '.2':
+            case $current_step ===  '2':
                 $text = "💧 Recolectar la primera orina de la mañana o en su defecto la orina con una retención no menor a tres horas.";
                 $text .= "\n*A_* Se practicará un cuidadoso lavado de la zona genital con abundante agua y jabón.";
                 $text .= "\n*B_* Secar con una toalla limpia y planchada, o con toallitas descartables.";
@@ -1064,25 +1077,25 @@ class WhatsappController extends Controller
                 $text .= "\n*E_* Tapar el frasco, rotular con nombre y apellido. Guardar en la heladera hasta su envío al laboratorio.";
                 break;
 
-            case $current_step ===  '.3':
+            case $current_step ===  '3':
                 $text = "🍼 Bebés y niños/as.";
                 $text .= "*-* Higienizar muy bien los genitales externos con agua y jabón.";
                 $text .= "*-* Recoger orina AL ACECHO en frasco estéril (una sola micción, no importa que la cantidad sea escasa). Tapar inmediatamente el frasco y conservar en heladera.";
                 break;
 
-            case $current_step ===  '.4':
+            case $current_step ===  '4':
                 $text = "💧 Juntar orina de 24 hs. En una o varias botella/s de plástico de agua mineral (2 litros o más) desechar la primera orina de la mañana y comenzar la recolección hasta el otro día a la misma hora con la primera orina de la mañana inclusive. Todo el contenido se debe traer al Laboratorio para realizar el estudio correspondiente. \n*_Importante:_* Se debe recolectar el total de la orina.";
                 break;
 
-            case $current_step ===  '.5':
+            case $current_step ===  '5':
                 $text = "💧 *Sangre oculta en materia fecal:* Condiciones previas a la recolección de la muestra:   \n\nDurante tres días consecutivos el/la paciente evitará comer carne roja y alimentos que contengan sangre. \nDeberá evitarse la ingestión de: rábanos, nabos y cacao. \nLos analgésicos y antirreumáticos no son aconsejables durante estos tres días.\n Al cuarto día recolectar en un frasco de boca ancha bien limpio y seco una porción de una deposición espontánea  (no recolectar orina).\n Aclarar si el paciente sufre de hemorroides. \nRotular con nombre y apellido.";
                 break;
 
-            case $current_step ===  '.6':
+            case $current_step ===  '6':
                 $text = "💧 Puede acercarse de lunes a viernes de 11:00 a 18:00 hs. o sábados de 11:00 a 13:00 hs. para pedir el material y las indicaciones necesarias.";
                 break;
 
-            case $current_step ===  '.7':
+            case $current_step ===  '7':
                 $text = "💧 Durante 72 hs. anteriores al estudio:";
                 $text .= "\n\n⛔ No tomar antibióticos.";
                 $text .= "\n⛔ No colocarse ningún tipo de crema, talco, óvulos, etc.";
@@ -1092,7 +1105,7 @@ class WhatsappController extends Controller
                 $text .= "\n*El día del estudio:* ⛔ No utilizar bidet.";
                 break;
 
-            case $current_step ===  '.8':
+            case $current_step ===  '8':
                 $text  = "*MICOLÓGICO UÑAS*";
                 $text .= "\n*A_* Suspender medicación antimicótica, por lo menos 10 días antes de la recolección.";
                 $text .= "\n*B_* No utilizar esmalte, talco, crema, aerosol, desinfectante, loción, etc. sobre la lesión por lo menos 3 días antes de la toma de muestra.";
@@ -1107,13 +1120,13 @@ class WhatsappController extends Controller
                 
                 break;
 
-            case $current_step ===  '.9':
+            case $current_step ===  '9':
                 $text = "Abstinencia sexual al menos 48 hs. previas a la extracción.";
                 $text .= "\n⛔ No haberse realizado en la semana previa tacto rectal o ecografía transrectal o biopsia.";
                 $text .= "\n⛔ No haber realizado ejercicios sentado (como andar en bicicleta o a caballo) al menos 48 hs. previas a la extracción.";
                 break;
 
-            case strpos($current_step, ".10") === 0:
+            case strpos($current_step, "10") === 0:
                 $text = $this->message_default(2, $wa_id);
                 break;
         
@@ -1137,7 +1150,7 @@ class WhatsappController extends Controller
                 $current_step = '';
             }
         }
-
+        Log::INFO("VALUE ANTES DE SWITCH ANALISIS: ".$current_step);
         switch($current_step) {
 
             case '':
@@ -1162,7 +1175,7 @@ class WhatsappController extends Controller
 
             case strpos($current_step, "1.1") === 0: 
 
-                $step = $this->cut_step('1.1', $current_step, false);
+                $step = $this->cut_step('1.1', $current_step);
                 $data = $this->manager_turnos($wa_id, $message, $step, false);
                 $current_step = $this->join_step('1.1', $data['id']);
                 $text = $data['text'];
@@ -1220,6 +1233,7 @@ class WhatsappController extends Controller
             $text .= $this->message_default(4);
         }
 
+        Log::INFO("VALUE ANTES DE RETURN: ".$current_step);
         return ['id' => $current_step,
                 'text' => $text];
     }
@@ -1278,7 +1292,8 @@ class WhatsappController extends Controller
 
     // Funcion cortar step
     function cut_step($step_base, $current_step){
-        $step = str_replace($step_base,'',$current_step);
+        
+        $step = $this->str_replace_first($step_base,'',$current_step);
         $step= ltrim ($step,'.'); // Elimina el primer caracter si es un '.'
 
         return $step;
@@ -1294,5 +1309,13 @@ class WhatsappController extends Controller
         Contact::where('wa_id',$wa_id)->update([
             'bot_status' => false
         ]);
+    }
+
+    function str_replace_first($search, $replace, $subject) {
+        $pos = strpos($subject, $search);
+        if ($pos !== false) {
+            return substr_replace($subject, $replace, $pos, strlen($search));
+        }
+        return $subject;
     }
 }

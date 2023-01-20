@@ -62,7 +62,7 @@
 								</div>
 							</th>
 							<th scope="col" class="py-3 px-6" @click="sort_by = 'title', sortObrasSociales()">
-								<div class="flex items-center justify-center">
+								<div class="flex items-center text-left">
 									Obra Social
 									<Icons v-if="sort_by == 'title' && sort_order == 'ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
@@ -92,15 +92,15 @@
 							<th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
 								{{ obras.id }}
 							</th>
-							<td class="py-4 px-6">
+							<td class="py-4 px-6 text-left">
 								<p><b>{{ obras.title }}</b></p>
 								<p class="text-sm">{{ obras.description.substr(0,70)}}</p>
 							</td>
 							<td v-if="obras.visible" class="py-4 px-6">
-								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Activo</span>
+								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">Visible</span>
 							</td>
 							<td v-else class="py-4 px-6">
-								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">Inactivo</span>
+								<span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">Oculto</span>
 							</td>
 
 							<td class="py-4 px-6">
