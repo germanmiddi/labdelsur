@@ -188,6 +188,7 @@ class BookingController extends Controller
             // ACTUALIZO LOS DATOS DEL CONTACTO
             Contact::where('wa_id', $data['wa_id'])->update([
                 'fullname' => $data['fullname'],
+                'name' => $data['name'] ?? '',
                 'nro_doc'  => $data['nro_doc'] ?? null, 
                 'nro_affiliate' => $data['nro_affiliate'] ?? null  
             ]);
@@ -195,8 +196,13 @@ class BookingController extends Controller
             $contact = Contact::where('wa_id', $data['wa_id'])->first();
 
             if(!$contact){
-                $contact = Contact::firstOrCreate(['wa_id' => $data['wa_id'], 
-                                                    'name' => $data['fullname']]);
+                $contact = Contact::firstOrCreate([
+                                    'wa_id' => $data['wa_id'], 
+                                    'fullname' => $data['fullname'],
+                                    'name' => $data['name'] ?? '',
+                                    'nro_doc'  => $data['nro_doc'] ?? null, 
+                                    'nro_affiliate' => $data['nro_affiliate'] ?? null 
+                            ]);
                 $contact = Contact::where('wa_id',$data['wa_id'])->first();
             }
             // CREO EL NUEVO TURNO..            
