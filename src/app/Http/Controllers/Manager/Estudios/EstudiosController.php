@@ -115,7 +115,8 @@ class EstudiosController extends Controller
             Estudio::where('id', $request->form['id'])->update([
                 'title' => $request->form['title'],
                 'description' => $request->form['description'],
-                'visible' => $request->form['visible']
+                'visible' => $request->form['visible'],
+                'favorite' => $request->form['favorite']
             ]);
             return response()->json(['message'=>'Estudio Actualizado correctamente'], 200);
         } catch (\Throwable $th) {

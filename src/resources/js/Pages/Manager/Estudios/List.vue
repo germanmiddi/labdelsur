@@ -30,6 +30,9 @@
 						<button
 							class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 							@click="getEstudios()">Buscar</button>
+							<button
+							class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							@click="clearFilter()">Limpiar Filtros</button>
 						<button
 							class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 							@click="viewFavorite()">{{ text_favorite }}</button>
@@ -216,6 +219,14 @@
 												</div>
 											</div>
 											<div>
+												<label for="question" class="block text-sm font-medium text-gray-900">Destacado</label>
+												<select v-model="form.favorite" id="driver" name="driver"
+														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+														<option value="0" :bind:select="form.favorite == 0">No</option>
+														<option value="1" :bind:select="form.favorite == 1">Si</option>
+													</select>
+											</div>
+											<div>
 												<label for="description"
 													class="block text-sm font-medium text-gray-900">Descripcion</label>
 												<div class="mt-1">
@@ -307,6 +318,14 @@ export default {
 		onEditorReady (e) {
 			e.container.querySelector('.ql-blank').innerHTML = this.form.description ?? ''
 		},
+		clearFilter(){
+			this.sort_order = 'DESC'
+			this.sort_by = "id"
+			this.text_favorite = 'Ver Destacados'
+			this.view_favorites = false
+			this.search = ''
+			this.getEstudios()
+		},
 		viewFavorite() {
 			if (this.view_favorites) {
 				this.text_favorite = 'Ver Destacados'
@@ -383,7 +402,10 @@ export default {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
-					this.getEstudios()
+					const pos = this.estudios.data.map(e => e.id).indexOf(id);
+                        if(pos >= 0){
+                            this.estudios.data[pos].visible = !this.estudios.data[pos].visible
+                        }
 				} else {
 					this.labelType = "info"
 					this.toastMessage = response.data.message
@@ -402,7 +424,10 @@ export default {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
-					this.getEstudios()
+					const pos = this.estudios.data.map(e => e.id).indexOf(id);
+                        if(pos >= 0){
+                            this.estudios.data[pos].favorite = this.estudios.data[pos].favorite  == 1 ? 0 : 1
+                        }
 				} else {
 					this.labelType = "info"
 					this.toastMessage = response.data.message

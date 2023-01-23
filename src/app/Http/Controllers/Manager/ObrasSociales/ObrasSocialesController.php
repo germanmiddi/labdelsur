@@ -145,12 +145,14 @@ class ObrasSocialesController extends Controller
                 ObraSocial::where('id', $request->id)->update([
                     'title' => $request->title,
                     'description' => $request->description,
+                    'favorite' => $request->favorite,
                     'url' => $nombre
                 ]);
             }else{
                 ObraSocial::where('id', $request->id)->update([
                     'title' => $request->title,
                     'description' => $request->description,
+                    'favorite' => $request->favorite,
                 ]);
             }
             return response()->json(['message'=>'Obra Social Actualizada correctamente'], 200);

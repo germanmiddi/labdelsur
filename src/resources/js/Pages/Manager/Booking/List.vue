@@ -17,6 +17,7 @@
 							@click="
 							form = {},
 							editingBooking = false,
+							viewBooking = false,
 							open = true">
 							<span>Nuevo Turno </span>
 						</button>
@@ -127,28 +128,54 @@
 									:class="booking.status.status == 'AGENDADO' ? 'text-orange-100 bg-gray-600' : [booking.status.status == 'CANCELADO' ? 'text-red-100 bg-red-600' : 'text-green-100 bg-green-600']">
 									{{ booking.status.status }}
 								</span>
-								
+
 							</td>
 							<td class="py-4 px-6">
-								<a type="button" @click="
+								<div v-if="booking.status.id == 1">
+									<a type="button" @click="
 									form.id = booking.id,
 									form.fullname = booking.contact.fullname,
 									form.name = booking.contact.name,
 									form.wa_id = booking.contact.wa_id,
 									form.nro_affiliate = booking.contact.nro_affiliate,
 									form.status_id = booking.status.id,
+									form.date = booking.date,
 									editingBooking = true,
+									open = true, 
+									viewBooking = false" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+										<Icons name="edit" class="h-5 w-5"></Icons>
+									</a>
+
+									<a type="button" @click="updateStatus(booking.id, 2)" title="Atendido"
+										class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+										<Icons name="clip-check" class="h-5 w-5"></Icons>
+									</a>
+									<a type="button" @click="updateStatus(booking.id, 3)" title="Cancelar turno"
+										class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+										<Icons name="archive-box" class="h-5 w-5"></Icons>
+									</a>
+
+								</div>
+								<div v-else>
+									<a type="button" @click="
+									form.id = booking.id,
+									form.fullname = booking.contact.fullname,
+									form.name = booking.contact.name,
+									form.wa_id = booking.contact.wa_id,
+									form.nro_affiliate = booking.contact.nro_affiliate,
+									form.status_id = booking.status.id,
+									form.status = booking.status.status,
+									form.date = booking.date,
+									viewBooking = true,
 									open = true" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-									<Icons name="edit" class="h-5 w-5"></Icons>
-								</a>
-								<a v-if="booking.status.id == 1" type="button" @click="updateStatus(booking.id, 1)" 
-									title="Atendido" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-									<Icons name="clip-check" class="h-5 w-5"></Icons>
-								</a>
-								<a v-if="booking.status.id == 1" type="button" @click="updateStatus(booking.id, 2)" 
-									title="Cancelar turno" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-									<Icons name="archive-box" class="h-5 w-5"></Icons>
-								</a>
+										<Icons name="view" class="h-5 w-5"></Icons>
+									</a>
+
+									<a type="button" @click="updateStatus(booking.id, 1)" title="Volver a Agendar Turno"
+										class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+										<Icons name="arrow-return-left" class="h-5 w-5"></Icons>
+									</a>
+								</div>
 							</td>
 						</tr>
 					</table>
@@ -192,12 +219,16 @@
 								<div class="flex-1 h-0 overflow-y-auto">
 									<div class="py-7 px-4 bg-gray-500 sm:px-6">
 										<div class="flex items-center justify-between">
-											<DialogTitle v-if="editingBooking == false"
+											<DialogTitle v-if="editingBooking == false && viewBooking == false"
 												class="text-lg font-medium text-white">
 												Nuevo Turno
 											</DialogTitle>
 
-											<DialogTitle v-else class="text-lg font-medium text-white"> Editar
+											<DialogTitle v-else-if="editingBooking == true && viewBooking == false"
+												class="text-lg font-medium text-white"> Editar
+												Turno </DialogTitle>
+
+											<DialogTitle v-else class="text-lg font-medium text-white"> Detalle
 												Turno </DialogTitle>
 											<div class="ml-3 h-7 flex items-center">
 												<button type="button"
@@ -210,7 +241,7 @@
 										</div>
 									</div>
 									<div class="flex-1 flex flex-col justify-between">
-										<div class="px-4 sm:px-6 font-medium">
+										<div class="px-4 sm:px-6 font-medium" v-if="!viewBooking">
 
 											<div class="mt-4">
 												<label for="fullname"
@@ -250,27 +281,32 @@
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500  rounded-md" />
 												</div>
 											</div>
-											<div class="mt-2"  v-if="!editingBooking">
+											<div class="mt-2">
 												<label for="telefono"
-													class="block text-sm font-medium text-gray-900">Nro. Documento</label>
+													class="block text-sm font-medium text-gray-900">Nro.
+													Documento</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.nro_doc" name="nro_doc" id="nro_doc"
+													<input type="text" v-model="form.nro_doc" name="nro_doc" 
+														:disabled="editingBooking"
+														:class="{ 'bg-gray-100': editingBooking }"
+														id="nro_doc"
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500  rounded-md" />
 												</div>
 											</div>
 
-											<div class="mt-2"  v-if="!editingBooking">
+											<div class="mt-2" v-if="!editingBooking">
 												<label for="telefono"
 													class="block text-sm font-medium text-gray-900">Fecha</label>
 												<div class="mt-1">
-													<Datepicker id="date" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-red-100" v-model="form.date" 
-														:enableTimePicker="false" :monthChangeOnScroll="false" autoApply
-														:format="format">
+													<Datepicker id="date"
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-red-100"
+														v-model="form.date" :enableTimePicker="false"
+														:monthChangeOnScroll="false" autoApply :format="format">
 													</Datepicker>
 												</div>
 											</div>
 
-											<div class="mt-2" v-if="editingBooking && form.status_id == 1">
+											<div class="mt-2" v-if="editingBooking">
 												<label for="telefono"
 													class="block text-sm font-medium text-gray-900">Estado</label>
 												<div class="mt-1">
@@ -281,10 +317,47 @@
 														<option v-for="status in booking_status" :key="status.id"
 															:value="status.id"
 															:bind:select="status.id == form.status_id">{{
-																	status.status
+																status.status
 															}}</option>
 													</select>
 												</div>
+											</div>
+
+										</div>
+										<div class="px-4 sm:px-6 font-medium" v-else>
+
+											<div class="mt-4">
+												<label for="fullname"
+													class="block text-sm font-medium text-gray-900">Nombre y
+													Apellido: {{ form.fullname }}</label>
+											</div>
+											<div class="mt-2">
+												<label for="nro_affiliate"
+													class="block text-sm font-medium text-gray-900">Nro.
+													Afiliado: {{ form.nro_affiliate }}</label>
+											</div>
+											<div class="mt-2">
+												<label for="fullname"
+													class="block text-sm font-medium text-gray-900">WhatsApp: {{ form.name }}</label>
+											</div>
+											<div class="mt-2">
+												<label for="telefono"
+													class="block text-sm font-medium text-gray-900">Telefono: {{ form.wa_id }}</label>
+											</div>
+											<div class="mt-2">
+												<label for="telefono"
+													class="block text-sm font-medium text-gray-900">Nro.
+													Documento: {{ form.nro_doc }}</label>
+											</div>
+
+											<div class="mt-2">
+												<label for="telefono"
+													class="block text-sm font-medium text-gray-900">Fecha: {{ form.date }} </label>
+											</div>
+
+											<div class="mt-2">
+												<label for="telefono"
+													class="block text-sm font-medium text-gray-900">Estado: {{ form.status }}</label>
 											</div>
 
 										</div>
@@ -295,7 +368,7 @@
 										class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 										@click="open = false">Cancelar</button>
 
-									<button @click.prevent="storeBooking"
+									<button @click.prevent="storeBooking" v-if="!viewBooking"
 										class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 										Guardar
 									</button>
@@ -363,7 +436,8 @@ export default {
 			form: {},
 			toastMessage: "",
 			labelType: "info",
-			editingUser: false
+			editingUser: false,
+			viewBooking: false
 		}
 	},
 	watch: {
@@ -413,22 +487,29 @@ export default {
 			this.getBookings()
 		},
 
-		async updateStatus(id, status){
+		async updateStatus(id, status) {
 
 			let rt = route('booking.updatestatus');
 			let status_id = ''
 
 			switch (status) {
 				case 1:
-					status_id = this.booking_status.filter(function(obj){
-						if (obj.status == 'FINALIZADO'){
+					status_id = this.booking_status.filter(function (obj) {
+						if (obj.status == 'AGENDADO') {
 							return obj.id
 						}
 					})
 					break;
 				case 2:
-					status_id = this.booking_status.filter(function(obj){
-						if (obj.status == 'CANCELADO'){
+					status_id = this.booking_status.filter(function (obj) {
+						if (obj.status == 'ATENDIDO') {
+							return obj.id
+						}
+					})
+					break;
+				case 3:
+					status_id = this.booking_status.filter(function (obj) {
+						if (obj.status == 'CANCELADO') {
 							return obj.id
 						}
 					})
@@ -436,7 +517,7 @@ export default {
 				default:
 					break;
 			}
-			
+
 			this.form.status_id = status_id[0].id
 			this.form.id = id
 

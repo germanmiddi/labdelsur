@@ -27,9 +27,12 @@
 					<div class="min-w-0 flex-1">
 						<input class="shadow-sm text-sm border-gray-300 rounded-md" type="text" id="search"
 							v-model="search" placeholder="Buscar...">
-						<button
+							<button
 							class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 							@click="getFaqs()">Buscar</button>
+							<button
+							class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							@click="clearFilter()">Limpiar Filtros</button>
 							<button
 						class="ml-2 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 						@click="viewFavorite()">{{text_favorite}}</button>
@@ -120,6 +123,7 @@
 									form.question = faq.question,
 									form.answer = faq.answer,
 									form.visible = faq.visible,
+									form.favorite = faq.favorite,
 									open = true,
 									editingFaqs = true
 								" class=" mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -207,12 +211,21 @@
 												</div>
 											</div>
 											<div>
+												<label for="question" class="block text-sm font-medium text-gray-900">Destacado</label>
+												<select v-model="form.favorite" id="driver" name="driver"
+														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+														<option value="0" :bind:select="form.favorite == 0">No</option>
+														<option value="1" :bind:select="form.favorite == 1">Si</option>
+													</select>
+											</div>
+											<div>
 												<label for="answer"
 													class="block text-sm font-medium text-gray-900">Respuesta</label>
 												<div class="mt-1">
 													 <QuillEditor theme="snow" v-model:content="form.answer" contentType="html" @ready="onEditorReady($event)" style="min-height:300px;"/>
 												</div>
 											</div>
+
 										</div>
 									</div>
 								</div>
@@ -297,6 +310,14 @@ export default {
 		onEditorReady (e) {
 			e.container.querySelector('.ql-blank').innerHTML = this.form.answer ?? ''
 		},
+		clearFilter(){
+			this.sort_order = 'DESC'
+			this.sort_by = "id"
+			this.text_favorite = 'Ver Destacados'
+			this.view_favorites = false
+			this.search = ''
+			this.getFaqs()
+		},
 		viewFavorite(){
 			if(this.view_favorites){
 				this.text_favorite = 'Ver Destacados'
@@ -373,7 +394,10 @@ export default {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
-					this.getFaqs()
+					const pos = this.faqs.data.map(e => e.id).indexOf(id);
+                        if(pos >= 0){
+                            this.faqs.data[pos].visible = !this.faqs.data[pos].visible
+                        }
 				} else {
 					this.labelType = "info"
 					this.toastMessage = response.data.message
@@ -392,7 +416,10 @@ export default {
 				if (response.status == 200) {
 					this.labelType = "success"
 					this.toastMessage = response.data.message
-					this.getFaqs()
+					const pos = this.faqs.data.map(e => e.id).indexOf(id);
+                        if(pos >= 0){
+                            this.faqs.data[pos].favorite = this.faqs.data[pos].favorite == 1 ? 0 : 1
+                        }
 				} else {
 					this.labelType = "info"
 					this.toastMessage = response.data.message

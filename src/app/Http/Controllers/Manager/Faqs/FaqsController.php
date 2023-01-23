@@ -114,7 +114,8 @@ class FaqsController extends Controller
             Faq::where('id', $request->form['id'])->update([
                 'question' => $request->form['question'],
                 'answer' => $request->form['answer'],
-                'visible' => $request->form['visible']
+                'visible' => $request->form['visible'],
+                'favorite' => $request->form['favorite']
             ]);
             return response()->json(['message'=>'Pregunta Actualizada correctamente'], 200);
         } catch (\Throwable $th) {
