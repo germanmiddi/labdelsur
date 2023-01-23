@@ -132,6 +132,10 @@ Route::get('/booking/daysavailable/{date?}', [BookingController::class, 'get_day
 Route::post('/booking', [BookingController::class, 'create_booking'])
         ->name('booking.createbooking')
         ->middleware('auth');
+
+Route::post('/booking/update', [BookingController::class, 'update_booking'])
+        ->name('booking.updatebooking')
+        ->middleware('auth');
         
 Route::post('/booking/updatestatus', [BookingController::class, 'update_status'])
         ->name('booking.updatestatus')

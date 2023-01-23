@@ -73,7 +73,7 @@ class BookingController extends Controller
                         ->withQueryString()
                         ->through(fn ($booking) => [
                             'id'                    => $booking->id,
-                            'date'                  => Carbon::parse($booking->date)->format("d-m-Y"),
+                            'date'                  => $booking->date,
                             'contact'               => $booking->contact()->first(),
                             'status'                => $booking->status()->first(),
                         ]);
@@ -180,6 +180,45 @@ class BookingController extends Controller
             return response()->json($data, 500);
         }
     }
+
+    public function update_booking(Request $request){
+        DB::beginTransaction();
+        try {
+            // ACTUALIZO LOS DATOS DEL CONTACTO
+            Contact::where('wa_id', $request->form['wa_id'])->update([
+                'fullname' => $request->form['fullname'],
+                'name' => $request->form['name'] ?? '',
+                'nro_doc'  => $request->form['nro_doc'] ?? null, 
+                'nro_affiliate' => $request->form['nro_affiliate'] ?? null  
+            ]);
+            
+            $contact = Contact::where('wa_id', $request->form['wa_id'])->first();
+
+            // ACTUALIZO DATOS DEL TURNO..            
+            $input_date = $request->form['date'];
+            $input_date  = date('Y-m-d', strtotime($input_date));
+
+            Booking::where('id', $request->form['id'])->update([
+                'date' => $input_date,
+                'status_id' => $request->form['status_id'],
+            ]);
+
+            DB::commit();
+            
+            return $data = [
+                'code' => 200,
+                'message' => 'Se ha actualizado correctamente el turno'
+            ];
+        } catch (\Throwable $th) {
+            dd($th);
+            log::info($th);
+            DB::rollBack();
+            return $data = [
+                'code' => 500,
+                'message' => 'Se ha producido un error'
+            ];
+    }
+}
 
     public function store_booking($data){
 

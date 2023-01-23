@@ -112,7 +112,7 @@
 								{{ booking.id }}
 							</th>
 							<td class="py-4 px-6">
-								{{ booking.date }}
+								{{ printDate(booking.date) }}
 							</td>
 							<td class="py-4 px-6">
 								<p>{{ booking.contact.fullname }}</p>
@@ -139,7 +139,7 @@
 									form.wa_id = booking.contact.wa_id,
 									form.nro_affiliate = booking.contact.nro_affiliate,
 									form.status_id = booking.status.id,
-									form.date = booking.date,
+									form.date = formatDate(booking.date),
 									editingBooking = true,
 									open = true, 
 									viewBooking = false" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -294,7 +294,7 @@
 												</div>
 											</div>
 
-											<div class="mt-2" v-if="!editingBooking">
+											<div class="mt-2">
 												<label for="telefono"
 													class="block text-sm font-medium text-gray-900">Fecha</label>
 												<div class="mt-1">
@@ -352,7 +352,7 @@
 
 											<div class="mt-2">
 												<label for="telefono"
-													class="block text-sm font-medium text-gray-900">Fecha: {{ form.date }} </label>
+													class="block text-sm font-medium text-gray-900">Fecha: {{ printDate(form.date) }} </label>
 											</div>
 
 											<div class="mt-2">
@@ -452,6 +452,12 @@ export default {
 		clearMessage() {
 			this.toastMessage = ""
 		},
+		formatDate(date){
+			return new Date(date + "T00:00:00.000-03:00")
+		},
+		printDate(date){
+			return moment(date, 'Y/mm/D').format('D/mm/Y')
+		},
 		async getBookings() {
 
 			this.loading = true
@@ -536,7 +542,7 @@ export default {
 		async storeBooking() {
 			let rt = ''
 			if (this.editingBooking) {
-				rt = route('booking.updatestatus');
+				rt = route('booking.updatebooking');
 			} else {
 				rt = route('booking.createbooking');
 			}
