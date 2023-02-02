@@ -119,7 +119,7 @@
 									</td>
 									<td class="py-4 px-6">
 										<a type="button" @click="deleteHoliday(holiday.id)"
-											class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+											class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
 											<Icons name="trash" class="h-5 w-5"></Icons>
 										</a>
 									</td>
@@ -254,23 +254,30 @@
 									class="bg-white border-b text-left text-xs font-light hover:bg-gray-100 focus-within:bg-gray-100">
 									<th scope="row"
 										class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap ">
-										{{message.description}}
+										{{ message.description.substring(0,30) }}
 									</th>
 									<td class="py-4 px-6 text-center">
-										<a type="button" @click="deleteMessage(message.id)"
+										<a type="button" @click="open = true, 
+																editingQuestion = true, 
+																form_message.description=message.description, 
+																form_message.id=message.id"
 											class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+											<Icons name="edit" class="h-5 w-5"></Icons>
+										</a>
+										<a type="button" @click="deleteMessage(message.id)"
+											class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
 											<Icons name="trash" class="h-5 w-5"></Icons>
 										</a>
 									</td>
 								</tr>
 							</table>
 							<div class="mt-6 flex flex-col justify-stretch">
-								<a type="button" @click="newMessage = true" v-show="!newMessage"
+								<a type="button" @click="open = true, editingQuestion = false" v-show="!open"
 									class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Nuevo
 									Mensaje</a>
 							</div>
 
-							<form v-show="newMessage" action="#" method="POST">
+							<!-- <form v-show="newMessage" action="#" method="POST">
 								<div class="shadow overflow-hidden sm:rounded-md mt-2 ">
 									<div class="px-4 py-5 bg-white sm:p-6">
 										<div class="grid grid-cols-6 gap-6">
@@ -296,7 +303,7 @@
 										</div>
 									</div>
 								</div>
-							</form>
+							</form> -->
 						</div>
 					</div>
 
@@ -304,6 +311,67 @@
 			</div>
 		</template>
 	</AppLayout>
+	<TransitionRoot as="template" :show="open">
+		<Dialog as="div" class="fixed inset-0 overflow-hidden" @close="open = false">
+			<div class="absolute inset-0 overflow-hidden">
+				<DialogOverlay class="absolute inset-0" />
+
+				<div class="fixed inset-y-0 pl-16 max-w-full right-0 flex">
+					<TransitionChild as="template" enter="transform transition ease-in-out duration-500 sm:duration-700"
+						enter-from="translate-x-full" enter-to="translate-x-0"
+						leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0"
+						leave-to="translate-x-full">
+						<div class="w-screen max-w-7xl">
+							<form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl">
+								<div class="flex-1 h-0 overflow-y-auto">
+									<div class="py-7 px-4 bg-gray-500 sm:px-6">
+										<div class="flex items-center justify-between">
+											<DialogTitle v-if="editingQuestion == false"
+												class="text-lg font-medium text-white">
+												Nuevo Mensaje Predefinido
+											</DialogTitle>
+
+											<DialogTitle v-else class="text-lg font-medium text-white"> Editar
+												Mensaje Predefinido </DialogTitle>
+											<div class="ml-3 h-7 flex items-center">
+												<button type="button"
+													class="bg-gray-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+													@click="open = false">
+													<span class="sr-only">Cerrar</span>
+													<Icons name="x" class="h-5 w-5"></Icons>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="flex-1 flex flex-col justify-between">
+										<div class="px-4 divide-y divide-gray-200 sm:px-6 font-medium">
+											<div>
+												<label for="answer"
+													class="block text-sm font-medium text-gray-900">Mensaje</label>
+												<div class="mt-1">
+													<textarea rows="10" type="text" name="description" id="description"
+														v-model="form_message.description"
+														class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<div class="flex-shrink-0 px-4 py-4 flex justify-end">
+									<button type="button"
+										class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+										@click="open = false">Cancelar</button>
+									<button @click="storeMessage()"
+										class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar</button>
+								</div>
+							</form>
+						</div>
+					</TransitionChild>
+				</div>
+			</div>
+		</Dialog>
+	</TransitionRoot>
 </template>
 
 
@@ -315,6 +383,7 @@ import Icons from '@/Layouts/Components/Icons.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Toast from '@/Layouts/Components/Toast.vue'
+import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 
 export default {
 	props: {
@@ -330,7 +399,12 @@ export default {
 		moment,
 		Icons,
 		Datepicker,
-		Toast
+		Toast,
+		Dialog,
+		DialogOverlay,
+		DialogTitle,
+		TransitionChild,
+		TransitionRoot,
 	},
 	setup() {
 		const format = (date) => {
@@ -372,6 +446,8 @@ export default {
 			list_messages: this.messages,
 			toastMessage: "",
 			labelType: "info",
+			open: false,
+			editingQuestion: false,
 		}
 	},
 	watch: {
@@ -447,8 +523,12 @@ export default {
 		},
 		storeMessage() {
 			this.newMessage = false
-
-			let rt = route('settings.storemessage');
+			let rt = '';
+			if(!this.editingQuestion){
+				rt = route('settings.storemessage');
+			}else{
+				rt = route('settings.updatemessage');
+			}
 
 			axios.post(rt, {
 				form: this.form_message,

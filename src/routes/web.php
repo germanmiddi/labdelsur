@@ -93,6 +93,10 @@ Route::post('/settings/storemessage', [SettingController::class, 'store_message'
         ->name('settings.storemessage')
         ->middleware('auth');
 
+Route::post('/settings/updatemessage', [SettingController::class, 'update_message'])
+        ->name('settings.updatemessage')
+        ->middleware('auth');
+
 Route::get('/settings/listholiday', [SettingController::class, 'list_holiday'])
         ->name('settings.listholiday')
         ->middleware('auth');

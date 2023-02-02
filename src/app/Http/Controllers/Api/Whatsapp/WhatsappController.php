@@ -22,6 +22,7 @@ class WhatsappController extends Controller
 {
     protected  $emojis;
     protected  $dias;
+    protected  $boot_status;
 
     public function __construct(){
         $this->emojis[0] = "0️⃣";
@@ -53,6 +54,8 @@ class WhatsappController extends Controller
         $this->dias[5] = "Viernes";
         $this->dias[6] = "Sabado";
         $this->dias[7] = "Domingo";
+
+        $this->boot_status = true;
     }
 
     public function receive_message(){
@@ -157,7 +160,7 @@ class WhatsappController extends Controller
                 // Si devuelve false, se cambia el signo para que procese el return
                 if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
                 
-
+                Log::info('TIPO FILE: '.$type_msg);
                 switch ($type_msg) {
                     case 'text':
                         $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
@@ -184,19 +187,6 @@ class WhatsappController extends Controller
                                 $this->store_message($data_msg);
                                 // SEND MESSAGES
 
-                                // STORE MESSAGES OUT
-
-                                /* $inbound_msj = new Message;
-                                $inbound_msj->wa_id     = $wa_id;
-                                $inbound_msj->contact_id= $contact->id;
-                                $inbound_msj->type      = 'in';
-                                $inbound_msj->body      = $message;
-                                $inbound_msj->status    = 'initial';
-                                $inbound_msj->response  = $response['id']; 
-                                $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
-                                $inbound_msj->timestamp = $timestamp;
-                                $inbound_msj->save(); */
-                                
                                 $params = [ "messaging_product" => "whatsapp", 
                                             "recipient_type"    => "individual",
                                             "to"                => $wa_id, 
@@ -207,26 +197,17 @@ class WhatsappController extends Controller
                                 
                                 /*  $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                                                 'Content-Type'  => 'application/json'])->post($wp_url->value, $params); */
+
                                 $http_post = $this->send_message($params);
                                 log::info('DATA: '.$http_post);
                                 $data_msg['type'] = 'out';
                                 $data_msg['body'] = $response['text'];
-                                $data_msg['reponse'] = $response['id'];
+                                $data_msg['response'] = $response['id'];
                                 $data_msg['wamid'] = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
                                 $data_msg['timestamp'] = \Carbon\Carbon::now()->timestamp;
-                                
+                                log::info($data_msg);
                                 $this->store_message($data_msg);
 
-                                /* $outbound_msj = new Message;
-                                $outbound_msj->wa_id     = $wa_id;
-                                $outbound_msj->contact_id= $contact->id;
-                                $outbound_msj->type      = 'out';
-                                $outbound_msj->body      = $response['text']; //$message;
-                                $outbound_msj->status    = 'initial';
-                                $outbound_msj->response  = $response['id']; 
-                                $outbound_msj->wamid     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
-                                $outbound_msj->timestamp = \Carbon\Carbon::now()->timestamp;
-                                $outbound_msj->save(); */
                             }else{
                                 $data_msg = [
                                     "wa_id"         => $wa_id,
@@ -240,30 +221,30 @@ class WhatsappController extends Controller
                                     "timestamp"     => $timestamp,
                                 ];
                                 $this->store_message($data_msg);
-                                
-                                /* $inbound_msj = new Message;
-                                $inbound_msj->wa_id     = $wa_id;
-                                $inbound_msj->contact_id= $contact->id;
-                                $inbound_msj->type      = 'in';
-                                $inbound_msj->body      = $message;
-                                $inbound_msj->status    = 'initial';
-                                $inbound_msj->response  = 'asesor'; 
-                                $inbound_msj->wamid     = $request['entry'][0]['changes'][0]['value']['messages'][0]['id'];
-                                $inbound_msj->timestamp = $timestamp;
-                                $inbound_msj->save(); */
-            
+
                                 log::info('Contacto: '. $contact->wa_id .'tiene el chat con el Bot desactivado');
                             }
                             
                         break;
                         
-                    case 'image':
+                    case ('image' and 'document'):
 
-                            $type_image = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['mime_type']));
-                            $type_image = explode('/', $type_image);
+                        Log::info("DENTRO DE FILE AND DOCUMENT");
 
-                            if($type_image[1] == 'jpeg' || $type_image[1] == 'jpg' || $type_image[1] == 'png'){
-                                $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['id']));
+                            if($type_msg == 'image'){
+                                $type_image = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['mime_type']));
+                                $type_image = explode('/', $type_image);
+                            }else{
+                                $type_image = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['document']['mime_type']));
+                                $type_image = explode('/', $type_image);
+                            }
+                        
+                            if($type_image[1] == 'jpeg' || $type_image[1] == 'jpg' || $type_image[1] == 'png' || $type_image[1] == 'pdf'){
+                                if($type_msg == 'image'){
+                                    $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['image']['id']));
+                                }else{
+                                    $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['document']['id']));
+                                }
     
                                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                                                     'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
@@ -288,49 +269,36 @@ class WhatsappController extends Controller
                                 ];
 
                                 $this->store_message($data_msg);
+
+                                // SEND MESSAGES
+
+                                $params = [ "messaging_product" => "whatsapp", 
+                                            "recipient_type"    => "individual",
+                                            "to"                => $wa_id, 
+                                            "type"              => 'text',
+                                            "preview_url"       => false,             
+                                            "text"              => [ "body" => "📎 Su archivo ha sido recibido. 📥 \n".$this->message_default(2, $wa_id) ]];
+                            
+                                $http_post = $this->send_message($params);
+                                $data_msg['type'] = 'out';
+                                $data_msg['body'] = $params['text'];
+                                $data_msg['response'] = 'asesor_image';
+                                $data_msg['wamid'] = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
+                                $data_msg['timestamp'] = \Carbon\Carbon::now()->timestamp;
+
                                 
                             }else{ 
-                                Log::info("Imagen no es un formato permitido");
+                                Log::info("File no es un formato permitido");
+                                $params = [ "messaging_product" => "whatsapp", 
+                                            "recipient_type"    => "individual",
+                                            "to"                => $wa_id, 
+                                            "type"              => 'text',
+                                            "preview_url"       => false,             
+                                            "text"              => [ "body" => '❌❌❌ - 🔎 El archivo enviado no corresponde a una imagen o un pdf, intente enviar el archivo con otro formato. ']];
+                            
+                                $http_post = $this->send_message($params);
                             }
 
-                        break;
-
-                        case 'document':
-                            $type_doc = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['document']['mime_type']));
-                            $type_doc = explode('/', $type_doc);
-                            if($type_doc[1] == 'pdf'){
-                                $image_id = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['document']['id']));
-
-                                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
-                                                                    'Content-Type'  => 'application/json'])->get('https://graph.facebook.com/v15.0/'.$image_id);
-                                
-                                $document_name = 'in_'.Carbon::now()->format("Ymdhis").'_wp.'.$type_doc[1];
-
-                                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
-                                            'Content-Type'  => 'application/json'
-                                            ])->get($http_post['url']);
-                                
-                                Storage::disk('wp')->put($wa_id.'/'.$document_name, $http_post);
-
-                                 // ALMACENO MENSAJE
-                                 $data_msg = [
-                                    "wa_id"         => $wa_id,
-                                    "contact_id"    => $contact->id,
-                                    "type"          => 'in',
-                                    "type_msg"      => $type_msg,
-                                    "body"          => $document_name,
-                                    "status"        => 'initial',
-                                    "response"      => 'asesor', 
-                                    "wamid"         => $request['entry'][0]['changes'][0]['value']['messages'][0]['id'],
-                                    "timestamp"     => $timestamp,
-                                ];
-
-                                $this->store_message($data_msg);
-                            }else{
-                                Log::info("Documento no es un pdf");
-                            }
-                            
-                            
                         break;
                         
                     default:
@@ -346,9 +314,9 @@ class WhatsappController extends Controller
             }
         }elseif( isset($request['entry'][0]['changes'][0]['value']['statuses'][0]['status']) ){
             
+
         }
 
-        
         return response($request['hub_challenge'], 200);
 
     }
@@ -385,38 +353,6 @@ class WhatsappController extends Controller
             $current_step->save();
             $body = '';
 
-            // Pasos
-            // ID   -   Step - previo
-            // 0    -   0    -   1   -   menu - 
-            // 1    -   1    -   0   -   Turno para atención por UTA  
-            // 2    -   2    -   0   -   ¿Cómo obtener mis resultados?
-            // 3    -   3    -   0   -   Horario de atención y ubicación
-            // 4    -   4    -   0   -   Domicilios
-            // 5    -   5    -   0   -   COVID 19
-            // 6    -   6    -   0   -   Indicaciones de estudios
-            // 7    -   7    -   0   -   Coberturas
-            // 8    -   8    -   0   -   Autorización de órdenes
-            // 9    -   9    -   0   -   Presupuestos
-            // 10   -          
-            // 11   -    
-            // 12   -    
-            // 13   -    
-            // 14   -    
-            // 15   -    
-            // 16   -    
-
-
-
-            // if($message == ''){
-            //     $params = [ "messaging_product" => "whatsapp", 
-            //                 "to"                => $wa_id,
-            //                 "type"              => "template",
-            //                 "template"          => [ "name" => "menu_principal",
-            //                                             "language" => ["code" => "es_AR"]
-            //                                         ],
-            //                 ];
-            // }else{
-
             switch($message){
 
                 case 'menu':
@@ -426,12 +362,9 @@ class WhatsappController extends Controller
                     $body = "";
                     break;
                 
-                
-
                 default:
                     $body = "No entendi tu mensaje";
                     break;
-            
             }
 
             $params = [ "messaging_product" => "whatsapp", 
@@ -441,7 +374,6 @@ class WhatsappController extends Controller
                         "preview_url"       => false,             
                         "text"              => [ "body" =>  $body]];
             
-
             $url = 'https://graph.facebook.com/v14.0/107765322075657/messages';
 
 
@@ -487,7 +419,7 @@ class WhatsappController extends Controller
                 $text = "Hola 👋, se comunicó con *_DEL SUR ANÁLISIS CLÍNICOS_*, soy su Asistente Virtual 🤖."; 
                 $text .= "\nIndique la opción deseada:\n";
                 $text .= "\n ".$this->emojis[1]." 📆​ Turno para atención";
-                $text .= "\n ".$this->emojis[2]." ✅ Autorizaciones de órdenes (IOMA, OSSEG, Galeno, FATSA)";
+                $text .= "\n ".$this->emojis[2]." ✅ Autorizaciones de órdenes (IOMA, OSSEG, COMEI, FATSA)";
                 $text .= "\n ".$this->emojis[3]." 📄 ¿Cómo obtener mis resultados?";
                 $text .= "\n ".$this->emojis[4]." 📍 Horario de atención y ubicación.";
                 $text .= "\n ".$this->emojis[5]." 🚗 Extracciones a domicilio.";
@@ -583,7 +515,9 @@ class WhatsappController extends Controller
         }
 
         if($current_step != '0'){
-            $text .= "\n\n0️⃣ Menú principal.";
+            if($this->boot_status){
+                $text .= "\n\n0️⃣ Menú principal.";
+            }
         }
         log::info("SALIDA: ".$current_step);
         return ['id' => $current_step,
@@ -641,14 +575,14 @@ class WhatsappController extends Controller
                 $text .= "\n".$this->emojis[1]." UTA";
                 $text .= "\n".$this->emojis[2]." PAMI";
                 $text .= "\n".$this->emojis[3]." IOMA";
-                $text .= "\n".$this->emojis[4]." SWISS Medical, OSDE";
+                $text .= "\n".$this->emojis[4]." SWISS Medical, OSDE, GALENO";
                 $text .= "\n".$this->emojis[5]." Otras";
                 $text .= "\n".$this->emojis[6]." Particular";
 
                 break;
             case '1':
                 
-                $text = "🗓️ Los próximos turnos disponibles son días en el horario de ⌚️ 7:30 a 10:00 hs."; 
+                $text = "🗓️ Los próximos turnos disponibles son días en el horario de ⌚️ 7:30 a 10:30 hs."; 
                 $text .= "\nIndique la opción deseada:\n";
                 $bookingController = new BookingController();
                 $bookings = $bookingController->days_available();
@@ -670,15 +604,15 @@ class WhatsappController extends Controller
                 $text = "Para PAMI puede venir sin turno de lunes a viernes de 7:30 a 10:30 hs. con fotocopia de su DNI y carnet"; 
                 break;
             case '3':
-                $text = "Pacientes de IOMA deben enviar previamente la orden médica para autorizar.";
-                $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
-                $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
-                $text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
-                $text .= "\n\nSi usted ya envió su orden y la misma sigue pendiente puede consultarnos el estado de la misma digitando la opción:";
+                $text = "Los pacientes de IOMA deben enviar las órdenes médicas para autorizar antes de concurrir al laboratorio.";
+                $text .= "Para enviar la orden a autorizar o bien si desea consultar el estado de una orden que envio previamente puede hacerlo digitando la opción:";
+                //$text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
+                //$text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
+                //$text .= "\n\nSi usted ya envió su orden y la misma sigue pendiente puede consultarnos el estado de la misma digitando la opción:";
                 $text .= "\n\n".$this->emojis[1]." ✅ Autorizaciones de órdenes"; 
-                $text .= "\n\nPuede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
-                $text .= "\nSi posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizada tiene 3 meses para realizar los análisis.";
-                $text .= "\nSi su orden ya está autorizada puede venir sin turno de 7 30 a 10 30 de lunes a sábados";
+                $text .= "\n\n*_Si su orden ya está autorizada puede venir sin turno de 7:30 a 10:30 hs. de lunes a sábados_*. Si posee la orden original traigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizado tiene 3 meses para realizar los estudios";
+                $text .= "\nSi ya envió la orden para autorizar también puede consultar el estado de la misma ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI";
+                //$text .= "\nSi su orden ya está autorizada puede venir sin turno de 7 30 a 10 30 de lunes a sábados";
                 break;
 
             case strpos($current_step, "3.1") === 0: // Manejo de Presupuestos.
@@ -691,7 +625,7 @@ class WhatsappController extends Controller
                 break;
 
             case '4':
-                $text = "Pacientes de OSDE / SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
+                $text = "Pacientes de OSDE / SWISS MEDICAL / GALENO concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
                 break;                
             
             case '5':
@@ -729,7 +663,7 @@ class WhatsappController extends Controller
                 break;
 
             case ('1.L' ):
-                $text = "👤 Indique el nombre del paciente, por favor:";
+                $text = "👤 Indique el Nombre y Apellido del paciente, por favor:";
                 break;
             
             case ('1.L.T'):
@@ -741,14 +675,14 @@ class WhatsappController extends Controller
                 $fecha_options = Message::where('wa_id', $wa_id)
                             ->where('response','like', '%.1')
                             ->where('type', 'out')   
-                            ->orderBy('updated_at', 'desc')
+                            ->orderBy('created_at', 'desc')
                             ->first();
-                
+
                 //OBTENGO LA POSICION DE LA FECHA SELECCIONADA.
                 $fecha = Message::where('wa_id', $wa_id)
                             ->where('response','like', '%.1.L')
                             ->where('type', 'in')   
-                            ->orderBy('updated_at', 'desc')
+                            ->orderBy('created_at', 'desc')
                             ->first();
                 
                 //RECUPERO LA FECHA SELECCIONADA.
@@ -784,13 +718,13 @@ class WhatsappController extends Controller
                 $bookings = $bookingController->store_booking($form);
 
                 if($bookings['code'] == 200){
-                    $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:00 hs.";
+                    $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:30 hs.";
                     
                     $text .= "\n🤔​ Recuerde consultar las indicaciones para su estudio.";
                     $text .= "\n\nPresione ".$this->emojis[7]." para ver el menu de 🔬 Indicaciones de estudios";
 
-                    $text .= "\n\n📝 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
-                    $text .= "\n▶ Si pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
+                    $text .= "\n\n📝 *_Puede venir en el día asignado de 7:30 a 10:30 hs. con la orden, el carnet y la autorización._* Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
+                    $text .= "\n▶ Si pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.800 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
                 }else{
                     $text = "⛔ No se ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
                 } 
@@ -860,10 +794,10 @@ class WhatsappController extends Controller
         switch($current_step) {
 
             case '':
-                $text  = "Para autorizaciones envie foto de la orden, del carnet y del bono si tiene uno.";
-                $text .= "Su orden sera revisada por un agente y pasada a atuorizar en la brevedad.";
+                $text  = "Para autorizaciones envie foto de la orden, del carnet y del bono si tiene uno. ";
+                $text .= "Su orden sera revisada por un agente y pasada a autorizar en la brevedad.";
                 $text .= "Cuando la misma se haya realizado le indicaremos un numero de precarga que debe tener presente al momento de asistir al laboratorio";
-                $text .= "\n\nSi Ud. ha dejado su orden para autorizar y desea conocer su estado elija la siguiente opción:";
+                $text .= "\n\n*_Si Ud._* ha dejado su orden para autorizar y desea conocer su estado digite la siguiente opción y luego indíquenos su apellido y número de precarga";
                 $text .= "\n\n".$this->emojis[1]." ". $this->message_default(1);
                 break;
 
@@ -995,17 +929,17 @@ class WhatsappController extends Controller
 
                 break;
 
-            case $current_step ===  '.1':
+            case $current_step ===  '1':
                 $text = "El hisopado PCR  para SARS-CoV-2 🦠​ tiene un valor de $7.900 pesos con tarjeta de débito y $7.000 si abona en efectivo. Puede venir de lunes a viernes de 11:00 a 15:00 hs y sábados de 8:00 a 9:00 hs. Si desea los resultados en el día debería acercarse a las 11:00 o a las 8:00 hs. respectivamente.";
                 $text .= "\n\nEl test rápido para SARS-CoV-2 tiene un valor de $4.600 pesos con tarjeta de débito y $4.000 en efectivo. En caso de que quiera realizarlo puede venir de lunes a viernes de 11:00 a 15:00 hs. y sábado de 8:00 a 12:00 hs. Obtiene el resultado en el momento.";
                 $text .= "\n\nA domicilio el valor es $5.500 pesos el test rápido y $8.000 la PCR.";
                 break;
             
-            case $current_step ===  '.2':
+            case $current_step ===  '2':
                 $text = "Por favor envíe una 📷 foto de la orden (al operador).";
                 break;
 
-            case $current_step ===  '.3':
+            case $current_step ===  '3':
                 $text = "Por favor indique 📌 domicilio y entre calles.";
                 break;
         
@@ -1112,11 +1046,11 @@ class WhatsappController extends Controller
                 $text .= "\n*C_* Durante los 3 días previos a la toma, cepillar sus uñas con agua y jabón blanco por encima y por debajo de la lámina ungueal, al menos 3 veces al día. Evitar cortarlas desde la semana previa.";
                 $text .= "\n*D_* Un día antes, hacer 3 baños con agua y sal. Preparados con una cuchara sopera de sal fina en un litro de agua previamente hervida y entibiada.";
                 $text .= "\n*E_* ¡ATENCIÓN!  Si la lesión es en los pies, concurrir con calzado cerrado y medias.";
-                $text .= "\n*MICOLÓGICO LESIONES EN  PIEL O CUERO CABELLUDO*";
-                $text .= "\n*A_*Suspender medicación antimicótica, por lo menos 10 días antes de la recolección.";
-                $text .= "\n*B_*No utilizar talco, crema, aerosol, desinfectante, loción, etc. sobre la lesión por lo menos 3 días antes de la toma de muestra.";
-                $text .= "\n*C_*Lavar la zona lesionada con jabón blanco o neutro, por lo menos 3 veces al día durante los 3 días previos a la toma de  muestra.";
-                $text .= "\n*D_*¡ATENCIÓN!  Si la lesión es en los pies, concurrir con calzado cerrado y medias.";
+                $text .= "\n\n*MICOLÓGICO LESIONES EN  PIEL O CUERO CABELLUDO*";
+                $text .= "\n*A_* Suspender medicación antimicótica, por lo menos 10 días antes de la recolección.";
+                $text .= "\n*B_* No utilizar talco, crema, aerosol, desinfectante, loción, etc. sobre la lesión por lo menos 3 días antes de la toma de muestra.";
+                $text .= "\n*C_* Lavar la zona lesionada con jabón blanco o neutro, por lo menos 3 veces al día durante los 3 días previos a la toma de  muestra.";
+                $text .= "\n*D_* ¡ATENCIÓN!  Si la lesión es en los pies, concurrir con calzado cerrado y medias.";
                 
                 break;
 
@@ -1150,7 +1084,6 @@ class WhatsappController extends Controller
                 $current_step = '';
             }
         }
-        Log::INFO("VALUE ANTES DE SWITCH ANALISIS: ".$current_step);
         switch($current_step) {
 
             case '':
@@ -1159,7 +1092,7 @@ class WhatsappController extends Controller
                 $text .= "\n".$this->emojis[1]." UTA";
                 $text .= "\n".$this->emojis[2]." PAMI";
                 $text .= "\n".$this->emojis[3]." IOMA";
-                $text .= "\n".$this->emojis[4]." SWISS Medical, OSDE";
+                $text .= "\n".$this->emojis[4]." SWISS Medical, OSDE, GALENO";
                 $text .= "\n".$this->emojis[5]." Otras";
 
                 break;
@@ -1167,10 +1100,11 @@ class WhatsappController extends Controller
             case $current_step === "1":
                 // $text = "🏷 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
                 // $text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
-                $text = "Puede venir el día asignado en su turno de 7:30 a 10:30 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
-                $text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
-                $text .= "\n\nSi usted no tiene un turno, puede solicitarlo desde la siguiente opción:";
-                $text .= "\n\n".$this->emojis[1]." 📆​ Solicitar Turno *sólo para obra social UTA*.";    
+                //$text = "Puede venir el día asignado en su turno de 7:30 a 10:30 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
+                $text = "Antes de concurrir al laboratorio debe solicitar un turno puede hacerlo marcando la opción 1:";
+                //$text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
+                //$text .= "\n\nSi usted no tiene un turno, puede solicitarlo desde la siguiente opción:";
+                $text .= "\n\n".$this->emojis[1]." 📆​ Solicitar Turno.";    
             break;
 
             case strpos($current_step, "1.1") === 0: 
@@ -1191,16 +1125,15 @@ class WhatsappController extends Controller
                 break;
 
             case $current_step === "3":
-                $text = "Pacientes de IOMA deben enviar previamente la orden médica para autorizar.";
-                $text .= "Ud. puede consultarnos el estado de la misma en 48 hs. o bien puede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
-                $text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
-                $text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
-                $text .= "\n\nSi usted ya envió su orden y la misma sigue pendiente puede consultarnos el estado de la misma digitando la opción:";
+                $text = "Los pacientes de IOMA deben enviar las órdenes médicas para autorizar antes de concurrir al laboratorio.";
+                $text .= "Para enviar la orden a autorizar o bien si desea consultar el estado de una orden que envio previamente puede hacerlo digitando la opción:";
+                //$text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
+                //$text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
+                //$text .= "\n\nSi usted ya envió su orden y la misma sigue pendiente puede consultarnos el estado de la misma digitando la opción:";
                 $text .= "\n\n".$this->emojis[1]." ✅ Autorizaciones de órdenes"; 
-                $text .= "\n\nPuede conocer el estado de su autorización ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI.";
-                $text .= "\nSi posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizada tiene 3 meses para realizar los análisis.";
-                $text .= "\nSi su orden ya está autorizada puede venir sin turno de 7 30 a 10 30 de lunes a sábados";
-
+                $text .= "\n\n*_Si su orden ya está autorizada puede venir sin turno de 7:30 a 10:30 hs. de lunes a sábados_*. Si posee la orden original traigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizado tiene 3 meses para realizar los estudios";
+                $text .= "\nSi ya envió la orden para autorizar también puede consultar el estado de la misma ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI";
+                //$text .= "\nSi su orden ya está autorizada puede venir sin turno de 7 30 a 10 30 de lunes a sábados";
                 break;
             
             case strpos($current_step, "3.1") === 0:
@@ -1213,7 +1146,7 @@ class WhatsappController extends Controller
                 break;
 
             case $current_step === "4":
-                $text = "Pacientes de OSDE / SWISS MEDICAL concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
+                $text = "Pacientes de OSDE / SWISS MEDICAL / GALENO concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
                 break;
         
             case $current_step === "5":
@@ -1281,7 +1214,11 @@ class WhatsappController extends Controller
                 return "No entendi su consulta. 🤔​";
                 break;
             case 4: // 
-                return "\n\n#️⃣ Menú anterior.";
+                if($this->boot_status){
+                    return "\n\n#️⃣ Menú anterior.";
+                }else{
+                    return "";
+                }
                 break;
             default:
                 
@@ -1309,6 +1246,7 @@ class WhatsappController extends Controller
         Contact::where('wa_id',$wa_id)->update([
             'bot_status' => false
         ]);
+        $this->boot_status = false;
     }
 
     function str_replace_first($search, $replace, $subject) {

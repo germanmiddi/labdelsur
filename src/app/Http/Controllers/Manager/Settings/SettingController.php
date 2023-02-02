@@ -73,7 +73,6 @@ class SettingController extends Controller
     }
 
     public function store_message(Request $request){
-
         try {
             DefaultMessage::create(array(
                 'description' => $request->form['description']
@@ -83,6 +82,17 @@ class SettingController extends Controller
             return response()->json(['message'=>'Se ha producido un error'], 500);
         }
     }  
+
+    public function update_message(Request $request){
+        try {
+            DefaultMessage::where('id', $request->form['id'])->update([
+                'description' => $request->form['description']
+            ]); 
+            return response()->json(['message'=>'Mensaje predefinido actualizado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
 
     public function delete_message($id){
         try {
