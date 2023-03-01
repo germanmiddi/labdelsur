@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('bookings', function (Blueprint $table) {
+        Schema::table('contacts', function (Blueprint $table) {
             $table->string('fullname')->nullable()->change();
         });        
     }
