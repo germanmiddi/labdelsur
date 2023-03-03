@@ -2,9 +2,9 @@
   <div class="bg-white">
    
 
-    <headers />
+    <headers :links=links />
     <main>
-      <whatsappbtn />
+      <whatsappbtn :links=links />
 
       <!-- Hero section -->
       <div class="relative">
@@ -65,28 +65,24 @@
               <dl class="mt-8 text-base text-gray-100">
                 
                 <div>
-                  <dt class="sr-only">Phone number</dt>
                   <dd class="flex">
                     <PhoneIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
                     <span class="ml-3"> 4225-0789 / 4249-8651</span>
                   </dd>
                 </div>
                 <div class="mt-3">
-                  <dt class="sr-only">Email</dt>
                   <dd class="flex">
                     <ChatIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
-                    <a class="ml-3 hover:underline" href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank">11 2771 45 69</a>
+                    <a class="ml-3 hover:underline" :href="links['whatsapp_btn']" target="_blank">11 2771 45 69</a>
                   </dd>
                 </div>
                 <div class="mt-3">
-                  <dt class="sr-only">Email</dt>
                   <dd class="flex">
                     <MailIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
                     <a href="mailto:info@laboratoriodelsur.com.ar" target="_blank" class="ml-3 hover:underline">info@laboratoriodelsur.com.ar</a>
                   </dd>
                 </div>
                 <div class="mt-3">
-                  <dt class="sr-only">Email</dt>
                   <dd class="flex">
                     <ClockIcon class="flex-shrink-0 h-6 w-6 text-blue-200" aria-hidden="true" />
                     <span class="ml-3">Lunes a Viernes 7:30 a 18:00 hs. / Sábados 7:30 a 13:00 hs. <br>Extracciones hasta 10:30 hs.</span>
@@ -162,7 +158,7 @@
               <span class="text-2xl md:text-4xl font-extrabold block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Ingrese al siguiente enlace</span>
             </h2>
             <div class="space-y-4 sm:space-y-0 sm:flex sm:space-x-5 mt-4 sm:mt-0">
-              <a href="https://wa.me/5491126887264?text=Hola" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">UTA</a>
+              <a :href="links['whatsapp_btn']" target="_blank" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">UTA</a>
             </div>
         </div>
       </div>
@@ -231,15 +227,15 @@
             <span class="block bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">Accede desde aquí al portal de resultados</span>
             </h2>
             <div class="mt-6 space-y-4 sm:space-y-0 sm:flex sm:space-x-5">
-            <a href="#" class="flex items-center justify-center bg-blue-500 bg-origin-border px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white hover:bg-blue-600">INGRESAR</a>
-            <a href="https://wa.me/5491126887264?text=Hola" class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-800 bg-blue-50 hover:bg-blue-100">Más información</a>
+            <a :href="links['kern_url']" target="_blank" class="flex items-center justify-center bg-blue-500 bg-origin-border px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white hover:bg-blue-600">INGRESAR</a>
+            <a :href="links['whatsapp_btn']" target="_blank" class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-800 bg-blue-50 hover:bg-blue-100">Más información</a>
             </div>
         </div>
       </div>
 
     </main>
 
-    <footers />
+    <footers :links=links />
 
   </div>
 </template>
@@ -426,7 +422,8 @@ const footerNavigation = {
 export default {
   props: {
     faqs: Object,
-    obras: Object
+    obras: Object,
+    links: Object
   },
   components: {
     Popover,

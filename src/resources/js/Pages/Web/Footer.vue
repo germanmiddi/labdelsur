@@ -6,7 +6,7 @@
         </div>
         <div class=" md:w-5/6">
           <ul class="flex justify-between text-gray-700 flex-col items-center md:flex-row">
-            <li><a href="#" >RESULTADOS</a></li>
+            <li><a :href="links['kern_url']" target="_blank" >RESULTADOS</a></li>
             <li><a :href="route('estudios')" >ESTUDIOS</a></li>
             <li><a :href="route('preguntas-frecuentes')" >PREGUNTAS FRECUENTES</a></li>
             <li><a :href="route('obras-sociales')" >OBRAS SOCIALES</a></li>
@@ -20,7 +20,7 @@
         <div class="mt-12 border-t border-gray-200 pt-8 lg:mt-12 w-full">
           <p class="mt-8 text-sm text-gray-800 md:mt-0 md:order-1 text-left">TÉRMINOS Y CONDICIONES DE USO</p>
           <p class="mt-8 text-xs text-gray-400 md:mt-0 md:order-1 text-left">El/la titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo al efecto conforme lo establecido en el artículo 14, inciso 3 de la Ley N° 25.326. La AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA, Órgano de control de la Ley N° 25.326, tiene la atribución de atender las denuncias y reclamos que se interpongan con relación al incumplimiento de las normas sobre protección de datos personales</p>
-          <p class="mt-8 text-base text-gray-400 md:mt-3 md:order-1 text-center"><a href="https://www.onmedia.com.ar">&copy; 2022 - Diseño y Desarrollo por onMedia.</a></p>
+          <p class="mt-8 text-base text-gray-400 md:mt-3 md:order-1 text-center"><a href="https://www.onmedia.com.ar">&copy; 2023 - Diseño y Desarrollo por onMedia.</a></p>
         </div>
       </div>
     </footer>
@@ -29,8 +29,10 @@
 <script>
 
 export default {
-    name:"Footers"
-
+    name:"Footers",
+    props:{
+      links:Object
+    }
 }
 
 </script>

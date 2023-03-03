@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Faq;
 use App\Models\Estudio;
 use App\Models\ObraSocial;
+use App\Models\Setting;
 
 // use App\Models\Competencia;
 
@@ -22,11 +23,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $faqs = Faq::select('id','answer','question')->where('favorite', true)->where('visible',true)->orderby('favorite')->limit(4)->orderBy('favorite','DESC')->orderBy('question','ASC')->get();
-        $obras = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->limit(10)->orderBy('favorite','DESC')->orderBy('title','ASC')->get();
+        $faqs   = Faq::select('id','answer','question')->where('favorite', true)->where('visible',true)->orderby('favorite')->limit(4)->orderBy('favorite','DESC')->orderBy('question','ASC')->get();
+        $obras  = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->limit(10)->orderBy('favorite','DESC')->orderBy('title','ASC')->get();
+        $settings  = Setting::where('module','EXTERNAL_URL')->get();
+
+        $links = [];
+        foreach($settings as $row){
+            $links[$row['key']] = $row['value'];
+        }
+
         return  Inertia::render('Web/Home', [
-            'faqs' => $faqs,
+            'faqs'  => $faqs,
             'obras' => $obras,
+            'links' => $links,
         ]);
     }
 

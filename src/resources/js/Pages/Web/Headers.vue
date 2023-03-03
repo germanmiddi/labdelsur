@@ -14,12 +14,10 @@
             </PopoverButton>
           </div>
           <PopoverGroup as="nav" class="hidden md:flex space-x-10">
-            <!-- <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> NOSOTROS </a> -->
-            <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
+            <a :href="links['kern_url']" target="_blank" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> RESULTADOS </a>
             <a :href="route('estudios')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> ESTUDIOS </a>
             <a :href="route('preguntas-frecuentes')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> PREGUNTAS FRECUENTES </a>
             <a :href="route('obras-sociales')" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> OBRAS SOCIALES </a>
-            <!-- <a href="#" class="text-base font-semibold font-['jost'] text-neutral-500 hover:text-gray-900"> UBICACIÓN </a> -->
           </PopoverGroup>
         </div>
 
@@ -38,12 +36,10 @@
               </div>
               <div class="py-6 px-5">
                 <div class="flex flex-col">
-                  <!-- <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> NOSOTROS </a> -->
-                  <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> RESULTADOS </a>
+                  <a :href="links['kern_url']" target="_blank" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> RESULTADOS </a>
                   <a :href="route('estudios')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> ESTUDIOS </a>
                   <a :href="route('preguntas-frecuentes')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> PREGUNTAS FRECUENTES </a>
                   <a :href="route('obras-sociales')" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> OBRAS SOCIALES </a>
-                  <!-- <a href="#" class="text-base font-medium text-gray-900 hover:text-gray-700 py-2"> UBICACIÓN </a> -->
                 </div>
               </div>
             </div>
@@ -60,6 +56,9 @@ import { MenuIcon,XIcon } from '@heroicons/vue/outline'
 
 export default {
     name:"Headers",
+    props:{
+      links:Object
+    },
     components:{
         Popover,
         PopoverButton,

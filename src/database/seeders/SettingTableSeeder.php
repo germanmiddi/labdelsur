@@ -59,5 +59,12 @@ class SettingTableSeeder extends Seeder
             'description' => 'URL del API suministrado por WhatsApp'
         ]);
 
+        \App\Models\Setting::create([
+            'module' => 'EXTERNAL_URL',
+            'key' => 'kern_url',
+            'value' => '-',
+            'description' => 'URL para links en web publica a Kern'
+        ]);
+
     }
 }
