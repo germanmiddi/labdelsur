@@ -1,9 +1,8 @@
 <template>
   <div class="bg-white">
-    <headers />
-    
-    <main>
-      <whatsappbtn />
+  <headers :links=links />
+   <main>
+      <whatsappbtn :links=links />
 
       <div class="relative">
         <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white" />
@@ -79,7 +78,7 @@
       </div>
 
     </main>
-    <footers />  
+    <footers :links=links />
 
   </div>
 </template>
@@ -115,7 +114,8 @@ import Headers from './Headers.vue'
 
 export default {
   props: {
-    faqs: Object
+    faqs: Object,
+    links: Object    
   },
   components: {
     Popover,

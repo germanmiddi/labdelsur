@@ -42,16 +42,32 @@ class HomeController extends Controller
     public function faq()
     {
         $faqs = Faq::select('id','answer','question')->where('visible',true)->orderBy('favorite','DESC')->orderBy('question','ASC')->get();
+        $settings  = Setting::where('module','EXTERNAL_URL')->get();
+
+        $links = [];
+        foreach($settings as $row){
+            $links[$row['key']] = $row['value'];
+        }        
+
         return  Inertia::render('Web/Faq', [    
-            'faqs' => $faqs        
+            'faqs' => $faqs,
+            'links' => $links,            
         ]);
     }   
     
     public function estudios()
     {
         $estudios = Estudio::select('id','title','description')->where('visible',true)->orderBy('favorite','DESC')->orderBy('title','ASC')->get();
+        $settings  = Setting::where('module','EXTERNAL_URL')->get();
+
+        $links = [];
+        foreach($settings as $row){
+            $links[$row['key']] = $row['value'];
+        }  
+
         return  Inertia::render('Web/Estudios', [            
-            'estudios' => $estudios  
+            'estudios' => $estudios,
+            'links' => $links,                        
         ]);
     } 
 
@@ -59,9 +75,17 @@ class HomeController extends Controller
     {
         $obras_img = ObraSocial::select('id','url')->where('favorite', true)->where('visible',true)->where('url','!=','')->orderBy('favorite','DESC')->orderBy('title','ASC')->limit(10)->get();
         $obras = ObraSocial::select('id','title','description')->where('visible',true)->orderBy('favorite','DESC')->orderBy('title','ASC')->get();
+        $settings  = Setting::where('module','EXTERNAL_URL')->get();
+
+        $links = [];
+        foreach($settings as $row){
+            $links[$row['key']] = $row['value'];
+        }         
+        
         return  Inertia::render('Web/ObrasSociales', [    
             'obras_img' => $obras_img   ,
-            'obras' => $obras      
+            'obras' => $obras,
+            'links' => $links,                  
         ]);
     }    
 

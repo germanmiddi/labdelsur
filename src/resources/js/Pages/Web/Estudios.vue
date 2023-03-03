@@ -1,8 +1,8 @@
 <template>
   <div class="bg-white">
-   <headers />
+  <headers :links=links />
    <main>
-      <whatsappbtn />
+      <whatsappbtn :links=links />
       <div class="relative">
         <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white" />
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -38,7 +38,7 @@
         </div>
       </div> 
     </main>
-    <footers />
+    <footers :links=links />
   </div>
 </template>
 
@@ -76,7 +76,8 @@ import Footers from './Footer.vue'
 
 export default {
   props: {
-    estudios: Object
+    estudios: Object,
+    links: Object    
   }, 
   components: {
     Popover,

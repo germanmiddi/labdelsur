@@ -1,9 +1,9 @@
 <template>
   <div class="bg-white">
-    <headers />
 
-    <main>
-      <whatsappbtn />
+  <headers :links=links />
+   <main>
+      <whatsappbtn :links=links />
 
       <div class="relative">
         <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white" />
@@ -94,9 +94,7 @@
 
     </main>
  
-
-    <footers />
-
+    <footers :links=links />
   </div>
 </template>
 
@@ -132,7 +130,8 @@ import Footers from './Footer.vue'
 export default {
   props: {
     obras_img: Object,
-    obras: Object
+    obras: Object,
+    links: Object        
   },
   components: {
     Popover,
