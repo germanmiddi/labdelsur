@@ -22,6 +22,7 @@
                   <input class="w-64 rounded-md mr-2" type="text"  v-model="filtro"/>
                   <a href="#" 
                      @click="filtroInput"
+                     @keydown.enter="filtroInput"
                      class="flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">BUSCAR</a>
               </div>
             </div>
@@ -72,7 +73,7 @@
           </div> -->
 
           <div class="mt-8">
-            <dl class="divide-y divide-gray-200">
+            <dl v-if="obrasFiltered.length" class="divide-y divide-gray-200">
               <div v-for="obra in obrasFiltered" :key="obra.id" >
                 <div class="pt-6 pb-8 md:grid md:grid-cols-12 md:gap-8">
                   <dt class="text-base font-medium text-gray-900 md:col-span-5">
@@ -85,7 +86,24 @@
                   </dd>
                 </div>
               </div>
+              <div>
+
+              </div>
             </dl>
+
+            <div v-else class="rounded-md bg-blue-50 p-4 shadow-lg">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <InformationCircleIcon class="h-8 w-8 text-blue-400" aria-hidden="true" />
+                </div>
+                <div class="ml-3 flex-1 md:flex md:justify-between items-center">
+                  <p class="text-lg text-blue-700">No se encontraron resultados para su busqueda. Consulte a nuestros asesores haciendo click <a class="underline" target="_blank" href="https://wa.me/5491126887264?text=Consulta%20Obra%20social" >aquí</a>.</p>
+                  <p class="mt-3 text-sm md:mt-0 md:ml-6">
+                    <a href="#" @click="obrasFiltered = obras" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600 hover:underline">Limpiar búsqueda</a>
+                  </p>                  
+                </div>
+              </div>
+            </div>            
           </div>
 
 
@@ -102,7 +120,7 @@
 
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon, MailIcon, PhoneIcon, ClockIcon } from '@heroicons/vue/outline'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import { ChevronDownIcon } from '@heroicons/vue/outline'
+import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/vue/outline'
 import { defineComponent, h } from 'vue'
 import { Popover, PopoverButton, PopoverGroup, PopoverPanel } from '@headlessui/vue'
 import {
@@ -152,7 +170,8 @@ export default {
     DisclosurePanel,
     Whatsappbtn,
     Headers,
-    Footers   
+    Footers,
+    InformationCircleIcon   
   
   },
   setup() {

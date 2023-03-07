@@ -41,7 +41,7 @@
                             <CheckIcon class="absolute h-6 w-6 text-green-500" aria-hidden="true" />
                             <p class="ml-9 text-lg leading-6 font-medium text-gray-900">{{ feature.name }}</p>
                         </dt>
-                        <dd class="mt-2 ml-9 text-base text-gray-500 text-justify" v-html="feature.description.replace(/\n/g, '<br>')">
+                        <dd class="mt-2 ml-6 text-base text-gray-500 text-justify" v-html="feature.description.replace(/\n/g, '<br>')">
                             
                         </dd>
                     </div>
@@ -299,17 +299,17 @@ const features = [
   },
   {
     name: 'Extracciones a domicilio',
-    description: 'Ofrecemos extracciones a domicilio para que no tenga que salir de su casa. Solicite su turno online <b><a href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aquí</a></b>',
+    description: 'Ofrecemos extracciones a domicilio para que no tenga que salir de su casa. Solicite su turno online <b><a class="underline" href="https://api.whatsapp.com/send?phone=541127714569&text=Hola" target="_blank"> aquí</a></b>',
     icon: UsersIcon,
   },
   {
     name: 'Resultados online',
-    description: 'Reciba sus resultados de forma rápida y segura a través del siguiente <b><a href="https://www.suresultado.com/labexpress/Labexpress-form.html" target="_blank"> sitio</a></b>.',
+    description: 'Reciba sus resultados de forma rápida y segura a través del siguiente <b><a class="underline" href="https://delsur.kernitcloud.com/#/login/paciente" target="_blank"> sitio</a></b>.',
     icon: TrashIcon,
   },
   {
     name: 'Empresas e instituciones',
-    description: 'Atención y asesoramiento a empresas e instituciones, exámenes pre ocupacionales, anuales y otros servicios. Consultanos <a href="mailto:info@laboratoriodelsur.com.ar">info@laboratoriodelsur.com.ar</a>.',
+    description: 'Atención y asesoramiento a empresas e instituciones, exámenes pre ocupacionales, anuales y otros servicios. Consultanos <a class="underline" href="mailto:info@labdelsur.com.ar">info@labdelsur.com.ar</a>.',
     icon: PencilAltIcon,
   },
 
