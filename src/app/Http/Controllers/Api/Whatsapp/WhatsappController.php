@@ -17,6 +17,7 @@ use App\Models\Contact;
 use App\Http\Controllers\Manager\Booking\BookingController;
 
 use Carbon\Carbon;
+use App\Jobs\ProcessConversations;
 
 class WhatsappController extends Controller
 {
@@ -136,9 +137,15 @@ class WhatsappController extends Controller
                     ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
                     : '';
 
-                    $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
+                $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
                     ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
                     : '';
+
+                /** 
+                * Las sesiones controlan el overlap de mensajes del mismo contacto
+                * Si el usuario manda varios mensajes juntos, el BOT procesa solo el primero y da respuesta solo para ese mensaje
+                * El resto de los mensajes que se envian, mientras procesa el primero, se pierden
+                */
 
                 $session = Waidsession::where('wa_id',$wa_id)->first(); 
     
@@ -152,9 +159,14 @@ class WhatsappController extends Controller
                 
                 if(!$contact){
                     $contact = Contact::firstOrCreate(['wa_id' => $wa_id, 
-                                    'name' => $name]);
+                                                       'name' => $name]);
                     $contact = Contact::where('wa_id',$wa_id)->first();
                 }
+
+                /**
+                 * Por motivos de la API de Whatsapp, pueden llegar mensajes anteriores a los ya procesados.
+                 * Se verifica en la BD si para el contacto ya se respondieron mensajes mas nuevos al que se esta procesando
+                 */
                 $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
                 
                 // Si devuelve false, se cambia el signo para que procese el return
@@ -163,8 +175,8 @@ class WhatsappController extends Controller
                 Log::info('TIPO FILE: '.$type_msg);
                 switch ($type_msg) {
                     case 'text':
-                        $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
-                        ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
+                        $message =  isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
+                                    ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
                                     : '' ;
             
                             // CONTROLA SI TIENE HABILITADO EL BOT
@@ -305,13 +317,16 @@ class WhatsappController extends Controller
                             log::info('Han enviado un archivo desconocido');
                         break;
                 }
+
                 Waidsession::where('wa_id',$wa_id)->delete();
 
                 DB::Commit();
+
             } catch (\Throwable $th) {
                 Log::info($th);
                 DB::rollBack();
             }
+
         }elseif( isset($request['entry'][0]['changes'][0]['value']['statuses'][0]['status']) ){
             
 
@@ -1256,4 +1271,14 @@ class WhatsappController extends Controller
         }
         return $subject;
     }
+
+    function dispatch_job(Request $request){
+        Log::info(date("Y-m-d H:i:s") . " - Inicio del dispatch");
+        ProcessConversations::dispatch()->delay(now()->addSeconds(10));
+
+
+    }
+
+
+
 }
