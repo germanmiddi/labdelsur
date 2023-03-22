@@ -4,19 +4,10 @@
 		<template #content>
 			<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 			<div class="focus-within:content flex-grow flex flex-col">
-				<div class="mx-auto my-10 text-4xl font-bold
-							xl: w-11/12
-							lg: w-11/12
-							flex justify-between">
-
+				<div class="text-lg font-bold flex justify-between pl-2">
 					<div class="flex items-center">
-						<h1>Centro de Mensajes</h1>
+						<h1 class="font-[jost] text-2xl text-gray-800">Centro de Mensajes<span v-if="selectedName">: {{ this.selectedName }}</span></h1>
 					</div>
-
-					<div class="flex text-sm" v-if="selectedName">
-						<Icons name="user" class="h-6 w-6 text-opacity-50" /> - {{ this.selectedName }} <br>
-					</div>
-
 				</div>
 
 				<div class="lg:flex lg:items-center lg:justify-between">
@@ -26,44 +17,47 @@
 				<div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-5">
 					<div class="flex flex-row justify-between bg-white ">
 						<!-- chat list -->
-						<div class="flex flex-col w-2/5 border-r overflow-y-auto h-[70vh]">
+						<div class="flex flex-col w-[600px] border-r overflow-y-auto h-[70vh]">
 							<!-- search compt -->
 
-							<div
+							<!-- <div
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-blue-200 hover:cursor-pointer bg-blue-100">
 								<input class="shadow-sm text-sm border-gray-300 rounded-md" type="text" id="search"
 									placeholder="Buscar...">
-							</div>
+							</div> -->
 							<!-- end search compt -->
 							<!-- user list -->
 							<div v-for="c in contacts" :key="c.id"
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer"
-								:class="[(c.message_status != 'read' ? 'bg-gradient-to-r from-blue-500 to-blue-300 hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-200' : '')]">
-								<div class="w-2/12 mr-4" @click="getMessages(c)">
+								:class="[(c.message_status != 'read' ? 'bg-gray-100 border-l-4 border-l-blue-500' : '')]">
+								<div class="w-12  mr-4" @click="getMessages(c)">
 									<div
-										class="p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
+										class="p-2 bg-indigo-300 rounded-full text-white flex items-center justify-center">
 										{{ c.name.substr(0, 2).toUpperCase() }}</div>
 								</div>
 								<div class="w-7/12" @click="getMessages(c)">
-									<div class="text-sm font-semibold text-white"
-										:class="[(c.message_status != 'read' ? 'text-white' : 'text-black')]">{{
-											c.name
-										}}<br>
-										<span class="text-sm font-normal"
-											:class="[(c.message_status != 'read' ? 'text-white' : 'text-gray-700')]">{{
-												c.wa_id
-											}}</span>
+									<div class="text-sm text-gray-800"
+										:class="[(c.message_status != 'read' ? 'font-semibold' : 'font-normal')]">
+										{{ c.name }}<br>
+										<span class="text-sm text-gray-500"
+											:class="[(c.message_status != 'read' ? 'font-semibold' : 'font-normal')]">
+										{{ c.wa_id }}</span>
 									</div>
 								</div>
-								<div class="w-3/12 text-sm">
-									<a v-if="c.bot_status" type="button" @click="changeStatusBot(c.id)"
+								<div class=" text-sm">
+									<a v-if="c.bot_status == 'CHATBOT' " type="button" @click="changeStatusBot(c.id)"
 										title="Chat con asesor"
-										class="inline-flex items-center p-1 border border-transparent rounded-full bg-orange-300 hover:bg-orange-700 shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-										<Icons name="cog" class="h-5 w-5"></Icons> Bot
+										class="inline-flex items-center px-3 py-1 border border-transparent bg-slate-200 hover:text-slate-800 hover:border-slate-400 text-slate-600 rounded-full">
+										<Icons name="cog" class="h-5 w-5 mr-1"></Icons> ChatBot
 									</a>
-									<a v-else type="button" @click="changeStatusBot(c.id)" title="Chat con bot"
-										class="inline-flex items-center p-1 border border-transparent bg-green-300 hover:bg-green-700 rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-										<Icons name="chat" class="h-5 w-5"></Icons> Asesor
+									<a v-else-if="c.bot_status == 'WAITING'" type="button" @click="changeStatusBot(c.id)" 
+										class="inline-flex items-center px-3 py-1 border border-transparent bg-yellow-200 hover:text-yellow-700 hover:border-yellow-700 hover:border rounded-full shadow-sm text-yellow-600">
+										<BellIcon class="h-6 w-6 mr-1"/> Waiting
+										
+									</a>
+									<a v-else-if="c.bot_status == 'ASESOR'" type="button" @click="changeStatusBot(c.id)" 
+										class="inline-flex items-center px-3 py-1 border border-transparent bg-green-200 hover:text-green-700 hover:border-green-700 hover:border rounded-full shadow-sm text-green-600 ">
+										<Icons name="chat" class="h-5 w-5 mr-1"></Icons> Asesor
 									</a>
 								</div>
 							</div>
@@ -141,7 +135,8 @@
 								<div class="col-span-9">
 									<textarea rows="1"
 										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
-										v-model="msg.text" type="text" placeholder="Escribe tu mensaje aquí..." />
+										v-model="msg.text" type="text" placeholder="Escribe tu mensaje aquí..." 
+										@keypress.enter.prevent="sendMessage"/>
 								</div>
 								<div class="col-span-1">
 									<a type="button" title="Mensaje Predefinido" @click="open = true"
@@ -460,6 +455,7 @@ export default {
 			console.log(message)
 
 		},
+
 		async changeStatusBot($id) {
 			this.loading = true
 			let rt = route('contacts.changestatusbot', $id);
@@ -475,6 +471,7 @@ export default {
 			})
 			this.loading = false
 		},
+
 		sendMessage() {
 			this.loading = true
 
@@ -485,14 +482,16 @@ export default {
 
 			let rt = route('whatsapp.sendmessage');
 
+			this.msg.text = ''
+			this.msg.image = ''
+
 			axios.post(rt, formData)
 				.then(response => {
 					if (response.status == 200) {
-						this.labelType = "success"
-						this.toastMessage = response.data.message
 						this.getMessages(this.contact)
-						this.msg.text = ''
-						this.msg.image = ''
+						// this.labelType = "success"
+						// this.toastMessage = response.data.message
+
 					}
 				}).catch(error => {
 					this.labelType = "danger"
@@ -502,6 +501,7 @@ export default {
 			this.$refs.file.value = null
 			this.loading = false
 		},
+
 		getUrl(idMsg) {
 			this.loading = true
 

@@ -71,18 +71,25 @@ class ContactsController extends Controller
                         'wa_id'         => $contact->wa_id,
                         'bot_status'    => $contact->bot_status,
                         'message_status'       => $contact->messages()->latest()->first()->status,
+                        'message'        => $contact->messages()->latest()->first()
                     ]);  
         
     }
 
     public function change_status_bot($id){
         try {
+            
             $contact = Contact::where('id', $id)->first();
 
+            $value = $contact->bot_status == 'CHATBOT' ? 'ASESOR' : 'CHATBOT';
+            
+
             Contact::where('id', $id)->update([
-                'bot_status' => !$contact->bot_status
+                'bot_status' => $value
             ]);
+
             return response()->json(['message'=>'Contacto actualizado correctamente'], 200);
+
         } catch (\Throwable $th) {
             return response()->json(['message'=>'Se ha producido un error'], 500);
         }

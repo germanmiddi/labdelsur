@@ -180,7 +180,7 @@ class WhatsappController extends Controller
                                     : '' ;
             
                             // CONTROLA SI TIENE HABILITADO EL BOT
-                            if($contact->bot_status){
+                            if($contact->bot_status == 'CHATBOT'){
                                 
                                 $response = $this->set_message($wa_id, $message);
                                 // STORE MESSAGES IN
@@ -1259,7 +1259,7 @@ class WhatsappController extends Controller
     // Disable Bot
     function disable_bot($wa_id){
         Contact::where('wa_id',$wa_id)->update([
-            'bot_status' => false
+            'bot_status' => 'WAITING'
         ]);
         $this->boot_status = false;
     }

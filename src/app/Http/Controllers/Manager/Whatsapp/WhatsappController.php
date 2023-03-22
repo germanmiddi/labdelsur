@@ -56,7 +56,9 @@ class WhatsappController extends Controller
     public function sendMessage(Request $request){
 
         DB::beginTransaction();
+
         try {
+
             //Obtengo Configuraciones
             $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
             $wp_url_media = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
@@ -66,6 +68,7 @@ class WhatsappController extends Controller
             $contact = Contact::where('wa_id',$request->wa_id)->first();  
 
             $type_file = '';
+
             if (is_file($request->image)) {
                 //ALMACENO FILE
                 $extension = $request->image->getClientOriginalExtension();
@@ -81,16 +84,16 @@ class WhatsappController extends Controller
                 }elseif($extension == 'pdf'){
                         $type_file = 'document';
                 }
-                //dd($nombre);
+
                 // Obtengo PATH
                 $url_file = Storage::disk('wp')->path($request->wa_id.'/'.$nombre);
-                //dd($url_file);
+
                 //GENERO EL ID DE IMAGEN EN WP.
                 $ch2 = curl_init();
                 $params = array("messaging_product" => "whatsapp", 
                                 "file"              => curl_file_create($url_file, mime_content_type($url_file))
                         );
-                //dd($wp_token);
+
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
                 curl_setopt($ch2, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $wp_token->value));
@@ -103,7 +106,7 @@ class WhatsappController extends Controller
                 
                 curl_close ($ch2);
                 $data = json_decode($server_output);
-                //dd($server_output);
+
                 $id_file = $data->id;
 
                 // ENVIO DE IMAGEN
@@ -114,6 +117,7 @@ class WhatsappController extends Controller
                         "type"              => 'document',         
                         "document"             => [ "id" => $id_file, "filename" => "LabSur-".Carbon::now()->format("Ymdhis")]
                     ];
+
                 }else if($type_file == "image"){
                     
                     $params = [ "messaging_product" => "whatsapp", 
@@ -125,20 +129,22 @@ class WhatsappController extends Controller
                 }
                 
 
-                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value
-                ,'Content-Type'  => 'application/json'
-                ])->post($wp_url->value, $params); 
+                $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
+                                                 'Content-Type'  => 'application/json'
+                                               ])->post($wp_url->value, $params); 
 
             }
+
             //VERIFICO SI POSEE TEXTO PARA ENVIAR
             if($request->text != ''){
+
                 //Formateo los parametros de WP TEXT
                 $params = [ "messaging_product" => "whatsapp", 
-                                    "recipient_type"    => "individual",
-                                    "to"                => $request->wa_id, 
-                                    "type"              => "text",
-                                    "preview_url"       => false,             
-                                    "text"              => [ "body" => $request->text ]];
+                            "recipient_type"    => "individual",
+                            "to"                => $request->wa_id, 
+                            "type"              => "text",
+                            "preview_url"       => false,             
+                            "text"              => [ "body" => $request->text ]];
     
                 $http_post = Http::withHeaders([ 'Authorization' => 'Bearer '.$wp_token->value,
                                                 'Content-Type'  => 'application/json'])->post($wp_url->value, $params);
@@ -154,36 +160,43 @@ class WhatsappController extends Controller
                 $outbound_msj->response     = 'asesor';
                 $outbound_msj->wamid        = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
                 $outbound_msj->timestamp    = \Carbon\Carbon::now()->timestamp;
+
                 $outbound_msj->save();
+            
             }
 
-        //Almaceno el Mensaje de IMAGEN / PDF
-        if($type_file != ''){
-            $outbound_msj = new Message;
-            $outbound_msj->wa_id        = $request->wa_id;
-            $outbound_msj->contact_id   = $contact->id;
-            $outbound_msj->type         = 'out';
-            $outbound_msj->type_msg     = $type_file;
-            $outbound_msj->body         = $nombre; //$message;
-            $outbound_msj->status       = 'initial';
-            $outbound_msj->response     = 'asesor';
-            $outbound_msj->wamid        = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
-            $outbound_msj->timestamp    = \Carbon\Carbon::now()->timestamp;
-            $outbound_msj->save();
-        }
+            //Almaceno el Mensaje de IMAGEN / PDF
+            if($type_file != ''){
 
-        //Bloqueo las respuestas del Bot
-        Contact::where('id', $contact->id)->update([
-            'bot_status' => false
-        ]);
+                $outbound_msj = new Message;
+                $outbound_msj->wa_id        = $request->wa_id;
+                $outbound_msj->contact_id   = $contact->id;
+                $outbound_msj->type         = 'out';
+                $outbound_msj->type_msg     = $type_file;
+                $outbound_msj->body         = $nombre; //$message;
+                $outbound_msj->status       = 'initial';
+                $outbound_msj->response     = 'asesor';
+                $outbound_msj->wamid        = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
+                $outbound_msj->timestamp    = \Carbon\Carbon::now()->timestamp;
+                $outbound_msj->save();
 
-        DB::Commit();
-        return response()->json(['message'=>'Mensaje enviado correctamente'], 200);
-    } catch (\Throwable $th) {
-            dd($th);
+            }
+
+            //Bloqueo las respuestas del Bot
+            Contact::where('id', $contact->id)->update([
+                'bot_status' => 'ASESOR'
+            ]);
+
+            DB::Commit();
+            return response()->json(['message'=>'Mensaje enviado correctamente'], 200);
+
+        } catch (\Throwable $th) {
+
             DB::rollBack();
             return response()->json(['message'=>'Se ha producido un error'], 500);
+
         }
+
     }
     
     /**
