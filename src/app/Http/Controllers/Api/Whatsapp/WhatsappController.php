@@ -1262,6 +1262,7 @@ class WhatsappController extends Controller
             'bot_status' => 'WAITING'
         ]);
         $this->boot_status = false;
+        $this->dispatch_job();
     }
 
     function str_replace_first($search, $replace, $subject) {
@@ -1272,11 +1273,10 @@ class WhatsappController extends Controller
         return $subject;
     }
 
-    function dispatch_job(Request $request){
+    function dispatch_job(){
         Log::info(date("Y-m-d H:i:s") . " - Inicio del dispatch");
+        // ProcessConversations::dispatch()->delay(now()->addSeconds(300));
         ProcessConversations::dispatch()->delay(now()->addSeconds(10));
-
-
     }
 
 

@@ -72,12 +72,12 @@
 							ref="container" id="message-box">
 
 							<div class="flex flex-col mt-5">
-								<div v-if="loading" class="mx-auto">
+								<!-- <div v-if="loading" class="mx-auto">
 									<Icons name="loading" class="h-12 w-12 text-opacity-50" />
-								</div>
+								</div> -->
 
 								
-								<div v-else v-for="m in messages" :key="m.id">
+								<div v-for="m in messages" :key="m.id">
 
 									<div v-if="m.type_msg == 'image'">
 										<div class="flex mb-2"
@@ -130,42 +130,63 @@
 								</div>
 							</div>
 							
-							<form v-show="this.selectedWaId" class="py-5 border-t mt-20 grid grid-cols-12 gap-4"
-								enctype="multipart/form-data">
-								<div class="col-span-9">
+							<form v-show="this.selectedWaId" 
+							      class="py-5 border-t mt-20 flex w-full items-start "
+								  enctype="multipart/form-data">
+								
+								<div v-if="adjunt" class="w-9/12 ">
+									<input v-on:change="onFileChange"
+										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
+										id="file_input" type="file" name="file_input" ref="file" :ref="file" />
+								</div>
+
+								<div v-else class="w-9/12">
 									<textarea rows="1"
 										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
 										v-model="msg.text" type="text" placeholder="Escribe tu mensaje aquí..." 
 										@keypress.enter.prevent="sendMessage"/>
 								</div>
-								<div class="col-span-1">
-									<a type="button" title="Mensaje Predefinido" @click="open = true"
-										class="cursor-pointer py-3 px-3 mt-1 ml-4 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-										<Icons name="chat" class="h-4 w-4"></Icons>
-									</a>
+
+								<div class="w-3/12 pl-4">
+									<div class="flex justify-between">
+										<a type="button" title="Mensaje Predefinido" @click="open = true"
+											class="cursor-pointer py-3 px-3 inline-flex p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-100 hover:bg-gray-200" >
+											<Icons name="chat" class="h-4 w-4"></Icons>
+										</a>
+
+										<a type="button" title="Adjuntar Archivo"
+											@click="adjunt = !adjunt, this.$refs.file.value = null, scrolldown()"
+											class="cursor-pointer py-3 px-3 nline-flex p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-100 hover:bg-gray-200" >
+											<Icons name="paper-clip" class="h-4 w-4"></Icons>
+										</a>
+
+										<div v-if="this.sending"
+											class="cursor-pointer inline-flex p-2 border border-transparent rounded-full shadow-xl text-white bg-blue-500 hover:bg-blue-700 ">
+											<Icons  name="loading" class="h-6 w-6"></Icons>
+										</div>
+
+										<a v-else type="button" title="Enviar Mensaje" @click.prevent="sendMessage"
+											class="cursor-pointer py-3 px-3 inline-flex p-1 border border-transparent rounded-full shadow-xl text-white bg-blue-500 hover:bg-blue-700 ">
+											<Icons name="send" class="h-4 w-4"></Icons>
+										</a>
+									</div>
+								</div>
+								<!-- <div class="col-span-1">
 								</div>
 								<div class="col-span-1">
-									<a type="button" title="Adjuntar Archivo"
-										@click="adjunt = !adjunt, this.$refs.file.value = null"
-										class="cursor-pointer py-3 px-3 mt-1 ml-3 inline-flex  p-1 border border-transparent rounded-full shadow-xl text-black bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-										<Icons name="paper-clip" class="h-4 w-4"></Icons>
-									</a>
-								</div>
-								<div class="col-span-1">
-									<a type="button" title="Enviar Mensaje" @click.prevent="sendMessage"
-										class="cursor-pointer py-3 px-3 mt-1 inline-flex items-center p-1 border border-transparent rounded-full shadow-xl text-white bg-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-										<Icons name="send" class="h-4 w-4"></Icons>
-									</a>
-								</div>
-								<div v-show="adjunt" class="col-span-12">
+								</div> -->
+
+								<!-- <div v-show="adjunt" class="col-span-12">
 									<input v-on:change="onFileChange"
 										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
 										id="file_input" type="file" name="file_input" ref="file" :ref="file" />
-								</div>
+								</div> -->
 							</form>
 							
 						</div>
+				
 					</div>
+												
 				</div>
 			</div>
 		</template>
@@ -354,7 +375,8 @@ export default {
 				image: ''
 			},
 			open: false,
-			messageDefaults: ""
+			messageDefaults: "",
+			sending: false
 		}
 	},
 	created() {
@@ -386,6 +408,11 @@ export default {
 
 		clearMessage() {
 			this.toastMessage = ""
+		},
+
+		scrolldown(){
+			var element = document.getElementById('message-box');
+			element.scrollTop = element.scrollHeight
 		},
 
 		async getMessages(c) {
@@ -473,8 +500,8 @@ export default {
 		},
 
 		sendMessage() {
-			this.loading = true
-
+			this.sending = true
+			
 			let formData = new FormData();
 			formData.append('wa_id', this.selectedWaId);
 			formData.append('text', this.msg.text);
@@ -491,15 +518,15 @@ export default {
 						this.getMessages(this.contact)
 						// this.labelType = "success"
 						// this.toastMessage = response.data.message
-
-					}
+						this.sending = false
+				}
 				}).catch(error => {
 					this.labelType = "danger"
 					this.toastMessage = 'Se ha producido un error'
 					this.getMessages(this.contact)
 				})
 			this.$refs.file.value = null
-			this.loading = false
+			this.sending = false
 		},
 
 		getUrl(idMsg) {
