@@ -544,7 +544,7 @@ class WhatsappController extends Controller
             case "waiting.1": 
                 $text = $this->message_default(2, $wa_id);
                 break;
-                
+
             default:
                 $text = $this->message_default(3);
                 break;
@@ -1300,7 +1300,7 @@ class WhatsappController extends Controller
     function dispatch_job(){
         Log::info(date("Y-m-d H:i:s") . " - Inicio del dispatch");
         // ProcessConversations::dispatch()->delay(now()->addSeconds(300));
-        ProcessConversations::dispatch()->delay(now()->addSeconds(10));
+        ProcessConversations::dispatch()->delay(now()->addSeconds(30));
     }
 
 
