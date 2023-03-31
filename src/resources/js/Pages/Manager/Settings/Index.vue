@@ -308,7 +308,9 @@
 					</div>
 
 				</div>
+			
 			</div>
+
 		</template>
 	</AppLayout>
 	<TransitionRoot as="template" :show="open">

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('contacts', function (Blueprint $table) {
-            $table->string('bot_status', 10)->default('BOT')->change();
+            $table->string('bot_status', 10)->default('CHATBOT')->change();
         });
     }
 
