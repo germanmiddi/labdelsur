@@ -2,6 +2,10 @@
 
 @tailwind components;
 
+/* *{
+    @apply border border-red-500
+} */
+
 @font-face {
     font-family: 'jost';
     src: url("/fonts/Jost-Regular.ttf") format("truetype");

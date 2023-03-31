@@ -17,6 +17,7 @@ use App\Models\Contact;
 use App\Http\Controllers\Manager\Booking\BookingController;
 
 use Carbon\Carbon;
+use App\Jobs\ProcessConversations;
 
 class WhatsappController extends Controller
 {
@@ -94,6 +95,7 @@ class WhatsappController extends Controller
         }else{
             return false;
         }
+
     }
 
     public function send_message($params){
@@ -124,11 +126,11 @@ class WhatsappController extends Controller
 
             DB::beginTransaction();
             try {
-                
+
                 $a = json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]);
                 Log::info('soy un mensaje '. $a);
                 $type_msg = str_replace("\"", "",json_encode($request['entry'][0]['changes'][0]['value']['messages'][0]['type']));
-                
+
                 $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
                 $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
 
@@ -136,9 +138,15 @@ class WhatsappController extends Controller
                     ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
                     : '';
 
-                    $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
+                $name = isset($request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']) 
                     ? $request['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
                     : '';
+
+                /** 
+                * Las sesiones controlan el overlap de mensajes del mismo contacto
+                * Si el usuario manda varios mensajes juntos, el BOT procesa solo el primero y da respuesta solo para ese mensaje
+                * El resto de los mensajes que se envian, mientras procesa el primero, se pierden
+                */
 
                 $session = Waidsession::where('wa_id',$wa_id)->first(); 
     
@@ -152,25 +160,32 @@ class WhatsappController extends Controller
                 
                 if(!$contact){
                     $contact = Contact::firstOrCreate(['wa_id' => $wa_id, 
-                                    'name' => $name]);
+                                                       'name' => $name]);
                     $contact = Contact::where('wa_id',$wa_id)->first();
                 }
+
+                /**
+                 * Por motivos de la API de Whatsapp, pueden llegar mensajes anteriores a los ya procesados.
+                 * Se verifica en la BD si para el contacto ya se respondieron mensajes mas nuevos al que se esta procesando
+                 */
                 $timestamp = $request['entry'][0]['changes'][0]['value']['messages'][0]['timestamp'];
                 
                 // Si devuelve false, se cambia el signo para que procese el return
                 if ( !$this->check_timestamp($wa_id, $timestamp) ) { Log::info('No se procesa por timestamp'); return; }
                 
                 Log::info('TIPO FILE: '.$type_msg);
+
                 switch ($type_msg) {
                     case 'text':
-                        $message = isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
-                        ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
+                        $message =  isset($request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']) 
+                                    ? $request['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
                                     : '' ;
             
                             // CONTROLA SI TIENE HABILITADO EL BOT
-                            if($contact->bot_status){
+                            if($contact->bot_status == 'CHATBOT'){
                                 
                                 $response = $this->set_message($wa_id, $message);
+                                
                                 // STORE MESSAGES IN
                                 $data_msg = [
                                     "wa_id"         => $wa_id,
@@ -200,15 +215,18 @@ class WhatsappController extends Controller
 
                                 $http_post = $this->send_message($params);
                                 log::info('DATA: '.$http_post);
-                                $data_msg['type'] = 'out';
-                                $data_msg['body'] = $response['text'];
-                                $data_msg['response'] = $response['id'];
-                                $data_msg['wamid'] = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
+
+                                $data_msg['type']      = 'out';
+                                $data_msg['body']      = $response['text'];
+                                $data_msg['response']  = $response['id'];
+                                $data_msg['wamid']     = $http_post['messages'][0]['id'] ? $http_post['messages'][0]['id'] : '';
                                 $data_msg['timestamp'] = \Carbon\Carbon::now()->timestamp;
+                                
                                 log::info($data_msg);
                                 $this->store_message($data_msg);
 
                             }else{
+
                                 $data_msg = [
                                     "wa_id"         => $wa_id,
                                     "contact_id"    => $contact->id,
@@ -220,9 +238,10 @@ class WhatsappController extends Controller
                                     "wamid"         => $request['entry'][0]['changes'][0]['value']['messages'][0]['id'],
                                     "timestamp"     => $timestamp,
                                 ];
-                                $this->store_message($data_msg);
 
+                                $this->store_message($data_msg);
                                 log::info('Contacto: '. $contact->wa_id .'tiene el chat con el Bot desactivado');
+
                             }
                             
                         break;
@@ -305,13 +324,16 @@ class WhatsappController extends Controller
                             log::info('Han enviado un archivo desconocido');
                         break;
                 }
+
                 Waidsession::where('wa_id',$wa_id)->delete();
 
                 DB::Commit();
+
             } catch (\Throwable $th) {
                 Log::info($th);
                 DB::rollBack();
             }
+
         }elseif( isset($request['entry'][0]['changes'][0]['value']['statuses'][0]['status']) ){
             
 
@@ -396,18 +418,26 @@ class WhatsappController extends Controller
 
     public function set_message($wa_id, $message){
         
+        //CHECK ULTIMO MENSAJE
         $prev_menu = Message::where('wa_id', $wa_id)
                             ->where('response','!=','')   
                             ->orderBy('created_at', 'desc')
                             ->first();
         
-        //CHECK FECHA ULTIMO MENSAJE       
+        //CHECK FECHA ULTIMO MENSAJE, si pasan mas de 12hs del ultimo mensaje, se resetea el menu       
         $last_date = false;
         if($prev_menu){
             $last_date = $this->check_last_date($prev_menu->created_at);
         }
         
+        // si existe un paso anterior
+        // si el mensaje no es 0, o sea que no lo reinicio
+        // si la fecha del ultimo mensaje es menor a 12hs
+        // si el paso anterior no es asesor
+        // se concatena con el nuevo mensaje
+        
         if($prev_menu && $message != 0 && $last_date && $prev_menu != 'asesor'){
+            // $prev_menu->response tiene el paso anterior
             $prev_step = $prev_menu->response;
             $current_step = $prev_step . '.' . $message;
         }else{
@@ -509,6 +539,12 @@ class WhatsappController extends Controller
                 $text = $data['text'];
 
                 break;
+            
+            
+            case "waiting.1": 
+                $text = $this->message_default(2, $wa_id);
+                break;
+                
             default:
                 $text = $this->message_default(3);
                 break;
@@ -523,6 +559,15 @@ class WhatsappController extends Controller
         return ['id' => $current_step,
                 'text' => $text];
     }
+
+    /**
+     * Manejo de Turnos.
+     * $wa_id = ID de Whatsapp.
+     * $message = Mensaje recibido.
+     * $current_step = Paso actual.
+     * $retorno = Si es true, retorna el texto a mostrar.
+     * $text = Texto a mostrar.     
+     */
 
     public function manager_turnos($wa_id, $message, $current_step, $retorno = true, $text = ''){
         
@@ -596,7 +641,7 @@ class WhatsappController extends Controller
                     $text .= "\n".$this->emojis[9]." Mis Turnos.";
                     $text .= "\n*️⃣​ Necesito un turno más urgente.";
                 }else{
-                    $text .= "\nNo tenemos disponbilidad de turnos intente con otra fecha.";
+                    $text .= "\nNo tenemos disponbilidad de turnos.";
                 }
 
             break;
@@ -726,7 +771,7 @@ class WhatsappController extends Controller
                     $text .= "\n\n📝 *_Puede venir en el día asignado de 7:30 a 10:30 hs. con la orden, el carnet y la autorización._* Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
                     $text .= "\n▶ Si pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.800 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
                 }else{
-                    $text = "⛔ No se ha sido posible realizar el registro de su turno, por favor comuniquese telefonicamente o intentelo mas tarde.";
+                    $text = "⛔ No se ha sido posible realizar el registro de su turno, por favor comuniquese telefónicamente o intentelo mas tarde.";
                 } 
                 break;
             
@@ -830,7 +875,7 @@ class WhatsappController extends Controller
 
             case '':
                 $text = "📒 Para acceder a su resultado debe realizar los siguientes pasos:";
-                $text .= "\n\n*Paso 1* - Dirigite a este link: www…..com.ar.";
+                $text .= "\n\n*Paso 1* - Dirigite a este link: https://delsur.kernitcloud.com/#/login/paciente.";
                 $text .= "\n*Paso 2* - Ingresá al punto de menú _'resultados'_";
                 $text .= "\n*Paso 3* - Cargá el número de orden que te dimos cuando te realizaste el estudio.";
                 $text .= "\n*Paso 4* - Si no contás con el número de orden, cargá tal dato…";
@@ -1098,23 +1143,20 @@ class WhatsappController extends Controller
                 break;
 
             case $current_step === "1":
-                // $text = "🏷 Puede venir en el día asignado de 7:30 a 10:00 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
-                // $text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
-                //$text = "Puede venir el día asignado en su turno de 7:30 a 10:30 hs. con la orden, el carnet y la autorización. Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
+                // Opcion UTA
                 $text = "Antes de concurrir al laboratorio debe solicitar un turno puede hacerlo marcando la opción 1:";
-                //$text .= "\nSi pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.500 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
-                //$text .= "\n\nSi usted no tiene un turno, puede solicitarlo desde la siguiente opción:";
                 $text .= "\n\n".$this->emojis[1]." 📆​ Solicitar Turno.";    
             break;
 
-            case strpos($current_step, "1.1") === 0: 
 
-                $step = $this->cut_step('1.1', $current_step);
-                $data = $this->manager_turnos($wa_id, $message, $step, false);
-                $current_step = $this->join_step('1.1', $data['id']);
-                $text = $data['text'];
+                case strpos($current_step, "1.1") === 0: 
+                    // Se deriva a la funcion manager_turnos
+                    $step = $this->cut_step('1.1', $current_step);
+                    $data = $this->manager_turnos($wa_id, $message, $step, false);
+                    $current_step = $this->join_step('1.1', $data['id']);
+                    $text = $data['text'];
 
-                break;
+                    break;
             
             case $current_step === "2":
                 $text = "🔔 Para realizar estudios por PAMI deberá traer:";
@@ -1127,23 +1169,19 @@ class WhatsappController extends Controller
             case $current_step === "3":
                 $text = "Los pacientes de IOMA deben enviar las órdenes médicas para autorizar antes de concurrir al laboratorio.";
                 $text .= "Para enviar la orden a autorizar o bien si desea consultar el estado de una orden que envio previamente puede hacerlo digitando la opción:";
-                //$text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
-                //$text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
-                //$text .= "\n\nSi usted ya envió su orden y la misma sigue pendiente puede consultarnos el estado de la misma digitando la opción:";
                 $text .= "\n\n".$this->emojis[1]." ✅ Autorizaciones de órdenes"; 
                 $text .= "\n\n*_Si su orden ya está autorizada puede venir sin turno de 7:30 a 10:30 hs. de lunes a sábados_*. Si posee la orden original traigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizado tiene 3 meses para realizar los estudios";
                 $text .= "\nSi ya envió la orden para autorizar también puede consultar el estado de la misma ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI";
-                //$text .= "\nSi su orden ya está autorizada puede venir sin turno de 7 30 a 10 30 de lunes a sábados";
                 break;
             
-            case strpos($current_step, "3.1") === 0:
+                case strpos($current_step, "3.1") === 0:
 
-                $step = $this->cut_step('3.1', $current_step);
-                $data = $this->manager_autorizaciones($wa_id, $message, $step, false);
-                $current_step = $this->join_step('3.1', $data['id']);
-                $text = $data['text'];
+                    $step = $this->cut_step('3.1', $current_step);
+                    $data = $this->manager_autorizaciones($wa_id, $message, $step, false);
+                    $current_step = $this->join_step('3.1', $data['id']);
+                    $text = $data['text'];
 
-                break;
+                    break;
 
             case $current_step === "4":
                 $text = "Pacientes de OSDE / SWISS MEDICAL / GALENO concurrir con la orden médica, credencial y dni sin turno de lunes a sábados de 7:30 a 10:30 hs.";
@@ -1169,6 +1207,7 @@ class WhatsappController extends Controller
         Log::INFO("VALUE ANTES DE RETURN: ".$current_step);
         return ['id' => $current_step,
                 'text' => $text];
+
     }
 
     public function manager_presupuestos($wa_id, $message, $current_step, $retorno = true, $text = ''){ 
@@ -1244,9 +1283,10 @@ class WhatsappController extends Controller
     // Disable Bot
     function disable_bot($wa_id){
         Contact::where('wa_id',$wa_id)->update([
-            'bot_status' => false
+            'bot_status' => 'WAITING'
         ]);
         $this->boot_status = false;
+        $this->dispatch_job();
     }
 
     function str_replace_first($search, $replace, $subject) {
@@ -1256,4 +1296,13 @@ class WhatsappController extends Controller
         }
         return $subject;
     }
+
+    function dispatch_job(){
+        Log::info(date("Y-m-d H:i:s") . " - Inicio del dispatch");
+        // ProcessConversations::dispatch()->delay(now()->addSeconds(300));
+        ProcessConversations::dispatch()->delay(now()->addSeconds(10));
+    }
+
+
+
 }
