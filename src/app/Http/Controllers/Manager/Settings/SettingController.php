@@ -23,13 +23,14 @@ class SettingController extends Controller
      */
 
     public function index(){
-        return Inertia::render('Manager/Settings/Index', 
-        [
-            'holidays' => Holiday::all(),
-            'messages' => DefaultMessage::all(),
-            'days' => DetailDay::all(),
-            'settings' => Setting::get()
-        ]); 
+        return Inertia::render('Manager/Settings/Index_new');
+        // return Inertia::render('Manager/Settings/Index_new', 
+        // [
+        //     'holidays' => Holiday::all(),
+        //     'messages' => DefaultMessage::all(),
+        //     'days' => DetailDay::all(),
+        //     'settings' => Setting::get()
+        // ]); 
     }
 
     public function store_holiday(Request $request){
