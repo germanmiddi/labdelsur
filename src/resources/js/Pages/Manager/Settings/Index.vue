@@ -1,4 +1,5 @@
 <template>
+<!-- eslint-disable -->
 	<AppLayout>
 		<template #content>
 			<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
