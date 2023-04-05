@@ -66,5 +66,21 @@ class SettingTableSeeder extends Seeder
             'description' => 'URL para links en web publica a Kern'
         ]);
 
+        \App\Models\Setting::create([
+            'module' => 'EXTERNAL_URL',
+            'key' => 'whatsapp_btn',
+            'value' => '-',
+            'description' => 'URL para links Botón de WhatsApp'
+        ]);
+
+        \App\Models\Setting::create([
+            'module' => 'MAIN',
+            'key' => 'waiting_time',
+            'value' => '-',
+            'description' => ''
+        ]);
+
+
+
     }
 }

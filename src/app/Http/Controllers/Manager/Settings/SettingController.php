@@ -62,10 +62,8 @@ class SettingController extends Controller
 
     public function update_day(Request $request){
         try {
-            DetailDay::where('id', $request->form['id'])->update([
-                'num_day' => $request->form['num_day'],
-                'cant_orders' => $request->form['cant_orders'],
-                'description' => $request->form['description']
+            DetailDay::where('id', $request->id)->update([
+                'cant_orders' => $request->cant_orders                
             ]); 
             return response()->json(['message'=>'Configuración actualizada'], 200);
         } catch (\Throwable $th) {
@@ -76,7 +74,7 @@ class SettingController extends Controller
     public function store_message(Request $request){
         try {
             DefaultMessage::create(array(
-                'description' => $request->form['description']
+                'description' => $request->message
             ));
             return response()->json(['message'=>'Mensaje predefinido creado'], 200);
         } catch (\Throwable $th) {
@@ -86,8 +84,8 @@ class SettingController extends Controller
 
     public function update_message(Request $request){
         try {
-            DefaultMessage::where('id', $request->form['id'])->update([
-                'description' => $request->form['description']
+            DefaultMessage::where('id', $request->id)->update([
+                'description' => $request->message
             ]); 
             return response()->json(['message'=>'Mensaje predefinido actualizado'], 200);
         } catch (\Throwable $th) {
@@ -109,7 +107,6 @@ class SettingController extends Controller
         return DefaultMessage::all();
     }
    
-
     public function list_holiday(){
         return Holiday::all();
     }
@@ -135,10 +132,51 @@ class SettingController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['message'=>'Se ha producido un error'], 500);
         }
-
-
     }
 
+    public function get_whatsapp(){
+        return Setting::where('module', 'WP')->get();
+    }
 
+    public function get_general(){
+        return Setting::all();
+        //return Setting::where('module', 'MAIN')->get();
+    }
 
+    public function update_whatsapp(Request $request){
+        try {
+            Setting::where('key', 'wp_url')->update([
+                'value' => $request->wp_url
+            ]); 
+            Setting::where('key','wp_url_media' )->update([
+                'value' => $request->wp_url_media
+            ]); 
+            Setting::where('key','wp_token')->update([
+                'value' => $request->wp_token
+            ]); 
+
+            return response()->json(['message'=>'Configuración actualizada'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+    public function update_general(Request $request){
+
+        try {
+            $rows = $request->input('rows');
+
+            foreach ($rows as $row) {
+                $key = $row['key'];
+                $value = $row['value'];
+
+               // Buscar y actualizar la fila correspondiente en la base de datos
+               Setting::where('key', $key)->update(['value' => $value]);
+            }
+
+            return response()->json(['message'=>'Se han actualizado los datos'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
 }

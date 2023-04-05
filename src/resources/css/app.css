@@ -84,10 +84,6 @@
     font-style: normal;
 }
 
-
-
-
-
 @layer components{
 
     .btn-primary{
@@ -96,6 +92,14 @@
     .btn-blue{
         @apply inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent   rounded-md font-semibold text-xs   text-white uppercase tracking-widest   hover:bg-blue-600 active:bg-blue-900   focus:outline-none focus:border-blue-900   focus:ring focus:ring-blue-300   disabled:opacity-25 transition
     }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button{ 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+
+
 }
 
 @tailwind utilities;

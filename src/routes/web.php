@@ -76,7 +76,9 @@ Route::get('/contacts/changestatusbot/{id}', [ContactsController::class,'change_
 Route::get('/contacts/listdashboard', [ContactsController::class,'list_dashboard' ])
         ->name('contacts.listdashboard')
         ->middleware('auth');        
-        
+
+// Settings        
+
 Route::get('/settings', [SettingController::class, 'index'])
         ->name('settings')
         ->middleware('auth'); 
@@ -120,7 +122,26 @@ Route::get('/settings/deletemessage/{id}', [SettingController::class, 'delete_me
 Route::post('/settings/update', [SettingController::class, 'update_setting'])
         ->name('settings.update')
         ->middleware('auth'); 
+
+Route::get('/settings/getwhatsapp', [SettingController::class, 'get_whatsapp'])
+        ->name('settings.getwhatsapp')
+        ->middleware('auth');
+
+Route::get('/settings/getgeneral', [SettingController::class, 'get_general'])
+        ->name('settings.getgeneral')
+        ->middleware('auth');
+
+Route::post('/settings/updatewhatsapp', [SettingController::class, 'update_whatsapp'])
+        ->name('settings.updatewhatsapp')
+        ->middleware('auth');
+
+Route::post('/settings/updategeneral', [SettingController::class, 'update_general'])
+        ->name('settings.updategeneral')
+        ->middleware('auth');
+
         
+//* Obras Sociales *//
+
 Route::get('/booking', [BookingController::class, 'index'])
         ->name('booking')
         ->middleware('auth');

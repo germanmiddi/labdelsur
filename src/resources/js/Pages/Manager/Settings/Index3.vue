@@ -14,9 +14,9 @@
   </template>
   
   <script>
-  import Item1Component from './Item1Component.vue';
-  import Item2Component from './Item2Component.vue';
-  import Item3Component from './Item3Component.vue';
+  import Item1Component from './General.vue';
+  import Item2Component from './Turnos.vue';
+  import Item3Component from './Whatsapp.vue';
   import {
     UserCircleIcon,
   } from '@heroicons/vue/outline'  

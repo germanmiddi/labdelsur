@@ -1298,9 +1298,12 @@ class WhatsappController extends Controller
     }
 
     function dispatch_job(){
+
+        $waiting_time = Setting::where('key','waiting_time')->first()->value;
+
         Log::info(date("Y-m-d H:i:s") . " - Inicio del dispatch");
-        // ProcessConversations::dispatch()->delay(now()->addSeconds(300));
-        ProcessConversations::dispatch()->delay(now()->addSeconds(30));
+        ProcessConversations::dispatch()->delay(now()->addMinutes($waiting_time));
+        
     }
 
 
