@@ -8,7 +8,10 @@ use App\Http\Controllers\Manager\Whatsapp\WhatsappController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
 use App\Http\Controllers\Manager\Messages\MessagesController;
 use App\Http\Controllers\Manager\Contacts\ContactsController;
+
 use App\Http\Controllers\Manager\Settings\SettingController;
+use App\Http\Controllers\Manager\Settings\ChatbotmessageController;
+
 use App\Http\Controllers\Manager\Booking\BookingController;
 use App\Http\Controllers\Manager\ObrasSociales\ObrasSocialesController;
 use App\Http\Controllers\Manager\Estudios\EstudiosController;
@@ -139,6 +142,13 @@ Route::post('/settings/updategeneral', [SettingController::class, 'update_genera
         ->name('settings.updategeneral')
         ->middleware('auth');
 
+Route::get('/chatbotmessage/list', [ChatbotmessageController::class, 'list'])
+        ->name('chatbotmessage.list')
+        ->middleware('auth');
+
+Route::post('/chatbotmessage/update', [ChatbotmessageController::class, 'update'])
+        ->name('chatbotmessage.update')
+        ->middleware('auth');
         
 //* Obras Sociales *//
 

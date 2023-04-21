@@ -98,12 +98,6 @@ export default {
         }
     },
 
-    filters: {
-        nl2br(value) {
-            return value.replace(/\n/g, "<br>");
-        }
-    },  
-
     methods: {
         clearMessage() {
 			this.toastMessage = ""

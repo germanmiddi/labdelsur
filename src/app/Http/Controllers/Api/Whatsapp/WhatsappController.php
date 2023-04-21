@@ -13,6 +13,7 @@ use App\Models\Message;
 use App\Models\Setting;
 use App\Models\Waidsession;
 use App\Models\Contact;
+use App\Models\Chatbotmessage;
 
 use App\Http\Controllers\Manager\Booking\BookingController;
 
@@ -57,6 +58,8 @@ class WhatsappController extends Controller
         $this->dias[7] = "Domingo";
 
         $this->boot_status = true;
+
+        $this->messages = Chatbotmessage::pluck('message', 'name')->toArray();
     }
 
     public function receive_message(){
@@ -651,13 +654,9 @@ class WhatsappController extends Controller
             case '3':
                 $text = "Los pacientes de IOMA deben enviar las órdenes médicas para autorizar antes de concurrir al laboratorio.";
                 $text .= "Para enviar la orden a autorizar o bien si desea consultar el estado de una orden que envio previamente puede hacerlo digitando la opción:";
-                //$text .= "Si posee la orden original tráigala el día del estudio junto con el número de PRECARGA que le daremos. ";
-                //$text .= "Una vez autorizada tiene 3 meses para realizar los análisis.";
-                //$text .= "\n\nSi usted ya envió su orden y la misma sigue pendiente puede consultarnos el estado de la misma digitando la opción:";
                 $text .= "\n\n".$this->emojis[1]." ✅ Autorizaciones de órdenes"; 
                 $text .= "\n\n*_Si su orden ya está autorizada puede venir sin turno de 7:30 a 10:30 hs. de lunes a sábados_*. Si posee la orden original traigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizado tiene 3 meses para realizar los estudios";
                 $text .= "\nSi ya envió la orden para autorizar también puede consultar el estado de la misma ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI";
-                //$text .= "\nSi su orden ya está autorizada puede venir sin turno de 7 30 a 10 30 de lunes a sábados";
                 break;
 
             case strpos($current_step, "3.1") === 0: // Manejo de Presupuestos.
@@ -691,7 +690,6 @@ class WhatsappController extends Controller
                 break;
                 
             case '6':
-                // $text = "El horario de extracciones y entrega de muestras es de lunes a sábados de ⌚️ 7:30 a 10:30 hs."; 
                 $text = "El horario de extracciones y entrega de muestras es sin turno de lunes a sábados de ⌚️ 7:30 a 10:30 hs.";
                 $text .= "\nSi desea consultar su presupuesto puede hacerlo desde la siguiente opción";
                 $text .= "\n ".$this->emojis[1]." 💲 Presupuestos";
@@ -975,9 +973,10 @@ class WhatsappController extends Controller
                 break;
 
             case $current_step ===  '1':
-                $text = "El hisopado PCR  para SARS-CoV-2 🦠​ tiene un valor de $7.900 pesos con tarjeta de débito y $7.000 si abona en efectivo. Puede venir de lunes a viernes de 11:00 a 15:00 hs y sábados de 8:00 a 9:00 hs. Si desea los resultados en el día debería acercarse a las 11:00 o a las 8:00 hs. respectivamente.";
-                $text .= "\n\nEl test rápido para SARS-CoV-2 tiene un valor de $4.600 pesos con tarjeta de débito y $4.000 en efectivo. En caso de que quiera realizarlo puede venir de lunes a viernes de 11:00 a 15:00 hs. y sábado de 8:00 a 12:00 hs. Obtiene el resultado en el momento.";
-                $text .= "\n\nA domicilio el valor es $5.500 pesos el test rápido y $8.000 la PCR.";
+                // $text = "El hisopado PCR  para SARS-CoV-2 🦠​ tiene un valor de $7.900 pesos con tarjeta de débito y $7.000 si abona en efectivo. Puede venir de lunes a viernes de 11:00 a 15:00 hs y sábados de 8:00 a 9:00 hs. Si desea los resultados en el día debería acercarse a las 11:00 o a las 8:00 hs. respectivamente.";
+                // $text .= "\n\nEl test rápido para SARS-CoV-2 tiene un valor de $4.600 pesos con tarjeta de débito y $4.000 en efectivo. En caso de que quiera realizarlo puede venir de lunes a viernes de 11:00 a 15:00 hs. y sábado de 8:00 a 12:00 hs. Obtiene el resultado en el momento.";
+                // $text .= "\n\nA domicilio el valor es $5.500 pesos el test rápido y $8.000 la PCR.";
+                $text = $this->messages['covid_valor'];
                 break;
             
             case $current_step ===  '2':
@@ -1167,11 +1166,12 @@ class WhatsappController extends Controller
                 break;
 
             case $current_step === "3":
-                $text = "Los pacientes de IOMA deben enviar las órdenes médicas para autorizar antes de concurrir al laboratorio.";
-                $text .= "Para enviar la orden a autorizar o bien si desea consultar el estado de una orden que envio previamente puede hacerlo digitando la opción:";
-                $text .= "\n\n".$this->emojis[1]." ✅ Autorizaciones de órdenes"; 
-                $text .= "\n\n*_Si su orden ya está autorizada puede venir sin turno de 7:30 a 10:30 hs. de lunes a sábados_*. Si posee la orden original traigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizado tiene 3 meses para realizar los estudios";
-                $text .= "\nSi ya envió la orden para autorizar también puede consultar el estado de la misma ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI";
+                // $text = "Los pacientes de IOMA deben enviar las órdenes médicas para autorizar antes de concurrir al laboratorio.";
+                // $text .= "Para enviar la orden a autorizar o bien si desea consultar el estado de una orden que envio previamente puede hacerlo digitando la opción:";
+                // $text .= "\n\n".$this->emojis[1]." ✅ Autorizaciones de órdenes"; 
+                // $text .= "\n\n*_Si su orden ya está autorizada puede venir sin turno de 7:30 a 10:30 hs. de lunes a sábados_*. Si posee la orden original traigala el día del estudio junto con el número de PRECARGA que le asignamos. Una vez autorizado tiene 3 meses para realizar los estudios";
+                // $text .= "\nSi ya envió la orden para autorizar también puede consultar el estado de la misma ingresando a www.faba.org.ar en la opción “consulta de afiliado de IOMA” con su número de DNI";
+                $text = $this->messages['ioma'];
                 break;
             
                 case strpos($current_step, "3.1") === 0:

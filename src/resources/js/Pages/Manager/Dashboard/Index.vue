@@ -1,5 +1,7 @@
-
 <template>
+ <!-- eslint-disable	 -->
+
+
 	<AppLayout>
 		<template #content>
 			<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
@@ -29,7 +31,8 @@
 							<!-- user list -->
 							<div v-for="c in contacts" :key="c.id"
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer"
-								:class="[(c.message_status != 'read' ? 'bg-gray-100 border-l-4 border-l-blue-500' : '')]">
+								:class="[selectedContact == c.id ? 'bg-gray-50' : '',(c.message_status != 'read' ? 'bg-gray-100 border-l-4 border-l-blue-500' : '')]"
+								@click="selectContact(c)">
 								<div class="w-12  mr-4" @click="getMessages(c)">
 									<div
 										class="p-2 bg-indigo-300 rounded-full text-white flex items-center justify-center">
@@ -141,7 +144,7 @@
 								</div>
 
 								<div v-else class="w-9/12">
-									<textarea rows="1"
+									<textarea rows="2"
 										class="send-msj w-full bg-gray-100 border-transparent py-3 px-3 rounded-xl resize-none"
 										v-model="msg.text" type="text" placeholder="Escribe tu mensaje aquí..." 
 										@keypress.enter.prevent="sendMessage"/>
@@ -204,10 +207,11 @@
 						<div class="w-screen max-w-md">
 							<form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl">
 								<div class="flex-1 h-0 overflow-y-auto">
-									<div class="py-7 px-4 bg-gray-500 sm:px-6">
+									<div class="py-7 px-4 bg-indigo-400 sm:px-6">
 										<div class="flex items-center justify-between">
-											<DialogTitle class="text-lg font-medium text-white">
-												Mensajes Predefinidos
+											<DialogTitle class="text-lg font-medium text-white flex items-center ">
+												Mensajes Predefinidos <span><Icons v-if="this.sending" name="loading" class="h-4 w-4 ml-2"></Icons></span>
+												
 											</DialogTitle>
 											<div class="ml-3 h-7 flex items-center">
 												<button type="button"
@@ -224,8 +228,9 @@
 											<table class="w-full whitespace-nowrap">
 												<tr v-for="message in messageDefaults"
 													class="bg-white border-b text-center hover:bg-gray-100 focus-within:bg-gray-100">
-													<th scope="row" @click="msg.text = message.description, open = false"
-														class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap text-left">
+													<!-- <th scope="row" @click="msg.text = message.description"  -->
+														<th scope="row"	@click="setMessage(message.description)"
+														class="py-4 px-6 font-medium text-gray-900 text-left " style="whiteSpace: break-spaces">
 														{{ message.description }}
 													</th>
 												</tr>
@@ -359,7 +364,6 @@ export default {
 	data() {
 		return {
 			messages: "",
-			selectedContact: "",
 			intervalId: "",
 			loading: false,
 			selectedName: "",
@@ -376,7 +380,8 @@ export default {
 			},
 			open: false,
 			messageDefaults: "",
-			sending: false
+			sending: false,
+			selectedContact: null,
 		}
 	},
 	created() {
@@ -384,9 +389,19 @@ export default {
 			this.getMessagesDefaults()
 	},
 	methods: {
+
+		selectContact(c){
+			this.selectedContact = c.id
+		},
+
 		onFileChange(e) {
 			let file = e.target.files[0];
 			this.msg.image = file;
+		},
+
+		setMessage(message) {
+			this.msg.text = message
+			this.sendMessage()
 		},
 
 		/* handleScroll: function (el) {
@@ -499,7 +514,7 @@ export default {
 			this.loading = false
 		},
 
-		sendMessage() {
+		async sendMessage() {
 			this.sending = true
 			
 			let formData = new FormData();
@@ -512,20 +527,20 @@ export default {
 			this.msg.text = ''
 			this.msg.image = ''
 
-			axios.post(rt, formData)
-				.then(response => {
-					if (response.status == 200) {
-						this.getMessages(this.contact)
-						// this.labelType = "success"
-						// this.toastMessage = response.data.message
-						this.sending = false
-				}
-				}).catch(error => {
-					this.labelType = "danger"
-					this.toastMessage = 'Se ha producido un error'
-					this.getMessages(this.contact)
-				})
-			this.$refs.file.value = null
+			let response = await axios.post(rt, formData)
+				
+			if (response.status == 200) {
+				this.getMessages(this.contact)
+				this.sending = false
+			}else{
+				this.labelType = "danger"
+				this.toastMessage = 'Se ha producido un error'
+				this.getMessages(this.contact)
+			}
+
+			if(this.$refs.file){
+				this.$refs.file.value = null
+			}
 			this.sending = false
 		},
 

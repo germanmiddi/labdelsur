@@ -36,10 +36,13 @@ import General from './General.vue';
 import Turnos from './Turnos.vue';
 import Whatsapp from './Whatsapp.vue';
 import Mensajes from './Mensajes.vue';
+import Chatbot from './Chatbot.vue';
+
 import { CogIcon,
      	 CalendarIcon,
 		 ChatAltIcon,
 	     AdjustmentsIcon,
+		 ChatAlt2Icon
   		} from '@heroicons/vue/outline'  
 
 const subNavigation = [
@@ -47,6 +50,7 @@ const subNavigation = [
     { name: 'Turnos', icon: CalendarIcon, componentName: 'Turnos' },
     { name: 'API Whatsapp', icon: AdjustmentsIcon, componentName: 'Whatsapp' },
     { name: 'Mensajes', icon: ChatAltIcon, componentName: 'Mensajes' },
+    { name: 'Chatbot', icon: ChatAlt2Icon, componentName: 'Chatbot' },
 ]
 
 export default {
@@ -59,7 +63,8 @@ export default {
 		General,
 		Turnos,
 		Whatsapp,
-		Mensajes
+		Mensajes,
+		Chatbot
 	},
 
 	setup() {
