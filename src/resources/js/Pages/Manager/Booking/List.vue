@@ -75,8 +75,8 @@
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
 							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by = 'fullname', sortBookings()">
-								<div class="flex items-center justify-center">
+							<th scope="col" class="py-3 px-6 text-left" @click="sort_by = 'fullname', sortBookings()">
+								<div class="flex items-center">
 									Nombre
 									<Icons v-if="sort_by == 'fullname' && sort_order == 'ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
@@ -85,14 +85,14 @@
 									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
 								</div>
 							</th>
-							<th scope="col" class="py-3 px-6" @click="sort_by = 'name', sortBookings()">
-								<div class="flex items-center justify-center">
-									WhatsApp
-									<Icons v-if="sort_by == 'name' && sort_order == 'ASC'" name="bars-up"
+							<th scope="col" class="py-3 px-6 text-left">
+								<div class="flex items-center">
+									Documento y Nro Afiliado
+									<!-- <Icons v-if="sort_by == 'name' && sort_order == 'ASC'" name="bars-up"
 										class="h-4 w-4 ml-2" />
 									<Icons v-else-if="sort_by == 'name' && sort_order == 'DESC'" name="bars-down"
 										class="h-4 w-4 ml-2" />
-									<Icons v-else name="bars" class="h-4 w-4 ml-2" />
+									<Icons v-else name="bars" class="h-4 w-4 ml-2" /> -->
 								</div>
 							</th>
 							<th scope="col" class="py-3 px-6" @click="sort_by = 'status', sortBookings()">
@@ -116,14 +116,17 @@
 							<td class="py-4 px-6">
 								{{ printDate(booking.date) }}
 							</td>
-							<td class="py-4 px-6">
-								<p>{{ booking.contact.fullname }}</p>
-								<p>{{ booking.contact.nro_affiliate }}</p>
+							<td class="py-4 px-6 text-left capitalize">
+								<p class="text-medium" v-if="booking.contact.fullname">{{ booking.contact.fullname }} </p>
+								<p class="text-medium" v-else>{{ booking.contact.name }}</p>
+								<div class="text-gray-400 flex"><PhoneIcon class="w-4 mr-1" /><span>{{ booking.contact.wa_id }}</span></div>
 							</td>
-							<td class="py-4 px-6">
-								<p>{{ booking.contact.name }}</p>
-								<p>{{ booking.contact.wa_id }}</p>
+
+							<td class="py-4 px-6  text-left ">
+								<p> Doc: {{ booking.contact.nro_doc }}</p>
+								<p> Nro: {{ booking.contact.nro_affiliate }}</p>
 							</td>
+
 							<td class="py-4 px-6">
 								<!-- <span
 									class="inline-flex items-center justify-center px-2 py-1 mr-2 text-sm  leading-none rounded-md"
@@ -132,16 +135,15 @@
 									{{ booking.status.status }}
 								</span> -->
 								<span
-									class="inline-flex items-center justify-center px-3 py-1 mr-2 text-xs tracking-wider  rounded-sm "
+									class="inline-flex items-center justify-center px-3 py-1 mr-2 text-xs tracking-wider rounded-sm capitalize"
 									:class="labelStatus[booking.status.status]">
 									{{ booking.status.status }}
 								</span>
 
 							</td>
 							<td class="py-4 px-6">
-
-								<div>
-									<div v-if="booking.status.status == 'AGENDADO'" @click="changeStatus(booking.id, 3)" class="inline-flex items-center p-2 rounded-md cursor-pointer mr-2
+								<div >
+									<div v-if="booking.status.status == 'agendado'" @click="changeStatus(booking.id, 3)" class="inline-flex items-center p-2 rounded-md cursor-pointer mr-2
 											  text-green-900 bg-green-100 hover:bg-green-200 "><Icons name="clip-check" class="h-4 w-4 mr-1"/> Atendido</div>
 									<div @click="detailBooking(booking)" class="inline-flex items-center p-2 rounded-md cursor-pointer
 											  text-gray-600 bg-gray-100 hover:bg-gray-200 "><Icons name="view" class="h-4 w-4 mr-1"/> Detalle</div>
@@ -275,7 +277,7 @@
 												<div class="mt-1 flex justify-between">
 													<input type="text" v-model="form.status" name="status" id="status" disabled 														
 														   class="block w-60 shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-50" />
-													<button v-if="form.status == 'AGENDADO'" @click.prevent="changeStatus(form.id, 3)" class="px-4 py-1 bg-green-300 text-green-900 rounded-md hover:bg-green-400"> Confirmar Visita</button>
+													<button v-if="form.status == 'agendado'" @click.prevent="changeStatus(form.id, 3)" class="px-4 py-1 bg-green-300 text-green-900 rounded-md hover:bg-green-400"> Confirmar Visita</button>
 												</div>
 											</div>
 
@@ -351,7 +353,7 @@
 
 
 <script>
-import { CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/vue/solid'
+import { CheckCircleIcon, ChevronRightIcon, MailIcon,PhoneIcon } from '@heroicons/vue/solid'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import moment from 'moment';
 import Icons from '@/Layouts/Components/Icons.vue';
@@ -362,15 +364,15 @@ import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } f
 
 
 const labelStatus = {
-	'AGENDADO' : 'bg-indigo-100 text-indigo-800',
-	'FINALIZADO' : 'bg-green-100 text-green-800',
-	'CANCELADO' : 'bg-red-100 text-red-800',
+	'agendado' : 'bg-indigo-50 text-indigo-800 border border-indigo-300',
+	'finalizado' : 'bg-green-50 text-green-800 border border-green-400',
+	'cancelado' : 'bg-red-50 text-red-800 border border-red-300',
 }
 
 const statusIcon = {
-	'AGENDADO' : 'bg-indigo-500 text-white',
-	'CONFIRMADO' : 'bg-green-500 text-white',
-	'ATENDIDO' : 'bg-yellow-500 text-white'
+	'agendado' : 'bg-indigo-500 text-white',
+	'confirmado' : 'bg-green-500 text-white',
+	'atendido' : 'bg-yellow-500 text-white'
 }
 
 export default {
@@ -390,6 +392,7 @@ export default {
 		DialogTitle,
 		TransitionChild,
 		TransitionRoot,
+		PhoneIcon
 	},
 	setup() {
 		const format = (date) => {
@@ -436,6 +439,7 @@ export default {
 			this.form.fullname = booking.contact.fullname,
 			this.form.name = booking.contact.name,
 			this.form.wa_id = booking.contact.wa_id,
+			this.form.nro_doc = booking.contact.nro_doc,
 			this.form.nro_affiliate = booking.contact.nro_affiliate,
 			this.form.status_id = booking.status.id,
 			this.form.status = booking.status.status
