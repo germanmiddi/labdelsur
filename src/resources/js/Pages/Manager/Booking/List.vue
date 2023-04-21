@@ -5,28 +5,24 @@
 		<template #content>
 			<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 			<div class="focus-within:content flex-grow flex flex-col">
-				<div class="mx-auto my-10 text-4xl font-bold
-							xl: w-11/12
-							lg: w-11/12
-							flex justify-between">
+				<div class="text-4xl font-bold mb-6 flex justify-between">
 
 					<div class="flex items-center">
 						<h1>Turnos</h1>
 					</div>
 					<div class="flex text-sm">
-						<button
-							class="ml-2 inline-flex items-center p-1 border border-transparent rounded-lg shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-							@click="
-							form = {},
-							editingBooking = false,
-							viewBooking = false,
-							open = true">
+						<button class="px-3 py-2 border border-transparent rounded-lg shadow-sm text-white bg-blue-500 hover:bg-blue-700 
+								       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+								@click=" form = {},
+										editingBooking = false,
+										viewBooking = false,
+										open = true">
 							<span>Nuevo Turno </span>
 						</button>
 					</div>
 				</div>
 
-				<div class="lg:flex lg:items-center lg:justify-between">
+				<div class="lg:flex lg:items-center lg:justify-between mb-4">
 					<div class="min-w-0 flex-2 mr-2">
 						<Datepicker id="date" class="w-full" v-model="search_date" :enableTimePicker="false"
 							:monthChangeOnScroll="false" autoApply :format="format">
