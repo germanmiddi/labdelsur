@@ -454,8 +454,8 @@ class WhatsappController extends Controller
                 $text .= "\n ".$this->emojis[1]." 📆​ Turno para atención";
                 $text .= "\n ".$this->emojis[2]." ✅ Autorizaciones de órdenes (IOMA, OSSEG, COMEI, FATSA)";
                 $text .= "\n ".$this->emojis[3]." 📄 ¿Cómo obtener mis resultados?";
-                $text .= "\n ".$this->emojis[4]." 📍 Horario de atención y ubicación.";
-                $text .= "\n ".$this->emojis[5]." 🚗 Extracciones a domicilio.";
+                $text .= "\n ".$this->emojis[4]." 📍 Horario de atención y ubicación";
+                $text .= "\n ".$this->emojis[5]." 🚗 Extracciones a domicilio";
                 $text .= "\n ".$this->emojis[6]." 🦠 COVID 19";
                 $text .= "\n ".$this->emojis[7]." 🔬 Indicaciones de estudios";
                 $text .= "\n ".$this->emojis[8]." 🏥 Coberturas";
