@@ -18,8 +18,7 @@ use App\Http\Controllers\Manager\Estudios\EstudiosController;
 use App\Http\Controllers\Manager\Faqs\FaqsController;
 use App\Http\Controllers\Manager\User\UserController;
 use App\Http\Controllers\Web\HomeController;
-
-
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,6 +29,10 @@ use App\Http\Controllers\Web\HomeController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout');
+
 
 Route::get('/',[HomeController::class, 'index'])
         ->name('home');
@@ -174,7 +177,11 @@ Route::post('/booking/update', [BookingController::class, 'update_booking'])
         
 Route::post('/booking/updatestatus', [BookingController::class, 'update_status'])
         ->name('booking.updatestatus')
-                ->middleware('auth'); 
+        ->middleware('auth'); 
+
+Route::post('booking/store', [BookingController::class, 'store_booking'])
+        ->name('booking.store')
+        ->middleware('auth');
 
 Route::get('/user', [UserController::class, 'index'])
         ->name('user')

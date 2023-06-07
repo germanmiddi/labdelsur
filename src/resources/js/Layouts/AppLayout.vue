@@ -26,7 +26,8 @@
                 <div>
                   <MenuButton class="max-w-xs bg-indigo-600 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-600 focus:ring-white">
                     <span class="sr-only">Open user menu</span>
-                    <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" />
+                    <!-- <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" /> -->
+                    <div class="bg-white rounded-full p-2">{{ userInitials }}</div>
                   </MenuButton>
                 </div>
                 <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
@@ -57,7 +58,8 @@
         <div class="pt-4 pb-3 border-t border-indigo-700">
           <div class="flex items-center px-5">
             <div class="flex-shrink-0">
-              <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
+              <div>{{ userInitials }}</div>
+              <!-- <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" /> -->
             </div>
             <div class="ml-3">
               <div class="text-base font-medium text-white">{{ user.name }}</div>
@@ -115,9 +117,7 @@ const navigation = [
   { name: 'Configuración', href: route('settings'), current: window.location.pathname === '/settings' ? true : false },
 ]
 const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
+  { name: 'Salir', href: route('logout') }
 ]
 
 export default {
@@ -133,6 +133,26 @@ export default {
     MenuIcon,
     XIcon,
   },
+  computed: {
+    userInitials() {
+
+      // if (this.$page.auth.user) {
+      //   const name = this.$page.auth.user.name;
+      if (this.$page.props.user.name) {
+        const name = this.$page.props.user.name;        
+        const names = name.split(' ');
+
+        if (names.length > 1) {
+          const initials = names[0].charAt(0) + names[names.length - 1].charAt(0);
+          return initials.toUpperCase();
+        } else {
+          return name.charAt(0).toUpperCase();
+        }
+      }
+
+      return '';
+    }
+  },  
   setup() {
     return {
       user,

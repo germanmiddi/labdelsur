@@ -278,66 +278,28 @@
 											</div>
 
 										</div>
-										<!-- <div class="px-4 sm:px-6 font-medium" v-else>
-
-											<div class="mt-4">
-												<label for="fullname"
-													class="block text-sm font-medium text-gray-900">Nombre y
-													Apellido: {{ form.fullname }}</label>
-											</div>
-											<div class="mt-2">
-												<label for="nro_affiliate"
-													class="block text-sm font-medium text-gray-900">Nro.
-													Afiliado: {{ form.nro_affiliate }}</label>
-											</div>
-											<div class="mt-2">
-												<label for="fullname"
-													class="block text-sm font-medium text-gray-900">WhatsApp: {{ form.name }}</label>
-											</div>
-											<div class="mt-2">
-												<label for="telefono"
-													class="block text-sm font-medium text-gray-900">Telefono: {{ form.wa_id }}</label>
-											</div>
-											<div class="mt-2">
-												<label for="telefono"
-													class="block text-sm font-medium text-gray-900">Nro.
-													Documento: {{ form.nro_doc }}</label>
-											</div>
-
-											<div class="mt-2">
-												<label for="telefono"
-													class="block text-sm font-medium text-gray-900">Fecha: {{ printDate(form.date) }} </label>
-											</div>
-
-											<div class="mt-2">
-												<label for="telefono"
-													class="block text-sm font-medium text-gray-900">Estado: {{ form.status }}</label>
-											</div>
-
-										</div> -->
 									</div>
 								</div>
 
 								<div class="flex-shrink-0 px-4 py-4 flex justify-between">
-									<div>
-										<button type="button" v-if="form.status == 'AGENDADO'"
- 												class="bg-white py-2 px-4 border border-red-400 rounded-md shadow-sm text-sm font-medium text-red-700 
-													   hover:border-transparent hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-												@click="changeStatus(form.id, 2)">Cancelar Turno</button>
-									</div>									
-									<div>
-										<button type="button"
-											class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+									<button type="button"  v-if="form.status == 'cancelado' || form.status == 'finalizado'"
+											class=" py-2 px-4 border border-gray-300 bg-white rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 
+													focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 											@click="open = false">Cerrar</button>
 
-										<button @click.prevent="storeBooking" v-if="!viewBooking"
+									<button @click.prevent="storeBooking" v-if="form.id == undefined"
 											class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-											Guardar
-										</button>
+											Agendar Turno</button>
 
-									</div>
+									<button type="button" v-if="form.status == 'agendado'"
+											class="bg-white py-2 px-4 border border-red-400 rounded-md shadow-sm text-sm font-medium text-red-700 
+												hover:border-transparent hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+											@click="changeStatus(form.id, 2)">Cancelar Turno</button>
+
+									<button @click.prevent="updateBooking" v-if="form.status == 'agendado'"
+											class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+											Actualizar</button>
 								</div>
-
 							</form>
 						</div>
 					</TransitionChild>
@@ -352,7 +314,7 @@
 import { CheckCircleIcon, ChevronRightIcon, MailIcon,PhoneIcon } from '@heroicons/vue/solid'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import moment from 'moment';
-import Icons from '@/Layouts/Components/Icons.vue';
+import Icons  from '@/Layouts/Components/Icons.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Toast from '@/Layouts/Components/Toast.vue'
@@ -516,90 +478,82 @@ export default {
 
 		},
 
-		// async _changeStatus(id, action){
+		// async updateStatus(id, status) {
 
-		// 	let response = await axios.post('/booking/updatestatus', {
-		// 										id: id,
-		// 										status: action
-		// 									})
+		// 	let rt = route('booking.updatestatus');
+		// 	let status_id = ''
 
-
-		// 	if (response.data.status == 'success') {
-		// 		this.toastMessage = response.data.message
-		// 		this.labelType = "success"
-		// 	} else {
-		// 		this.toastMessage = response.data.message
-		// 		this.labelType = "error"
+		// 	switch (status) {
+		// 		case 1:
+		// 			status_id = this.booking_status.filter(function (obj) {
+		// 				if (obj.status == 'AGENDADO') {
+		// 					return obj.id
+		// 				}
+		// 			})
+		// 			break;
+		// 		case 2:
+		// 			status_id = this.booking_status.filter(function (obj) {
+		// 				if (obj.status == 'ATENDIDO') {
+		// 					return obj.id
+		// 				}
+		// 			})
+		// 			break;
+		// 		case 3:
+		// 			status_id = this.booking_status.filter(function (obj) {
+		// 				if (obj.status == 'CANCELADO') {
+		// 					return obj.id
+		// 				}
+		// 			})
+		// 			break;
+		// 		default:
+		// 			break;
 		// 	}
 
+		// 	this.form.status_id = status_id[0].id
+		// 	this.form.id = id
+
+		// 	axios.post(rt, {
+		// 		form: this.form,
+		// 	}).then(response => {
+		// 		this.open = false
+		// 		this.labelType = "success"
+		// 		this.toastMessage = response.data.message
+		// 		this.getBookings()
+		// 	}).catch(error => {
+		// 		this.labelType = "danger"
+		// 		this.toastMessage = error.response.data.message
+		// 	})
 		// },
 
-		async updateStatus(id, status) {
-
-			let rt = route('booking.updatestatus');
-			let status_id = ''
-
-			switch (status) {
-				case 1:
-					status_id = this.booking_status.filter(function (obj) {
-						if (obj.status == 'AGENDADO') {
-							return obj.id
-						}
-					})
-					break;
-				case 2:
-					status_id = this.booking_status.filter(function (obj) {
-						if (obj.status == 'ATENDIDO') {
-							return obj.id
-						}
-					})
-					break;
-				case 3:
-					status_id = this.booking_status.filter(function (obj) {
-						if (obj.status == 'CANCELADO') {
-							return obj.id
-						}
-					})
-					break;
-				default:
-					break;
-			}
-
-			this.form.status_id = status_id[0].id
-			this.form.id = id
-
-			axios.post(rt, {
-				form: this.form,
-			}).then(response => {
-				this.open = false
-				this.labelType = "success"
-				this.toastMessage = response.data.message
-				this.getBookings()
-			}).catch(error => {
-				this.labelType = "danger"
-				this.toastMessage = error.response.data.message
-			})
-		},
-
 		async storeBooking() {
-			let rt = ''
-			if (this.editingBooking) {
-				rt = route('booking.updatebooking');
-			} else {
-				rt = route('booking.createbooking');
-			}
 
-			axios.post(rt, {
-				form: this.form,
-			}).then(response => {
+			let response = await axios.post(route('booking.createbooking'), { form: this.form })
+
+			if(response.status == 200){
 				this.open = false
 				this.labelType = "success"
 				this.toastMessage = response.data.message
 				this.getBookings()
-			}).catch(error => {
+			}else{
 				this.labelType = "danger"
-				this.toastMessage = error.response.data.message
-			})
+				this.toastMessage = response.data.message
+			}
+
+		},
+		async updateBooking() {
+
+			let response = await axios.post(route('booking.createbooking'), { form: this.form })
+
+			if(response.status == 200){
+				this.open = false
+				this.labelType = "success"
+				this.toastMessage = response.data.message
+				this.getBookings()
+			}else{
+				this.labelType = "danger"
+				this.toastMessage = response.data.message
+			}
+
 		},
 	}
 }

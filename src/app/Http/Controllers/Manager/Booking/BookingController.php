@@ -157,6 +157,7 @@ class BookingController extends Controller
             
         }
     }
+    
     public function get_days_available($date = ''){
         
         $data = $this->days_available($date);
@@ -217,8 +218,11 @@ class BookingController extends Controller
                 'code' => 500,
                 'message' => 'Se ha producido un error'
             ];
+        }
     }
-}
+
+
+
 
     public function store_booking($data){
 
@@ -269,8 +273,8 @@ class BookingController extends Controller
                 'code' => 500,
                 'message' => 'Se ha producido un error'
             ];
+        }
     }
-}
 
     public function check_booking_available($date){
         
@@ -330,5 +334,18 @@ class BookingController extends Controller
             return response()->json(['message'=>'Error al actualizar el turno'], 400);
         }
     }
+
+    public function store(Request $request){
+
+        $data = $request->all();
+        $data['date'] = Carbon::parse($data['date'])->format('Y-m-d');
+        $data['status_id'] = 1;
+        $data['contact_id'] = 1;
+
+        $booking = Booking::create($data);
+
+        return response()->json(['message'=>'Turno creado correctamente'], 200);
+
+    }   
 
 }

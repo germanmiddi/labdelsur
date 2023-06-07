@@ -837,10 +837,11 @@ class WhatsappController extends Controller
         switch($current_step) {
 
             case '':
-                $text  = "Para autorizaciones envie foto de la orden, del carnet y del bono si tiene uno. ";
-                $text .= "Su orden sera revisada por un agente y pasada a autorizar en la brevedad.";
-                $text .= "Cuando la misma se haya realizado le indicaremos un numero de precarga que debe tener presente al momento de asistir al laboratorio";
-                $text .= "\n\n*_Si Ud._* ha dejado su orden para autorizar y desea conocer su estado digite la siguiente opción y luego indíquenos su apellido y número de precarga";
+                // $text  = "Para autorizaciones envie foto de la orden, del carnet y del bono si tiene uno. ";
+                // $text .= "Su orden sera revisada por un agente y pasada a autorizar en la brevedad.";
+                // $text .= "Cuando la misma se haya realizado le indicaremos un numero de precarga que debe tener presente al momento de asistir al laboratorio";
+                // $text .= "\n\n*_Si Ud._* ha dejado su orden para autorizar y desea conocer su estado digite la siguiente opción y luego indíquenos su apellido y número de precarga";
+                $text = $this->messages['authz'];
                 $text .= "\n\n".$this->emojis[1]." ". $this->message_default(1);
                 break;
 
@@ -872,11 +873,14 @@ class WhatsappController extends Controller
         switch($current_step) {
 
             case '':
-                $text = "📒 Para acceder a su resultado debe realizar los siguientes pasos:";
-                $text .= "\n\n*Paso 1* - Dirigite a este link: https://delsur.kernitcloud.com/#/login/paciente.";
-                $text .= "\n*Paso 2* - Ingresá al punto de menú _'resultados'_";
-                $text .= "\n*Paso 3* - Cargá el número de orden que te dimos cuando te realizaste el estudio.";
-                $text .= "\n*Paso 4* - Si no contás con el número de orden, cargá tal dato…";
+                // $text = "📒 Para acceder a su resultado debe realizar los siguientes pasos:";
+                // $text .= "\n\n*Paso 1* - Dirigite a este link: https://delsur.kernitcloud.com/#/login/paciente.";
+                // $text .= "\n*Paso 2* - Ingresá al punto de menú _'resultados'_";
+                // $text .= "\n*Paso 3* - Cargá el número de orden que te dimos cuando te realizaste el estudio.";
+                // $text .= "\n*Paso 4* - Si no contás con el número de orden, cargá tal dato…";
+                // break;
+
+                $text = $this->messages['resultados'];
                 break;
 
             default:
