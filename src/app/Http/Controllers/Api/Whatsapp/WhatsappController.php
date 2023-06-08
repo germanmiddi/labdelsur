@@ -881,6 +881,11 @@ class WhatsappController extends Controller
                 // break;
 
                 $text = $this->messages['resultados'];
+                $text .= "\n\n".$this->emojis[1]." ". $this->message_default(1);
+                break;
+            
+            case '1':
+                $text = $this->message_default(2, $wa_id);
                 break;
 
             default:
