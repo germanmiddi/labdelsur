@@ -761,13 +761,15 @@ class WhatsappController extends Controller
                 $bookings = $bookingController->store_booking($form);
 
                 if($bookings['code'] == 200){
-                    $text = "✅ Estimado/a ".$nombre->body ." su turno a sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:30 hs.";
+                    $text = "✅ Estimado/a ".$nombre->body ." su turno ha sido correctamente agendado para el dia ".$fecha.", en el horario de ⌚️ 7:30 a 10:30 hs.";
                     
                     $text .= "\n🤔​ Recuerde consultar las indicaciones para su estudio.";
                     $text .= "\n\nPresione ".$this->emojis[7]." para ver el menu de 🔬 Indicaciones de estudios";
+                    
+                    $text .= $this->messages['confirma_turno'];
 
-                    $text .= "\n\n📝 *_Puede venir en el día asignado de 7:30 a 10:30 hs. con la orden, el carnet y la autorización._* Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
-                    $text .= "\n▶ Si pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.800 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
+                    // $text .= "\n\n📝 *_Puede venir en el día asignado de 7:30 a 10:30 hs. con la orden, el carnet y la autorización._* Por favor asistir con la orden firmada al dorso con DNI, firma y aclaración y lo mismo en las autorizaciones al frente. Solicitamos concurrir sin acompañantes.";
+                    // $text .= "\n▶ Si pertenece a la mutual (carnet dorado) no abona el coseguro y sólo abona el Acto Profesional Bioquímico de $1.800 pesos, si no tiene mutual se suma el valor del coseguro indicado por la obra social en la autorización.";
                 }else{
                     $text = "⛔ No se ha sido posible realizar el registro de su turno, por favor comuniquese telefónicamente o intentelo mas tarde.";
                 } 
