@@ -458,18 +458,30 @@ export default {
 
 		async getContacts() {
 			const get = `${route('contacts.listdashboard')}`
-			setInterval(function () {
-				axios.get(get)
-					.then(response => {
+			
+			const fetchContacts = async () => {
+				try{
+					const response = await axios.get(get)
+
+					if (response.status == 200) {
 						if (this.selectedWaId) {
 							var elemento = response.data.data.find(el => el.wa_id == this.selectedWaId);
 							if (elemento.message_status != 'read') {
 								this.getMessages(this.contact);
 							}
 						}
-						this.contacts = response.data.data
-					})
-			}.bind(this), 3000)
+						this.contacts = response.data.data						
+					}
+
+				}catch (error){
+					console.error('Error al obtener los contactos:', error);
+				}
+
+				setTimeout(fetchContacts, 3000);
+
+			}
+			
+			await fetchContacts();
 
 		},
 
