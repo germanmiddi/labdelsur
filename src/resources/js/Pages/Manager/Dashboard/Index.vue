@@ -29,36 +29,36 @@
 							</div> -->
 							<!-- end search compt -->
 							<!-- user list -->
-							<div v-for="c in contacts" :key="c.id"
+							<div v-for="c in contacts" :key="c.contact.id"
 								class="flex flex-row py-4 px-4 justify-center items-center border-b hover:bg-gray-50 hover:cursor-pointer"
-								:class="[selectedContact == c.id ? 'bg-gray-50' : '',(c.message_status != 'read' ? 'bg-gray-100 border-l-4 border-l-blue-500' : '')]"
+								:class="[selectedContact == c.contact.id ? 'bg-gray-50' : '',(c.message.status != 'read' ? 'bg-gray-100 border-l-4 border-l-blue-500' : '')]"
 								@click="selectContact(c)">
 								<div class="w-12  mr-4" @click="getMessages(c)">
 									<div
 										class="p-2 bg-indigo-300 rounded-full text-white flex items-center justify-center">
-										{{ c.name.substr(0, 2).toUpperCase() }}</div>
+										{{ c.contact.name.substr(0, 2).toUpperCase() }}</div>
 								</div>
 								<div class="w-7/12" @click="getMessages(c)">
 									<div class="text-sm text-gray-800"
-										:class="[(c.message_status != 'read' ? 'font-semibold' : 'font-normal')]">
-										{{ c.name }}<br>
+										:class="[(c.message.status != 'read' ? 'font-semibold' : 'font-normal')]">
+										{{ c.contact.name }}<br>
 										<span class="text-sm text-gray-500"
-											:class="[(c.message_status != 'read' ? 'font-semibold' : 'font-normal')]">
-										{{ c.wa_id }}</span>
+											:class="[(c.message.status != 'read' ? 'font-semibold' : 'font-normal')]">
+										{{ c.contact.wa_id }}</span>
 									</div>
 								</div>
 								<div class=" text-sm">
-									<a v-if="c.bot_status == 'CHATBOT' " type="button" @click="changeStatusBot(c.id)"
+									<a v-if="c.contact.bot_status == 'CHATBOT' " type="button" @click="changeStatusBot(c.contact.id)"
 										title="Chat con asesor"
 										class="inline-flex items-center px-3 py-1 border border-transparent bg-slate-200 hover:text-slate-800 hover:border-slate-400 text-slate-600 rounded-full">
 										<Icons name="cog" class="h-5 w-5 mr-1"></Icons> ChatBot
 									</a>
-									<a v-else-if="c.bot_status == 'WAITING'" type="button" @click="changeStatusBot(c.id)" 
+									<a v-else-if="c.contact.bot_status == 'WAITING'" type="button" @click="changeStatusBot(c.contact.id)" 
 										class="inline-flex items-center px-3 py-1 border border-transparent bg-yellow-200 hover:text-yellow-700 hover:border-yellow-700 hover:border rounded-full shadow-sm text-yellow-600">
 										<BellIcon class="h-6 w-6 mr-1"/> Waiting
 										
 									</a>
-									<a v-else-if="c.bot_status == 'ASESOR'" type="button" @click="changeStatusBot(c.id)" 
+									<a v-else-if="c.contact.bot_status == 'ASESOR'" type="button" @click="changeStatusBot(c.contact.id)" 
 										class="inline-flex items-center px-3 py-1 border border-transparent bg-green-200 hover:text-green-700 hover:border-green-700 hover:border rounded-full shadow-sm text-green-600 ">
 										<Icons name="chat" class="h-5 w-5 mr-1"></Icons> Asesor
 									</a>
@@ -391,7 +391,7 @@ export default {
 	methods: {
 
 		selectContact(c){
-			this.selectedContact = c.id
+			this.selectedContact = c.contact
 		},
 
 		onFileChange(e) {
@@ -431,12 +431,12 @@ export default {
 		},
 
 		async getMessages(c) {
-			this.contact = c
+			this.contact = c.contact
 			//this.loading = true
-			this.selectedName = c.name
-			this.selectedWaId = c.wa_id
+			this.selectedName = c.contact.name
+			this.selectedWaId = c.contact.wa_id
 
-			let wa_id = c.wa_id
+			let wa_id = c.contact.wa_id
 			const get = `${route('messages.list')}?wa_id=${wa_id}`
 
 			//clearInterval(this.intervalId)
@@ -465,8 +465,8 @@ export default {
 
 					if (response.status == 200) {
 						if (this.selectedWaId) {
-							var elemento = response.data.data.find(el => el.wa_id == this.selectedWaId);
-							if (elemento.message_status != 'read') {
+							var elemento = response.data.data.find(el => el.contact.wa_id == this.selectedWaId);
+							if (elemento.message.status != 'read') {
 								this.getMessages(this.contact);
 							}
 						}
@@ -477,7 +477,7 @@ export default {
 					console.error('Error al obtener los contactos:', error);
 				}
 
-				setTimeout(fetchContacts, 3000);
+				setTimeout(fetchContacts, 4000);
 
 			}
 			

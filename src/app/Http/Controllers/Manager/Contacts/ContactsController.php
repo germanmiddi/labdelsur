@@ -66,11 +66,11 @@ class ContactsController extends Controller
                         ->paginate(999)
                         ->withQueryString()
                         ->through(fn ($contact) => [
-                        'id'            => $contact->id,
-                        'name'          => $contact->name,
-                        'wa_id'         => $contact->wa_id,
-                        'bot_status'    => $contact->bot_status,
-                        'message_status'       => $contact->messages()->latest()->first()->status,
+                        'contact'            => $contact,
+                        //'name'          => $contact->name,
+                        //'wa_id'         => $contact->wa_id,
+                        //'bot_status'    => $contact->bot_status,
+                        //'message_status'       => $contact->messages()->latest()->first()->status,
                         'message'        => $contact->messages()->latest()->first()
                     ]);  
         
