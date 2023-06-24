@@ -52,6 +52,12 @@ class ContactsController extends Controller
     public function list_dashboard(){
 
         $result = Contact::query();
+
+        if(request('status') == 1){
+            $result->where('bot_status','!=','CHATBOT');
+        }
+
+        $length = request('length');
         $result->Join(DB::raw('(select contact_id, status, created_at as date 
                                         from messages 
                                         where id in (
@@ -63,14 +69,10 @@ class ContactsController extends Controller
         
         return  $result ->orderBy('msg.status', 'ASC')                
                         ->orderBy('msg.date', 'DESC')
-                        ->paginate(999)
+                        ->paginate($length)
                         ->withQueryString()
                         ->through(fn ($contact) => [
-                        'contact'            => $contact,
-                        //'name'          => $contact->name,
-                        //'wa_id'         => $contact->wa_id,
-                        //'bot_status'    => $contact->bot_status,
-                        //'message_status'       => $contact->messages()->latest()->first()->status,
+                        'contact'        => $contact,
                         'message'        => $contact->messages()->latest()->first()
                     ]);  
         

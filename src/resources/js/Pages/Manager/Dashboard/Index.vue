@@ -9,6 +9,30 @@
 				<div class="text-lg font-bold flex justify-between pl-2">
 					<div class="flex items-center">
 						<h1 class="font-[jost] text-2xl text-gray-800">Centro de Mensajes<span v-if="selectedName">: {{ this.selectedName }}</span></h1>
+					</div> 
+
+					<div class="mt-5 flex lg:mt-0 lg:ml-4">
+						<div>
+							<label class="font-semibold mr-2 mt-2" for="">Estado: </label>
+						<select class="text-sm border-gray-300 rounded-md" v-model="status">
+							<option value="0">Todos</option>
+							<option value="1">Asesor - Waiting</option>
+						</select>
+						
+							<label class="font-semibold ml-2 mr-2 mt-2" for="">Ver: </label>
+						<select class="text-sm border-gray-300 rounded-md" v-model="length">
+							<option value="30">30</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+							<option value="200">200</option>
+							<option value="1000">Todos</option>
+						</select>
+						</div>
+						<div>
+
+						
+						</div>
+
 					</div>
 				</div>
 
@@ -382,11 +406,14 @@ export default {
 			messageDefaults: "",
 			sending: false,
 			selectedContact: null,
+			status: 1,
+			length: 30
+			
 		}
 	},
 	created() {
 		this.getContacts(),
-			this.getMessagesDefaults()
+		this.getMessagesDefaults()
 	},
 	methods: {
 
@@ -457,13 +484,17 @@ export default {
 		},
 
 		async getContacts() {
-			const get = `${route('contacts.listdashboard')}`
 			
 			const fetchContacts = async () => {
 				try{
+					console.log('- 1')
+					let filtro = `&status=${this.status}`
+					filtro += `&length=${this.length}`
+					const get = `${route('contacts.listdashboard')}?${filtro}`
 					const response = await axios.get(get)
-
+					
 					if (response.status == 200) {
+						
 						if (this.selectedWaId) {
 							var elemento = response.data.data.find(el => el.contact.wa_id == this.selectedWaId);
 							if (elemento.message.status != 'read') {
@@ -471,13 +502,14 @@ export default {
 							}
 						}
 						this.contacts = response.data.data						
+						console.log("LENGH " +this.contacts.length )
 					}
 
 				}catch (error){
 					console.error('Error al obtener los contactos:', error);
 				}
 
-				setTimeout(fetchContacts, 4000);
+				setTimeout(fetchContacts, 3000);
 
 			}
 			
@@ -492,7 +524,6 @@ export default {
 
 			axios.get(get)
 				.then(response => {
-					console.log(response.data)
 					this.messageDefaults = response.data
 				})
 
@@ -506,7 +537,6 @@ export default {
 			const response = await fetch(get, { method: 'GET' })
 			const message = await response.json()
 
-			console.log(message)
 
 		},
 
