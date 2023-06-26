@@ -84,7 +84,6 @@ class ContactsController extends Controller
             $contact = Contact::where('id', $id)->first();
 
             $value = $contact->bot_status == 'CHATBOT' ? 'ASESOR' : 'CHATBOT';
-            
 
             Contact::where('id', $id)->update([
                 'bot_status' => $value
@@ -96,5 +95,15 @@ class ContactsController extends Controller
             return response()->json(['message'=>'Se ha producido un error'], 500);
         }
     }
+
+    public function getContact($dni)
+        {
+            return  Contact::where('nro_doc', $dni)
+            ->paginate(999)
+            ->withQueryString()
+            ->through(fn ($contact) => [
+                'contact'   => $contact
+            ]);
+        }
 
 }

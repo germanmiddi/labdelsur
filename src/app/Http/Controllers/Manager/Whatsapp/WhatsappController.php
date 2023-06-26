@@ -61,7 +61,7 @@ class WhatsappController extends Controller
 
             //Obtengo Configuraciones
             $wp_url = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
-            $wp_url_media = Setting::where('module', 'WP')->where('key', 'wp_url')->first();
+            $wp_url_media = Setting::where('module', 'WP')->where('key', 'wp_url_media')->first();
             $wp_token = Setting::where('module', 'WP')->where('key', 'wp_token')->first();
 
             //Datos del contacto
@@ -106,7 +106,7 @@ class WhatsappController extends Controller
                 
                 curl_close ($ch2);
                 $data = json_decode($server_output);
-
+                        
                 $id_file = $data->id;
 
                 // ENVIO DE IMAGEN

@@ -109,13 +109,18 @@
 							</td>
 
 							<td class="py-4 px-6">
-								<a v-if="contact.bot_status" type="button" @click="changeStatusBot(contact.id)" title="Chat con asesor"
+								<a v-if="contact.bot_status == 'CHATBOT'" type="button" @click="changeStatusBot(contact.id)" title="Chat con asesor"
 									class="inline-flex items-center p-1 border border-transparent rounded-full bg-orange-300 hover:bg-orange-700 shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 									>
 									<Icons name="cog" class="h-5 w-5"></Icons> Bot
 									</a>
-									<a v-else type="button" @click="changeStatusBot(contact.id)" title="Chat con bot"
+									<a v-else-if ="contact.bot_status == 'ASESOR'" type="button" @click="changeStatusBot(contact.id)" title="Chat con bot"
 									class="inline-flex items-center p-1 border border-transparent bg-green-300 hover:bg-green-700 rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+									>
+									<Icons name="chat" class="h-5 w-5"></Icons> Asesor
+									</a>
+									<a v-else type="button" @click="changeStatusBot(contact.id)" title="Chat con bot"
+									class="inline-flex items-center p-1 border border-transparent bg-yellow-300 hover:bg-yellow-700 rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 									>
 									<Icons name="chat" class="h-5 w-5"></Icons> Asesor
 									</a>

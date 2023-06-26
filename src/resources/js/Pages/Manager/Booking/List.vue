@@ -220,6 +220,15 @@
 												</div>
 											</div>
 
+											<div class="mt-2">
+												<label for="telefono"
+													   class="block text-sm font-medium text-gray-900">Documento</label>
+												<div class="mt-1">
+													<input type="text" v-model="form.nro_doc" name="nro_doc" id="nro_doc" @focusout="getContact()"
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500  rounded-md" />
+												</div>
+											</div>
+
 											<div class="mt-4">
 												<label for="fullname"
 													   class="block text-sm font-medium text-gray-900">Nombre y Apellido</label>
@@ -227,15 +236,6 @@
 													<input type="text" v-model="form.fullname" name="fullname"
 														id="fullname"
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md" />
-												</div>
-											</div>
-											
-											<div class="mt-2">
-												<label for="telefono"
-													   class="block text-sm font-medium text-gray-900">Documento</label>
-												<div class="mt-1">
-													<input type="text" v-model="form.nro_doc" name="nro_doc" id="nro_doc"
-														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500  rounded-md" />
 												</div>
 											</div>
 
@@ -253,7 +253,7 @@
 												<label for="fullname"
 													class="block text-sm font-medium text-gray-900">Nombre en WhatsApp</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.name" name="name" id="name" disabled
+													<input type="text" v-model="form.name" name="name" id="name"
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-50" />
 												</div>
 											</div>
@@ -262,7 +262,7 @@
 												<label for="telefono"
 													class="block text-sm font-medium text-gray-900">Teléfono</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.wa_id" name="wa_id" id="wa_id" disabled 														
+													<input type="text" v-model="form.wa_id" name="wa_id" id="wa_id"  														
 														   class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-50" />
 												</div>
 											</div>
@@ -476,6 +476,22 @@ export default {
 				this.labelType = "danger"
 			}
 
+		},
+		async getContact(){
+
+			const get = `${route('contacts.getContact', this.form.nro_doc)}`
+			const response = await fetch(get, { method: 'GET' })
+            let data = await response.json()
+			if(!data.data.length == 0){
+				data = data.data[0].contact
+				this.form.name = data.name
+				this.form.fullname = data.fullname
+				this.form.nro_affiliate = data.nro_affiliate
+				this.form.wa_id = data.wa_id	
+			}else{
+				this.labelType = "info";
+                this.toastMessage = "El DNI indicado no se encuentra registrado";
+			}
 		},
 
 		// async updateStatus(id, status) {

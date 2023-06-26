@@ -388,7 +388,7 @@ class WhatsappController extends Controller
                     break;
                 
                 default:
-                    $body = "No entendi tu mensaje";
+                    $body = "No entendi tu mensaje. \nPresione 0.";
                     break;
             }
 
@@ -460,6 +460,7 @@ class WhatsappController extends Controller
                 $text .= "\n ".$this->emojis[7]." 🔬 Indicaciones de estudios";
                 $text .= "\n ".$this->emojis[8]." 🏥 Coberturas";
                 $text .= "\n ".$this->emojis[9]." 💲 Presupuestos";
+                $text .= "\n\n *- Por Ejemplo presione (1)*";
                 break;
 
             case strpos($current_step, "0.1") === 0: // Manejo de Turnos...
@@ -1261,7 +1262,7 @@ class WhatsappController extends Controller
                 return "💬 Usted esta siendo derivado a un agente, por favor aguarde y será contactado.";
                 break;
             case 3: // 
-                return "No entendi su consulta. 🤔​";
+                return "No entendi su consulta. 🤔\nPresione 0.";
                 break;
             case 4: // 
                 if($this->boot_status){

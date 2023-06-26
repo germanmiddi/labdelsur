@@ -81,7 +81,12 @@ Route::get('/contacts/changestatusbot/{id}', [ContactsController::class,'change_
 
 Route::get('/contacts/listdashboard', [ContactsController::class,'list_dashboard' ])
         ->name('contacts.listdashboard')
-        ->middleware('auth');        
+        ->middleware('auth');  
+        
+Route::get('/contacts/getContact/{dni}', [ContactsController::class, 'getContact'])
+        ->name('contacts.getContact')
+        ->middleware('auth');
+
 
 // Settings        
 
