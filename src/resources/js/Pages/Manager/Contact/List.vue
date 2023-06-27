@@ -122,7 +122,7 @@
 									<a v-else type="button" @click="changeStatusBot(contact.id)" title="Chat con bot"
 									class="inline-flex items-center p-1 border border-transparent bg-yellow-300 hover:bg-yellow-700 rounded-full shadow-sm text-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 									>
-									<Icons name="chat" class="h-5 w-5"></Icons> Asesor
+									<BellIcon class="h-5 w-5 mr-1"/> Waiting
 									</a>
 							</td>
 						</tr>
@@ -242,7 +242,7 @@
 
 
 <script>
-import { CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/vue/solid'
+import { BellIcon, CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/vue/solid'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import moment from 'moment';
 import Icons from '@/Layouts/Components/Icons.vue';
@@ -260,6 +260,7 @@ export default {
 		CheckCircleIcon, ChevronRightIcon, MailIcon,
 		moment,
 		Icons,
+		BellIcon,
 		Datepicker,
 		Toast,
 		Dialog,

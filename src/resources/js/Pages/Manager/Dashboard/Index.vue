@@ -460,6 +460,7 @@ export default {
 		async getMessages(c) {
 			this.contact = c.contact
 			//this.loading = true
+			console.log()
 			this.selectedName = c.contact.name
 			this.selectedWaId = c.contact.wa_id
 
@@ -487,22 +488,19 @@ export default {
 			
 			const fetchContacts = async () => {
 				try{
-					console.log('- 1')
 					let filtro = `&status=${this.status}`
 					filtro += `&length=${this.length}`
 					const get = `${route('contacts.listdashboard')}?${filtro}`
 					const response = await axios.get(get)
 					
 					if (response.status == 200) {
-						
 						if (this.selectedWaId) {
 							var elemento = response.data.data.find(el => el.contact.wa_id == this.selectedWaId);
 							if (elemento.message.status != 'read') {
-								this.getMessages(this.contact);
+								this.getMessages(elemento);
 							}
 						}
 						this.contacts = response.data.data						
-						console.log("LENGH " +this.contacts.length )
 					}
 
 				}catch (error){
