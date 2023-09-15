@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\DetailDay;
 use App\Models\Holiday;
 use App\Models\Booking;
+use App\Models\BookingContact;
 use App\Models\BookingStatus;
 use App\Models\Contact;
 use App\Models\Setting;
@@ -30,7 +31,7 @@ class BookingController extends Controller
 
     public function list(){
 
-        $result = Booking::query();
+        $result = Booking::query()->with('status')->with('BookingContact');
 
         $length = request('length');
         $sort_by = request('sort_by') ?? 'id';
@@ -42,30 +43,30 @@ class BookingController extends Controller
             $result->whereDate('date', $search_date);
         }
 
-        if(request('search')){
-            $search = request('search');
+        // if(request('search')){
+        //     $search = request('search');
 
-            $result->whereHas('contact', function($q) use ($search){
-                $q->Where('fullname','LIKE', '%'. $search . '%')
-                    ->orWhere('name','LIKE', '%'. $search . '%')
-                    ->orWhere('wa_id','LIKE', '%'. $search . '%')
-                    ->orWhere('nro_affiliate','LIKE', '%'. $search . '%');
-            });
+        //     $result->whereHas('contact', function($q) use ($search){
+        //         $q->Where('fullname','LIKE', '%'. $search . '%')
+        //             ->orWhere('name','LIKE', '%'. $search . '%')
+        //             ->orWhere('wa_id','LIKE', '%'. $search . '%')
+        //             ->orWhere('nro_affiliate','LIKE', '%'. $search . '%');
+        //     });
 
             
-        }
+        // }
 
-        if($sort_by === 'fullname' || $sort_by === 'nro_affiliate' || $sort_by === 'wa_id' || $sort_by === 'name'){
-            $sort_by = 'contact.'.$sort_by;
-            $result->leftJoin(DB::raw('(select * from contacts) as contact'), function ($join) {
-                                    $join->on ( 'contact.id', '=', 'contact_id' );
-                    });
-        }else if($sort_by === 'status'){
-            $sort_by = 'booking_status.'.$sort_by;
-            $result->leftJoin(DB::raw('(select * from booking_status) as booking_status'), function ($join) {
-                                    $join->on ( 'booking_status.id', '=', 'status_id' );
-                    });
-        }
+        // if($sort_by === 'fullname' || $sort_by === 'nro_affiliate' || $sort_by === 'wa_id' || $sort_by === 'name'){
+        //     $sort_by = 'contact.'.$sort_by;
+        //     $result->leftJoin(DB::raw('(select * from contacts) as contact'), function ($join) {
+        //                             $join->on ( 'contact.id', '=', 'contact_id' );
+        //             });
+        // }else if($sort_by === 'status'){
+        //     $sort_by = 'booking_status.'.$sort_by;
+        //     $result->leftJoin(DB::raw('(select * from booking_status) as booking_status'), function ($join) {
+        //                             $join->on ( 'booking_status.id', '=', 'status_id' );
+        //             });
+        // }
 
         
         return  $result ->orderBy($sort_by, $sort_order)
@@ -74,8 +75,8 @@ class BookingController extends Controller
                         ->through(fn ($booking) => [
                             'id'                    => $booking->id,
                             'date'                  => $booking->date,
-                            'contact'               => $booking->contact()->first(),
-                            'status'                => $booking->status()->first(),
+                            'contact'               => $booking->bookingContact,
+                            'status'                => $booking->status,
                         ]);
 
     }
@@ -186,38 +187,30 @@ class BookingController extends Controller
         DB::beginTransaction();
         try {
             // ACTUALIZO LOS DATOS DEL CONTACTO
-            Contact::where('wa_id', $request->form['wa_id'])->update([
-                'fullname' => $request->form['fullname'],
-                'name' => $request->form['name'] ?? '',
-                'nro_doc'  => $request->form['nro_doc'] ?? null, 
-                'nro_affiliate' => $request->form['nro_affiliate'] ?? null  
-            ]);
-            
-            $contact = Contact::where('wa_id', $request->form['wa_id'])->first();
+            BookingContact::where('id', $request->contact_id)
+                          ->update(['first_name' => $request->first_name,
+                                    'last_name' => $request->last_name,
+                                    'email' => $request->email ?? '',
+                                    'phone' => $request->phone ?? null ,
+                                    'nro_afiliado' => $request->nro_afiliado ?? null ]);
 
             // ACTUALIZO DATOS DEL TURNO..            
-            $input_date = $request->form['date'];
+            $input_date = $request->date;
             $input_date  = date('Y-m-d', strtotime($input_date));
 
-            Booking::where('id', $request->form['id'])->update([
+            Booking::where('id', $request->id)->update([
                 'date' => $input_date,
-                'status_id' => $request->form['status_id'],
             ]);
 
             DB::commit();
-            
-            return $data = [
-                'code' => 200,
-                'message' => 'Se ha actualizado correctamente el turno'
-            ];
+        
+            return response()->json(['message'=>'Turno actualizado correctamente'], 200);
+
         } catch (\Throwable $th) {
-            dd($th);
             log::info($th);
             DB::rollBack();
-            return $data = [
-                'code' => 500,
-                'message' => 'Se ha producido un error'
-            ];
+
+            return response()->json(['message'=>'Se ha producido un error'], 500);
         }
     }
 

@@ -83,12 +83,7 @@
 							</th>
 							<th scope="col" class="py-3 px-6 text-left">
 								<div class="flex items-center">
-									Documento y Nro Afiliado
-									<!-- <Icons v-if="sort_by == 'name' && sort_order == 'ASC'" name="bars-up"
-										class="h-4 w-4 ml-2" />
-									<Icons v-else-if="sort_by == 'name' && sort_order == 'DESC'" name="bars-down"
-										class="h-4 w-4 ml-2" />
-									<Icons v-else name="bars" class="h-4 w-4 ml-2" /> -->
+									Nro Afiliado
 								</div>
 							</th>
 							<th scope="col" class="py-3 px-6" @click="sort_by = 'status', sortBookings()">
@@ -113,14 +108,12 @@
 								{{ printDate(booking.date) }}
 							</td>
 							<td class="py-4 px-6 text-left capitalize">
-								<p class="text-medium" v-if="booking.contact.fullname">{{ booking.contact.fullname }} </p>
-								<p class="text-medium" v-else>{{ booking.contact.name }}</p>
-								<div class="text-gray-400 flex"><PhoneIcon class="w-4 mr-1" /><span>{{ booking.contact.wa_id }}</span></div>
+								<p class="text-medium capitalize">{{ booking.contact.first_name ?? '' }} {{ booking.contact.last_name ?? '' }} </p>
+								<div class="text-gray-400 flex"><PhoneIcon class="w-4 mr-1" /><span>{{ booking.contact.phone ?? '' }}</span></div>
 							</td>
 
 							<td class="py-4 px-6  text-left ">
-								<p> Doc: {{ booking.contact.nro_doc }}</p>
-								<p> Nro: {{ booking.contact.nro_affiliate }}</p>
+								<p> Nro: {{ booking.contact.nro_afiliado }}</p>
 							</td>
 
 							<td class="py-4 px-6">
@@ -230,39 +223,50 @@
 											</div>
 
 											<div class="mt-4">
-												<label for="fullname"
-													   class="block text-sm font-medium text-gray-900">Nombre y Apellido</label>
+												<label for="first_name"
+													   class="block text-sm font-medium text-gray-900">Nombre</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.fullname" name="fullname"
-														id="fullname"
+													<input type="text" v-model="form.first_name" name="first_name"
+														id="first_name"
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md" />
 												</div>
 											</div>
 
-											<div class="mt-2">
-												<label for="nro_affiliate"
-													class="block text-sm font-medium text-gray-900">Nro. Afiliado</label>
+											<div class="mt-4">
+												<label for="last_name"
+													   class="block text-sm font-medium text-gray-900">Apellido</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.nro_affiliate" name="nro_affiliate"
-														id="nro_affiliate"
+													<input type="text" v-model="form.last_name" name="fullname"
+														id="last_name"
 														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md" />
 												</div>
 											</div>
 											
 											<div class="mt-2">
-												<label for="fullname"
-													class="block text-sm font-medium text-gray-900">Nombre en WhatsApp</label>
+												<label for="nro_afiliado"
+													class="block text-sm font-medium text-gray-900">Nro. Afiliado</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.name" name="name" id="name"
-														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-50" />
+													<input type="text" v-model="form.nro_afiliado" name="nro_afiliado"
+														id="nro_afiliado"
+														class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md" />
+												</div>
+											</div>
+											
+
+											<div class="mt-2">
+												<label for="phone"
+													class="block text-sm font-medium text-gray-900">Teléfono</label>
+												<div class="mt-1">
+													<input type="text" v-model="form.phone" name="phone" id="phone" 														
+														   class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-50" />
 												</div>
 											</div>
 
 											<div class="mt-2">
-												<label for="telefono"
-													class="block text-sm font-medium text-gray-900">Teléfono</label>
+												<label for="email"
+													class="block text-sm font-medium text-gray-900">Email</label>
 												<div class="mt-1">
-													<input type="text" v-model="form.wa_id" name="wa_id" id="wa_id"  														
+													<input type="text" v-model="form.email" name="email" id="email" 														
 														   class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-50" />
 												</div>
 											</div>
@@ -272,7 +276,7 @@
 													class="block text-sm font-medium text-gray-900">Estado</label>
 												<div class="mt-1 flex justify-between">
 													<input type="text" v-model="form.status" name="status" id="status" disabled 														
-														   class="block w-60 shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-50" />
+														   class="uppercase block w-60 shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-50" />
 													<button v-if="form.status == 'agendado'" @click.prevent="changeStatus(form.id, 3)" class="px-4 py-1 bg-green-300 text-green-900 rounded-md hover:bg-green-400"> Confirmar Visita</button>
 												</div>
 											</div>
@@ -394,11 +398,13 @@ export default {
 		detailBooking(booking){
 			console.log(booking)
 			this.form.id = booking.id,
-			this.form.fullname = booking.contact.fullname,
-			this.form.name = booking.contact.name,
-			this.form.wa_id = booking.contact.wa_id,
-			this.form.nro_doc = booking.contact.nro_doc,
-			this.form.nro_affiliate = booking.contact.nro_affiliate,
+			this.forn.contact_id = booking.contact.id
+			this.form.first_name = booking.contact.first_name
+			this.form.last_name = booking.contact.last_name
+			this.form.email = booking.contact.email
+			this.form.phone = booking.contact.phone
+			this.form.nro_afiliado = booking.contact.nro_afiliado
+			
 			this.form.status_id = booking.status.id,
 			this.form.status = booking.status.status
 			this.form.date = this.formatDate(booking.date)
@@ -558,7 +564,7 @@ export default {
 		},
 		async updateBooking() {
 
-			let response = await axios.post(route('booking.createbooking'), { form: this.form })
+			let response = await axios.post(route('booking.updatebooking'), this.form )
 
 			if(response.status == 200){
 				this.open = false

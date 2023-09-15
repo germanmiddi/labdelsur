@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Whatsapp\WhatsappController;
+use App\Http\Controllers\Web\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/whatsapp/receive',[WhatsappController::class, 'receive']);
 Route::post('/whatsapp/receive',[WhatsappController::class, 'receive']);
 Route::post('/whatsapp/job',[WhatsappController::class, 'dispatch_job']);
+
+Route::post('/turnos/create',[HomeController::class, 'turno_post'])->name('turno_post');

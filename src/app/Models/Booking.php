@@ -15,8 +15,12 @@ class Booking extends Model
         'contact_id'
     ];
 
-    public function contact(){
-        return $this->belongsTo(Contact::class);
+    // public function contact(){
+    //     return $this->belongsTo(Contact::class);
+    // }
+
+    public function bookingContact(){
+        return $this->belongsTo(BookingContact::class, 'contact_id');
     }
 
     public function status()

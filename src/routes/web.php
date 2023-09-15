@@ -46,6 +46,13 @@ Route::get('/estudios',[HomeController::class, 'estudios'])
 Route::get('/obras-sociales',[HomeController::class, 'osociales'])
        ->name('obras-sociales');       
 
+Route::get('/nuevo-turno',[HomeController::class, 'form_turno'])
+       ->name('form-turno');       
+
+Route::post('/turnos/create',[HomeController::class, 'turno_post'])->name('turno_post');
+
+Route::get('turnos/{id}',[HomeController::class, 'turno_cancelar'])->name('turno.cancelar'); 
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard')
         ->middleware('auth');    
