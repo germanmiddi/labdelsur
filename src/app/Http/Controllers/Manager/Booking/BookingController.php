@@ -86,7 +86,8 @@ class BookingController extends Controller
         try {
             // Formatea variable de fecha..
             if($date === ''){
-                $date = Carbon::now()->tz('-3');
+                // $date = Carbon::now()->tz('-3');
+                $date = Carbon::now('America/Argentina/Buenos_Aires');
             }else{
                 $date = Carbon::parse($date);
             }
@@ -120,7 +121,10 @@ class BookingController extends Controller
                 //control horario de cierre
                 $date->addDay(1);
                 //Obtengo la cantidad de Orders permitidas segun el dia de la semana a consultar...
-                $cant_orders = DetailDay::select('cant_orders')->where('num_day', '=', date('w', strtotime($date)))->first();
+                // $cant_orders = DetailDay::select('cant_orders')->where('num_day', '=', date('w', strtotime($date)))->first();
+                $cant_orders = DetailDay::select('cant_orders')
+                                        ->where('num_day', '=', Carbon::parse($date)->timezone('America/Argentina/Buenos_Aires')->format('w'))
+                                        ->first();
                 if(
                     // Check que se tomen turnos para el dia seleccionado.
                     $cant_orders['cant_orders'] > 0
