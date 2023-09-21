@@ -1,4 +1,5 @@
 <template>
+    <!-- eslint-disable -->
     <div class="fixed z-50 bottom-10 right-20 hidden md:block">
         <a :href="links['whatsapp_btn']" target="_blank">
             <div class="bg-green-100 flex justify-center items-center rounded-full  border-white cursor-pointer 
@@ -11,9 +12,11 @@
     </div>
 
     <div class="fixed z-50 bottom-10 right-5 md:hidden">
-        <div class="bg-green-200 p-2 rounded-full flex justify-center shadow-md">
-            <img class="h-10" src="/img/whatsapp.png" alt="">
-        </div>
+        <a :href="links['whatsapp_btn']" target="_blank">
+            <div class="bg-green-200 p-2 rounded-full flex justify-center shadow-md">
+                <img class="h-10" src="/img/whatsapp.png" alt="">
+            </div>
+        </a>    
     </div>
 </template>
 

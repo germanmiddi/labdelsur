@@ -116,10 +116,17 @@ table.body .article {
                       <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">{{$contact->first_name}} {{$contact->last_name}},</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 10px;">Su turno se ha registrado con éxito.</p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 10px;">Si pertenece a la mutual (carnet dorado) abona el Acto Profesional Bioquímica. Si no tiene mutual se suma el valor del Coseguro indicado por la obra social, tenga en cuenta que este valor puede cambiar de un mes para el otro. Las autorizaciones duran 60 días</p>
+
                         <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 10px;">Dia: <span style="font-size: 14px; font-weight: bold;" >{{ $booking->date }} </span></p>
                         <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 10px;">Horario: <span style="font-size: 14px; font-weight: bold;" >7:30 a 10:30 hs</span></p>
                         <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 30px;">Dirección: <span style="font-size: 14px; font-weight: bold;" >Margarita Weild 1200 Lanús Este, Prov. Buenos Aires</span></p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 30px;">
+                          Solicitamos concurrir sin acompañantes. <br> 
+                          Recuerde consultar las indicaciones para su estudio enviando foto de la orden por WhatsApp al <a href="https://wa.me/5491127714569?text=Consulta">11 2771 4569</a>
+                        </p>
                         <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 15px;">En caso de no poder concurrir puede cancelar el mismo desde el siguiente botón </p>
+
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;" width="100%">
                           <tbody>
                             <tr>
@@ -137,7 +144,7 @@ table.body .article {
                             </tr>
                           </tbody>
                         </table>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Recuerde consultar las indicaciones para su estudio.</p>
+                        <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 15px;">El valor del Acto Profesional Bioquímico podría variar de un mes al otro sin previo aviso por normativa del Colegio de Bioquímicos de la Provincia de Buenos Aires.</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Laboratorio del Sur </p>
                       </td>
                     </tr>

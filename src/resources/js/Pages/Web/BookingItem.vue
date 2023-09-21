@@ -15,7 +15,7 @@
                 <div class="flex items-center">
                   <div class="text-sm">
                     <RadioGroupLabel as="p" class="font-medium" :class="checked ? 'text-white' : 'text-gray-900'">
-                     {{ formatFecha(day) }}
+                     {{ formatFecha(day) }} - Hora: 7:30 a 10:30 hs
                     </RadioGroupLabel>
                     <RadioGroupDescription as="span" class="inline"
                       :class="checked ? 'text-sky-100' : 'text-gray-500'">                      

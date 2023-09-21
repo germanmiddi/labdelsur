@@ -30,7 +30,17 @@
               <div class="border-b border-gray-900/10 pb-12">
                 <h2 class="text-2xl font-semibold leading-7 text-gray-900">Complete el formulario y reserve su turno</h2>
                 <p class="mt-1 text-lg leading-6 text-gray-500">Recibira en su mail la confirmación del turno.</p>
+                <div class="my-10 w-4/5  bg-indigo-50 px-4 py-6 rounded-md shadow-md">    
+                  <svg class="text-white w-16 h-16 absolute z-0" 
+                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                  </svg>
+                  
+                  <p class="relative text-xl z-10 ml-9 text-gray-700">
+                    Este servicio de turnos es exclusivo para afiliados/as de la obra social <span class="font-bold  text-indigo-500">UTA</span>. 
+                    <br>El horario de los turnos es siempre de 7:30 a 10:30, debe traer la orden médica y la autorización impresa.</p>
 
+                </div>
                 <div v-if="msjForm.show" 
                     :class="classMessageBox[msjForm.type]" 
                     class=" rounded-lg px-3 py-4 border-l-2  mt-5">
@@ -73,7 +83,7 @@
                   </div>
 
                   <div class="col-span-1 sm:col-span-3">
-                    <label for="afiliado" class="block text-lg font-medium leading-6 text-gray-900">Nro Afiliado</label>
+                    <label for="afiliado" class="block text-lg font-medium leading-6 text-gray-900">DNI / Nro Afiliado</label>
                     <div class="mt-2">
                       <input type="number" name="afiliado" id="afiliado" 
                              v-model="afiliado"

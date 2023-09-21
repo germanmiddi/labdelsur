@@ -38,7 +38,7 @@ class HomeController extends Controller
         foreach($settings as $row){
             $links[$row['key']] = $row['value'];
         }
-
+        
         return  Inertia::render('Web/Home', [
             'faqs'  => $faqs,
             'obras' => $obras,

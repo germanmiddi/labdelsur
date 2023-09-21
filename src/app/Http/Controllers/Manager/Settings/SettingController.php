@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Setting;
 use App\Models\Contact;
@@ -176,6 +177,37 @@ class SettingController extends Controller
 
             return response()->json(['message'=>'Se han actualizado los datos'], 200);
         } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error'], 500);
+        }
+    }
+
+    public function turnos(){
+
+        return response()->json([
+            'turnos' => Setting::where('module', 'BOOKING')->get()->pluck('value', 'key'),
+            'dias' => DetailDay::all()
+        ], 200);
+
+    }
+
+    public function update_turnos(Request $request){
+
+        try {
+            $rows = $request->all();
+
+            
+            foreach ($rows as $key => $value ) {
+
+                DB::beginTransaction(); 
+                // Buscar y actualizar la fila correspondiente en la base de datos
+                Setting::where('key', $key)->update(['value' => $value]);
+                DB::commit();
+            }
+
+            return response()->json(['message'=>'Se han actualizado los datos'], 200);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            dd($th);
             return response()->json(['message'=>'Se ha producido un error'], 500);
         }
     }

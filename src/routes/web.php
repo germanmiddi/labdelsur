@@ -157,6 +157,14 @@ Route::post('/settings/updategeneral', [SettingController::class, 'update_genera
         ->name('settings.updategeneral')
         ->middleware('auth');
 
+Route::get('/settings/turnos', [SettingController::class, 'turnos'])
+        ->name('settings.turnos')
+        ->middleware('auth');
+
+Route::post('/settings/turnosUpdate', [SettingController::class, 'update_turnos'])
+        ->name('settings.turnosUpdate')
+        ->middleware('auth');
+
 Route::get('/chatbotmessage/list', [ChatbotmessageController::class, 'list'])
         ->name('chatbotmessage.list')
         ->middleware('auth');
@@ -164,7 +172,9 @@ Route::get('/chatbotmessage/list', [ChatbotmessageController::class, 'list'])
 Route::post('/chatbotmessage/update', [ChatbotmessageController::class, 'update'])
         ->name('chatbotmessage.update')
         ->middleware('auth');
-        
+
+
+
 //* Obras Sociales *//
 
 Route::get('/booking', [BookingController::class, 'index'])
