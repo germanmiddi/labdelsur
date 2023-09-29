@@ -38,13 +38,13 @@
                   
                   <p class="relative text-xl z-10 ml-9 text-gray-700">
                     Este servicio de turnos es exclusivo para afiliados/as de la obra social <span class="font-bold  text-indigo-500">UTA</span>. 
-                    <br>El horario de los turnos es siempre de 7:30 a 10:30, debe traer la orden médica y la autorización impresa.</p>
-
+                    <br>El horario de los turnos es siempre de 7:30 a 10:30, debe traer la orden médica y la autorización impresa.
+                  </p>
                 </div>
                 <div v-if="msjForm.show" 
                     :class="classMessageBox[msjForm.type]" 
                     class=" rounded-lg px-3 py-4 border-l-2  mt-5">
-                  <p>{{ msjForm.message }}</p>
+                  <p v-html="msjForm.message"></p>
                 </div>
                 
                 <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -268,7 +268,7 @@ export default {
           this.fechaSeleccionada = ""
           this.loading = false
           this.msjForm.show = true;
-          this.msjForm.message = 'Turno reservado con éxito';
+          this.msjForm.message = 'Turno reservado con éxito. <br> Recibirá en su correo electrónico la confirmación del turno.';
           this.msjForm.type = 'success';
           this.scrollToTop()
         }else{

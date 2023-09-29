@@ -6,6 +6,7 @@
         </div>
         <div class=" md:w-5/6">
           <ul class="flex justify-between text-gray-700 flex-col items-center md:flex-row">
+            <li><a :href="route('form-turno')" >TURNOS</a></li>
             <li><a :href="links['kern_url']" target="_blank" >RESULTADOS</a></li>
             <li><a :href="route('estudios')" >ESTUDIOS</a></li>
             <li><a :href="route('preguntas-frecuentes')" >PREGUNTAS FRECUENTES</a></li>

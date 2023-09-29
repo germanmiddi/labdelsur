@@ -158,7 +158,7 @@
               <span class="text-2xl md:text-4xl font-extrabold block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Ingrese al siguiente enlace</span>
             </h2>
             <div class="space-y-4 sm:space-y-0 sm:flex sm:space-x-5 mt-4 sm:mt-0">
-              <a :href="links['whatsapp_btn']" target="_blank" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">UTA</a>
+              <a :href="route('form-turno')" target="_blank" class="h-12 flex items-center justify-center px-4 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 sm:px-8 tracking-wide">UTA</a>
             </div>
         </div>
       </div>

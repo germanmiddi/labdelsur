@@ -116,7 +116,7 @@ table.body .article {
                       <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">{{$contact->first_name}} {{$contact->last_name}},</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 10px;">Su turno se ha registrado con éxito.</p>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 10px;">Si pertenece a la mutual (carnet dorado) abona el Acto Profesional Bioquímica. Si no tiene mutual se suma el valor del Coseguro indicado por la obra social, tenga en cuenta que este valor puede cambiar de un mes para el otro. Las autorizaciones duran 60 días</p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 10px;">Si pertenece a la mutual (carnet dorado) abona el Acto Profesional Bioquímico. Si no tiene mutual se suma el valor del Coseguro indicado por la obra social, tenga en cuenta que este valor puede cambiar de un mes para el otro. Las autorizaciones duran 60 días</p>
 
                         <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 10px;">Dia: <span style="font-size: 14px; font-weight: bold;" >{{ $booking->date }} </span></p>
                         <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 10px;">Horario: <span style="font-size: 14px; font-weight: bold;" >7:30 a 10:30 hs</span></p>
